@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { requestLogin, requestUserInfo } from '@/api/user'
-import { onMounted, ref } from 'vue'
-import { User } from '@/api/user/type.ts'
-const userInfo = ref<User>()
-onMounted(async () => {
-  const {
-    data: { token },
-  } = await requestLogin({ username: 'admin', password: '111111' })
-  localStorage.setItem('token', token)
-  requestUserInfo().then((res) => {
-    userInfo.value = res.data
-    console.log(userInfo.value)
-  })
-})
+// import { requestLogin, requestUserInfo } from '@/api/user'
+// import { onMounted, ref } from 'vue'
+// import { User } from '@/api/user/type.ts'
+// const userInfo = ref<User>()
+// onMounted(async () => {
+//   const {
+//     data: { token },
+//   } = await requestLogin({ username: 'admin', password: '111111' })
+//   localStorage.setItem('token', token)
+//   requestUserInfo().then((res) => {
+//     userInfo.value = res.data
+//     console.log(userInfo.value)
+//   })
+// })
 </script>
 
 <template>

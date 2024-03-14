@@ -1,13 +1,14 @@
 import vue from '@vitejs/plugin-vue'
 import Components from 'unplugin-vue-components/vite'
 import path from 'path'
-import { ConfigEnv, UserConfigExport } from 'vite'
+import { UserConfigExport } from 'vite'
 import { AntDesignVueResolver } from 'unplugin-vue-components/dist/resolvers'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
-import { viteMockServe } from 'vite-plugin-mock'
+// import { viteMockServe } from 'vite-plugin-mock'
 
 // https://vitejs.dev/config/
-export default ({ command }: ConfigEnv): UserConfigExport => {
+// export default ({ command }: ConfigEnv): UserConfigExport => {
+export default (): UserConfigExport => {
   return {
     plugins: [
       vue(),
@@ -24,9 +25,9 @@ export default ({ command }: ConfigEnv): UserConfigExport => {
         iconDirs: [path.resolve(process.cwd(), 'src/assets/svg')],
         symbolId: 'icon-[dir]-[name]',
       }),
-      viteMockServe({
-        localEnabled: command === 'serve',
-      }),
+      // viteMockServe({
+      //   localEnabled: command === 'serve', // 开发环境时使用mock数据记得注释
+      // }),
     ],
     resolve: {
       alias: {
@@ -40,6 +41,18 @@ export default ({ command }: ConfigEnv): UserConfigExport => {
         scss: {
           javascriptEnabled: true,
           additionalData: '@import "./src/styles/variable.scss";',
+        },
+      },
+    },
+    server: {
+      host: true,
+      port: 9991,
+      proxy: {
+        '/dev': {
+          // 将带有/dev路径的地址都换成http://127.0.0.1:3001/kmsd-api
+          target: 'http://127.0.0.1:3001/kmsd-api', // 后端接口地址
+          changeOrigin: true, // 是否允许跨越
+          rewrite: (path) => path.replace(/^\/dev/, ''),
         },
       },
     },

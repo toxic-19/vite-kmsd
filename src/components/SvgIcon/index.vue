@@ -23,11 +23,16 @@ defineProps({
 </script>
 
 <template>
-  <div>
+  <div class="svg-icon">
     <svg :style="{ width: width, height: height }">
       <use :xlink:href="prefix + name" :fill="color"></use>
     </svg>
   </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.svg-icon {
+  display: flex;
+  align-items: center;
+}
+</style>

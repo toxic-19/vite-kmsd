@@ -2,10 +2,10 @@
 import axiosInstance from '@/utils/request'
 import type { loginFormData, loginResponseData, userInfoResponseData } from './type'
 enum API {
-  LOGIN_URL = '/user/login',
-  USERINFO_URL = '/user/info',
-  LOGOUT_URL = '/admin/acl/index/logout',
+  user_login_url = '/user/login',
+  user_info_url = '/user/info',
+  user_logout_url = '/admin/acl/index/logout',
 }
-export const requestLogin = (data: loginFormData) => axiosInstance.post<any, loginResponseData>(API.LOGIN_URL, data)
-export const requestLogout = () => axiosInstance.post<any, any>(API.LOGOUT_URL)
-export const requestUserInfo = () => axiosInstance.get<any, userInfoResponseData>(API.USERINFO_URL)
+export const postLogin = (data: loginFormData) => axiosInstance.post<any, loginResponseData>(API.user_login_url, data)
+export const postLogout = () => axiosInstance.post<any, any>(API.user_logout_url)
+export const getUserInfo = () => axiosInstance.get<any, userInfoResponseData>(API.user_info_url)

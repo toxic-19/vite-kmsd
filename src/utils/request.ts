@@ -1,6 +1,7 @@
 // axios 二次封装
 import axios, { AxiosInstance, CreateAxiosDefaults } from 'axios'
 import { message } from 'ant-design-vue'
+import { ERROR_STATUS_MAP } from '@/utils/map'
 
 // axios实例
 const axiosInstance: AxiosInstance = axios.create({
@@ -10,9 +11,21 @@ const axiosInstance: AxiosInstance = axios.create({
 } as CreateAxiosDefaults)
 
 // 请求拦截器 interceptors.request
-axiosInstance.interceptors.request.use((config) => {
-  return config
-})
+axiosInstance.interceptors.request.use(
+  (config) => {
+    return config
+  },
+  (error) => {
+    const { response } = error
+    if (response) {
+      // 请求已发出 但是不在2xx的范围
+      message.error(response.status)
+      return Promise.reject(error)
+    } else {
+      message.warning('网络连接异常，请稍后再试')
+    }
+  },
+)
 
 // 响应拦截器 interceptors.response
 axiosInstance.interceptors.response.use(
@@ -21,25 +34,9 @@ axiosInstance.interceptors.response.use(
   },
   (error) => {
     // 处理请求失败的HTTP网络错误
-    let msg = ''
     const status = error.response.status
-    switch (status) {
-      case 401:
-        msg = 'token is out of date'
-        break
-      case 403:
-        msg = 'Authentication'
-        break
-      case 404:
-        msg = 'Not Found'
-        break
-      case 500:
-        msg = 'Internal Server Error'
-        break
-      default:
-        msg = 'Network Error'
-    }
-    message.info(msg)
+    const message = ERROR_STATUS_MAP[status] || 'Http Error'
+    message.warning(`${message}，请检查网络或联系管理员！`)
     return Promise.reject(error)
   },
 )

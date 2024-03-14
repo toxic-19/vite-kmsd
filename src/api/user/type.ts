@@ -1,12 +1,8 @@
+import { ResponseData } from '@/api'
 // 定义用户相关数据的ts类型
 export interface loginFormData {
   username: string
   password: string
-}
-export interface ResponseData {
-  code: number
-  message: string
-  ok: boolean
 }
 export interface loginResponseData extends ResponseData {
   data: {

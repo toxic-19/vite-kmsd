@@ -24,7 +24,7 @@ function createKnowledgeBaseList() {
       knowId: 'uuid0102',
       title: 'Knowledge02',
       description: '企业系统产品管理',
-      coverImage: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+      coverImage: 'src/assets/avatar.jpg',
       isPublic: false,
       author: 'toxic',
     },

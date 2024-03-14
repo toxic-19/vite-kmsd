@@ -18,6 +18,10 @@ const routes = <RouteRecordRaw[]>[
       },
     ],
   },
+  {
+    path: '/docs',
+    component: () => import('@/views/docs/index.vue'),
+  },
 ]
 
 const options = <RouterOptions>{
