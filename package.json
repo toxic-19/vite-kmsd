@@ -16,6 +16,7 @@
     "lint:style": "stylelint src/**/*.{css,scss,vue} --cache --fix"
   },
   "dependencies": {
+    "@ant-design/icons-vue": "^7.0.1",
     "ant-design-vue": "4.x",
     "vue": "^3.3.11",
     "vue-router": "^4.3.0"

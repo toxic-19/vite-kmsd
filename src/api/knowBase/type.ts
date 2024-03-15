@@ -22,3 +22,7 @@ export interface UpdateTopForm {
   id: number
   isTop: boolean
 }
+export type CreateKnowForm = {
+  kbName: string
+  kbDesc: string
+}
