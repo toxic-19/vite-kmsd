@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { defineEmits, ref } from 'vue'
 import { FormOutlined, InfoCircleOutlined } from '@ant-design/icons-vue'
 import { postCreateKnowledge } from '@/api/knowBase'
 import { message } from 'ant-design-vue'
+const emit = defineEmits(['refresh'])
 const isShow = ref<boolean>(true)
 const showForm = () => {
   isShow.value = false
@@ -19,6 +20,7 @@ const createBase = async () => {
     loadingForAdd.value = false
     isShow.value = true
     message.success(res.message)
+    emit('refresh')
   }
 }
 </script>
@@ -92,7 +94,7 @@ const createBase = async () => {
 }
 .ant-btn-default,
 .ant-btn-primary {
-  margin-top: 40px;
+  margin-top: 30px;
   background-color: #4a6288;
 }
 .ant-btn-primary:not(:disabled):hover {

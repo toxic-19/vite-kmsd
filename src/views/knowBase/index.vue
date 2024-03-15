@@ -26,9 +26,9 @@ onMounted(() => {
     <div class="knowBase-title">{{ item.title }}</div>
     <div class="flex-container" v-if="item.list.length">
       <template v-for="base in item.list" :key="base.knowId">
-        <base-item :base-info="base"></base-item>
+        <base-item :base-info="base" @refresh="getBaseList"></base-item>
       </template>
-      <quick-create></quick-create>
+      <quick-create @refresh="getBaseList"></quick-create>
     </div>
   </div>
 </template>

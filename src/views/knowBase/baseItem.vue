@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { defineProps } from 'vue'
+import { defineProps, defineEmits } from 'vue'
 import { useRouter } from 'vue-router'
 import { postChangeTopStatus } from '@/api/knowBase'
-
+const emit = defineEmits(['refresh'])
 defineProps({
   baseInfo: {
     type: Object,
@@ -21,6 +21,7 @@ const beTop = async (id: number, isTop: boolean) => {
   console.log(id, isTop)
   postChangeTopStatus({ id, isTop: !isTop }).then(() => {
     // getBaseList()
+    emit('refresh')
   })
 }
 </script>
