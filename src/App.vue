@@ -1,25 +1,32 @@
 <script setup lang="ts">
-// import { requestLogin, requestUserInfo } from '@/api/user'
-// import { onMounted, ref } from 'vue'
-// import { User } from '@/api/user/type.ts'
-// const userInfo = ref<User>()
-// onMounted(async () => {
-//   const {
-//     data: { token },
-//   } = await requestLogin({ username: 'admin', password: '111111' })
-//   localStorage.setItem('token', token)
-//   requestUserInfo().then((res) => {
-//     userInfo.value = res.data
-//     console.log(userInfo.value)
-//   })
-// })
+console.log(
+  ' ......................阿弥陀佛......................\n' +
+    '                       _oo0oo_                      \n' +
+    '                      o8888888o                     \n' +
+    '                      88" . "88                     \n' +
+    '                      (| -_- |)                     \n' +
+    '                      0\\  =  /0                     \n' +
+    '                   ___/‘---’\\___                   \n' +
+    "                  .' \\|       |/ '.                 \n" +
+    '                 / \\\\|||  :  |||// \\                \n' +
+    '                / _||||| -卍-|||||_ \\               \n' +
+    '               |   | \\\\\\  -  /// |   |              \n' +
+    "               | \\_|  ''\\---/''  |_/ |              \n" +
+    "               \\  .-\\__  '-'  ___/-. /              \n" +
+    "             ___'. .'  /--.--\\  '. .'___            \n" +
+    '         ."" ‘<  ‘.___\\_<|>_/___.’>’ "".          \n' +
+    '       | | :  ‘- \\‘.;‘\\ _ /’;.’/ - ’ : | |        \n' +
+    '         \\  \\ ‘_.   \\_ __\\ /__ _/   .-’ /  /        \n' +
+    '    =====‘-.____‘.___ \\_____/___.-’___.-’=====     \n' +
+    '                       ‘=---=’                      \n' +
+    '                                                    \n' +
+    '....................佛祖保佑 ,永无BUG...................',
+)
 </script>
 
 <template>
   <div class="app-container">
     <router-view></router-view>
-    <!--<div>{{ userInfo }}</div>-->
-    <!--<SvgIcon name="wode"></SvgIcon>-->
   </div>
 </template>
 

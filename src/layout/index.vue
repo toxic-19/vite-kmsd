@@ -3,8 +3,9 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 const menuList = [
-  { id: 0, name: '主页', icon: 'knowledgeBase', path: '/home' },
+  { id: 0, name: '主页', icon: 'home', path: '/home' },
   { id: 1, name: '知识库', icon: 'knowledgeBase', path: '/knowledge' },
+  { id: 2, name: '文档', icon: 'tags', path: '/tags' },
 ]
 const activeCategory = ref(0) // 当前目录激活
 const clickMenu = (menu) => {
@@ -22,7 +23,7 @@ const clickMenu = (menu) => {
       </div>
       <ul class="catalog">
         <li v-for="menu in menuList" :key="menu.id" :class="{ active: activeCategory === menu.id }" @click="clickMenu(menu)">
-          <SvgIcon :name="menu.icon"></SvgIcon>
+          <SvgIcon :name="menu.icon" width="20px" height="20px"></SvgIcon>
           <span>{{ menu.name }}</span>
         </li>
       </ul>
@@ -39,9 +40,7 @@ const clickMenu = (menu) => {
 <style scoped lang="scss">
 .layout {
   display: flex;
-  width: 100vw;
   height: 100vh;
-  //background-color: antiquewhite;
 }
 .left {
   width: 164px;
@@ -89,5 +88,6 @@ const clickMenu = (menu) => {
 .content {
   height: 100vh;
   width: calc(100vw - 170px);
+  overflow-y: scroll;
 }
 </style>

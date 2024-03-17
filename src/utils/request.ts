@@ -34,9 +34,9 @@ axiosInstance.interceptors.response.use(
   },
   (error) => {
     // 处理请求失败的HTTP网络错误
-    const status = error.response.status
-    const message = ERROR_STATUS_MAP[status] || 'Http Error'
-    message.warning(`${message}，请检查网络或联系管理员！`)
+    const status = error.response.data.statusCode
+    const msg = ERROR_STATUS_MAP[status] || 'Http Error'
+    message.warning(`${msg}，请检查网络或联系管理员！`)
     return Promise.reject(error)
   },
 )

@@ -11,8 +11,8 @@ const getBaseList = async () => {
   const { data } = await getKnowledgeList()
   const topKnowList = data.filter((item: KnowBase) => item.isTop)
   allList.value = [
-    { title: '置顶知识库', list: topKnowList },
-    { title: '全部知识库', list: data },
+    { title: '置顶知识库', list: topKnowList, isTop: true },
+    { title: '全部知识库', list: data, isTop: false },
   ]
 }
 
@@ -28,7 +28,7 @@ onMounted(() => {
       <template v-for="base in item.list" :key="base.knowId">
         <base-item :base-info="base" @refresh="getBaseList"></base-item>
       </template>
-      <quick-create @refresh="getBaseList"></quick-create>
+      <quick-create :is-top="item.isTop" @refresh="getBaseList"></quick-create>
     </div>
   </div>
 </template>

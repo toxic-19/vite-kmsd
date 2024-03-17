@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { defineEmits, ref } from 'vue'
-import { FormOutlined, InfoCircleOutlined } from '@ant-design/icons-vue'
+import { defineEmits, defineProps, ref } from 'vue'
+import { FormOutlined, InfoCircleOutlined, CloseOutlined } from '@ant-design/icons-vue'
 import { postCreateKnowledge } from '@/api/knowBase'
 import { message } from 'ant-design-vue'
+
 const emit = defineEmits(['refresh'])
+const props = defineProps(['isTop'])
 const isShow = ref<boolean>(true)
 const showForm = () => {
   isShow.value = false
@@ -11,17 +13,28 @@ const showForm = () => {
 const formData = ref({
   kbName: '',
   kbDesc: '',
+  isTop: false,
 })
 const loadingForAdd = ref<boolean>(false)
-const createBase = async () => {
+const createBase = () => {
   loadingForAdd.value = true
-  const res = await postCreateKnowledge(formData.value)
-  if (res.ok) {
-    loadingForAdd.value = false
-    isShow.value = true
-    message.success(res.message)
-    emit('refresh')
-  }
+  formData.value.isTop = props.isTop
+  postCreateKnowledge(formData.value)
+    .then((res) => {
+      if (res.code === 200) {
+        loadingForAdd.value = false
+        closeForm()
+        message.success(res.message)
+        emit('refresh')
+      }
+    })
+    .catch(() => {
+      loadingForAdd.value = false
+      closeForm()
+    })
+}
+const closeForm = () => {
+  isShow.value = true
 }
 </script>
 
@@ -35,6 +48,9 @@ const createBase = async () => {
       </div>
     </div>
     <template v-else>
+      <div class="close-icon" @click="closeForm">
+        <CloseOutlined :style="{ fontSize: '14px', color: '#4a6288' }" />
+      </div>
       <a-input v-model:value="formData.kbName" size="small">
         <template #suffix>
           <a-tooltip :title="formData.kbName || '知识库标题'">
@@ -42,7 +58,7 @@ const createBase = async () => {
           </a-tooltip>
         </template>
       </a-input>
-      <a-textarea v-model:value="formData.kbDesc" placeholder="知识库描述" :auto-size="{ minRows: 2, maxRows: 3 }" />
+      <a-textarea v-model:value="formData.kbDesc" placeholder="知识库描述" :auto-size="{ minRows: 3, maxRows: 3 }" />
       <a-button type="primary" :loading="loadingForAdd" @click="createBase">
         确认
         <template #icon>
@@ -65,18 +81,30 @@ const createBase = async () => {
   transition: all 0.2s;
   border-radius: 8px;
   background: #fafafa;
-  border: 1px dashed #d9d9d9;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(white, white) padding-box,
+    repeating-linear-gradient(-45deg, #4b638a 0, #80abd5 0.8em, white 0, white 1em);
   box-shadow: 0 2px 4px rgba(31, 35, 41, 0.1);
   position: relative;
+
   &:hover {
-    border-color: #87a2ff;
+    box-shadow: 0 0 6px 2px rgba(31, 35, 41, 0.3);
   }
+
+  .close-icon {
+    position: absolute;
+    left: 5px;
+    top: 5px;
+  }
+
   .title {
     font-size: 14px;
-    margin: 16px 0 6px 0;
+    margin: 20px 0 6px 0;
     font-weight: bold;
     color: #80abd5;
   }
+
   .create-btn {
     position: absolute;
     left: 50%;
@@ -94,7 +122,7 @@ const createBase = async () => {
 }
 .ant-btn-default,
 .ant-btn-primary {
-  margin-top: 30px;
+  margin-top: 20px;
   background-color: #4a6288;
 }
 .ant-btn-primary:not(:disabled):hover {

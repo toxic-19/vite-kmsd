@@ -81,6 +81,7 @@ const beTop = async (id: number, isTop: boolean) => {
   }
   .desc {
     font-size: 13px;
+    word-break: break-word;
   }
 }
 .item-in {

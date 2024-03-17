@@ -16,6 +16,10 @@ const routes = <RouteRecordRaw[]>[
         name: 'knowledge',
         component: () => import('@/views/knowBase/index.vue'),
       },
+      {
+        path: '/tags',
+        component: () => import('@/views/tags/index.vue'),
+      },
     ],
   },
   {
