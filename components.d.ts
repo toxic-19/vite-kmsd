@@ -7,12 +7,13 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    AButton: (typeof import('ant-design-vue/es'))['Button']
-    AInput: (typeof import('ant-design-vue/es'))['Input']
-    ATextarea: (typeof import('ant-design-vue/es'))['Textarea']
-    ATooltip: (typeof import('ant-design-vue/es'))['Tooltip']
-    RouterLink: (typeof import('vue-router'))['RouterLink']
-    RouterView: (typeof import('vue-router'))['RouterView']
-    SvgIcon: (typeof import('./src/components/SvgIcon/index.vue'))['default']
+    AButton: typeof import('ant-design-vue/es')['Button']
+    AInput: typeof import('ant-design-vue/es')['Input']
+    ATextarea: typeof import('ant-design-vue/es')['Textarea']
+    ATooltip: typeof import('ant-design-vue/es')['Tooltip']
+    ATree: typeof import('ant-design-vue/es')['Tree']
+    RouterLink: typeof import('vue-router')['RouterLink']
+    RouterView: typeof import('vue-router')['RouterView']
+    SvgIcon: typeof import('./src/components/SvgIcon/index.vue')['default']
   }
 }
