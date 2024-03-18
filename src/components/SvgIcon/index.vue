@@ -33,6 +33,7 @@ defineProps({
 <style scoped lang="scss">
 .svg-icon {
   display: flex;
+  justify-content: center;
   align-items: center;
 }
 </style>
