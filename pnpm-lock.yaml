@@ -11,6 +11,9 @@ dependencies:
   ant-design-vue:
     specifier: 4.x
     version: 4.1.2(vue@3.3.11)
+  vditor:
+    specifier: ^3.10.2
+    version: 3.10.2
   vue:
     specifier: ^3.3.11
     version: 3.3.11(typescript@5.2.2)
@@ -1959,6 +1962,10 @@ packages:
     resolution: {integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==}
     engines: {node: '>=0.4.0'}
     dev: true
+
+  /diff-match-patch@1.0.5:
+    resolution: {integrity: sha512-IayShXAgj/QMXgB0IWmKx+rOPuGMhqm5w6jvFxmVenXKIzRqTAAsbBPT3kWQeGANj3jGgvcvv4yK6SxqYmikgw==}
+    dev: false
 
   /dir-glob@3.0.1:
     resolution: {integrity: sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA==}
@@ -5059,6 +5066,12 @@ packages:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
     dev: true
+
+  /vditor@3.10.2:
+    resolution: {integrity: sha512-NtnsqKoU7cFUb7HPLct+fSjRnuhSlfSp0bpCDm0GcH2emngoZb6m1cEyg8yhu1WkHt8ugD9i1OMrA1tnMEW6fA==}
+    dependencies:
+      diff-match-patch: 1.0.5
+    dev: false
 
   /vite-plugin-mock@2.9.6(mockjs@1.1.0)(rollup@2.79.1)(vite@5.0.8):
     resolution: {integrity: sha512-/Rm59oPppe/ncbkSrUuAxIQihlI2YcBmnbR4ST1RA2VzM1C0tEQc1KlbQvnUGhXECAGTaQN2JyasiwXP6EtKgg==}
