@@ -1,24 +1,41 @@
 <script setup lang="ts">
-import { defineProps, onMounted, ref } from 'vue'
-import { articleMenu, groupMenu } from './type'
+import { defineProps, onMounted, ref, useAttrs, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
+
 const props = defineProps(['groupData', 'articleData'])
-const allData = ref<articleMenu[] | groupMenu[]>([])
+const attrs = useAttrs()
+const allData = ref([])
+const router = useRouter()
+const route = useRoute()
 const changeIcon = (item) => {
   item.iconName = item.iconName === 'collapsed' ? 'open' : 'collapsed'
+  console.log(attrs)
 }
-onMounted(() => {
-  let groupList = props.groupData || []
+watch(props, (newVal) => {
+  allData.value = newVal
+  let groupList = newVal.groupData || []
   groupList = groupList?.map((item) => {
     return { ...item, iconName: 'collapsed' }
   })
-  allData.value = [...props.articleData, ...groupList] as articleMenu[] | groupMenu[]
+  allData.value = [...props.articleData, ...groupList]
+  if (props.articleData.length) getPreview(allData.value[0].articleId)
+  else if (props.groupData.length) getPreview(props.groupData[0].childrenData[0].articleId)
+  console.log(props.groupData)
 })
+const getPreview = (articleId: number) => {
+  console.log(articleId)
+  const knowId = route.params.knowId
+  router.push({
+    path: `/docs/${knowId}/${articleId}`,
+  })
+}
 </script>
 
 <template>
   <div class="tree-item" v-for="item in allData" :key="item">
     <div class="doc-content" v-if="item.articleId">
-      <div class="title">
+      <div class="title" @click="getPreview(item.articleId)">
         <SvgIcon name="md" width="13px" height="13px"></SvgIcon>
         <div class="name">{{ item.title }}</div>
         <div class="operate">
@@ -37,7 +54,7 @@ onMounted(() => {
       <div :class="[item.iconName === 'collapsed' ? '' : 'hidden-doc', 'doc-content children-doc']">
         <template v-for="child in item.childrenData" :key="child.articleId">
           <a-tooltip :title="child.title" color="#bab3c3">
-            <div class="title">
+            <div class="title" @click="getPreview(child.articleId)">
               <SvgIcon name="md" width="13px" height="13px"></SvgIcon>
               <div class="name">{{ child.title }}</div>
               <div class="operate">

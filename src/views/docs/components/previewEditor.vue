@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
-import { onMounted } from 'vue'
-import markdownContent from '../markdown.md?raw'
-import { useRouter } from 'vue-router'
+import { ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import request from '@/utils/request'
 const router = useRouter()
-onMounted(() => {
+const route = useRoute()
+const mdContent = ref('')
+const initVditor = (mdContent) => {
   const dom = document.getElementById('preview') as HTMLDivElement
-  Vditor.preview(dom, markdownContent, {
+  const { knowId, articleId } = route.params
+  Vditor.preview(dom, mdContent, {
     mode: 'dark',
     anchor: 1,
     markdown: {
@@ -20,10 +23,10 @@ onMounted(() => {
       }
       getOutline()
       const firstSpan = document.getElementById('outline').querySelector('span')
-      router.push(`/docs?knowId=1#${firstSpan.innerText}`)
+      router.push(`/docs/${knowId}/${articleId}/#${firstSpan.innerText}`)
     },
   })
-})
+}
 const initOutline = () => {
   const headingElements = []
   const scrollDOM = document.getElementById('content')
@@ -61,7 +64,7 @@ const getOutline = () => {
   const outlineElement = document.getElementById('outline')
   Vditor.outlineRender(document.getElementById('preview'), outlineElement)
   if (outlineElement.innerText.trim() !== '') {
-    outlineElement.style.display = 'block'
+    // outlineElement.style.display = 'block'
     initOutline()
     clickOutLine()
   }
@@ -69,12 +72,30 @@ const getOutline = () => {
 const clickOutLine = () => {
   // const spans = document.getElementById('outline').querySelectorAll('span[data-target-id]') as object
   const ulDOM = document.getElementById('outline').querySelector('ul')
-  console.log(ulDOM)
   ulDOM.addEventListener('click', (event: any) => {
     const title = event.target.innerText.replace(/\s/g, '-')
-    window.location = '/docs?knowId=1#' + title
+    const { knowId, articleId } = route.params
+    window.location = `/docs/${knowId}/${articleId}/#${title}`
   })
 }
+const showOutLine = () => {
+  const outlineElement = document.getElementById('outline')
+  const flag = outlineElement.style.display !== 'block'
+  console.log(outlineElement.style.display)
+  outlineElement.style.display = flag ? 'block' : 'none'
+}
+const getArticleContent = async (articleId: number) => {
+  const { data } = await request(`/article/articleId/${articleId}`)
+  mdContent.value = data.content
+  initVditor(mdContent.value)
+}
+watch(
+  () => route.params.articleId,
+  (newVal) => {
+    getArticleContent(+newVal)
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
@@ -82,23 +103,22 @@ const clickOutLine = () => {
     <div id="preview" class="preview"></div>
   </div>
   <div id="outline"></div>
+  <div class="float-menu" @click="showOutLine">
+    <a-tooltip title="文章目录">
+      <SvgIcon name="float-menu" width="30px" height="38px"></SvgIcon>
+    </a-tooltip>
+  </div>
 </template>
 
 <style scoped lang="scss">
-#preview {
-  width: 900px;
-}
-
 #previewWrap {
-  padding: 0 0 20px 20px;
+  padding: 60px 0 20px 20px;
   margin-right: 260px;
+  #preview {
+    margin: 0 auto;
+    /*max-width: 768px;*/
+  }
 }
-
-#preview {
-  margin: 0 auto;
-  max-width: 768px;
-}
-
 #outline {
   display: none;
   position: fixed;
@@ -109,21 +129,54 @@ const clickOutLine = () => {
   overflow: auto;
   font-size: 12px;
   border-left: 1px solid var(--border-color);
-  border-top: 1px solid var(--border-color);
   border-right: 0;
   --border-color: #eee;
   --toolbar-icon-hover-color: #4285f4;
   --textarea-text-color: #616161;
   --hover-background-color: #f6f8fa;
+  &.dark {
+    --border-color: #d1d5da;
+    --toolbar-icon-hover-color: #fff;
+    --textarea-text-color: #a6aab0;
+    --hover-background-color: #444d56;
+  }
+  li > span {
+    cursor: pointer;
+    display: block;
+    border-left: 1px solid transparent;
+    padding: 0 10px;
+
+    &:hover {
+      color: #4285f4;
+    }
+  }
 }
 
-#outline.dark {
-  --border-color: #d1d5da;
-  --toolbar-icon-hover-color: #fff;
-  --textarea-text-color: #a6aab0;
-  --hover-background-color: #444d56;
+.float-menu {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  position: fixed;
+  right: 20px;
+  top: 140px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  box-shadow: 1px 2px 6px 2px rgba(183, 183, 183, 0.8);
+  transition: all 0.3s;
+  &:hover {
+    border: 1px solid #d9d6d6;
+  }
 }
 
+@media screen and (max-width: 768px) {
+  #previewWrap {
+    padding: 0 20px 20px 0;
+  }
+
+  #outline {
+    display: none !important;
+  }
+}
 .vditor-reset ul[data-style='*'] {
   list-style-type: disc;
 }
@@ -172,16 +225,6 @@ const clickOutLine = () => {
   list-style-type: trad-chinese-formal;
 }
 
-@media screen and (max-width: 768px) {
-  #previewWrap {
-    padding: 0 20px 20px 0;
-  }
-
-  #outline {
-    display: none !important;
-  }
-}
-
 :deep(.vditor-outline__item--current) {
   border-left: 1px solid #4285f4;
   color: #4285f4;
@@ -190,15 +233,5 @@ const clickOutLine = () => {
 :deep(.vditor-outline__action) {
   width: 6px;
   height: 6px;
-}
-#outline li > span {
-  cursor: pointer;
-  display: block;
-  border-left: 1px solid transparent;
-  padding: 0 10px;
-
-  &:hover {
-    color: #4285f4;
-  }
 }
 </style>

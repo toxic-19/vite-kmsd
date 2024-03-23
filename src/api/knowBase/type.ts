@@ -26,3 +26,21 @@ export type CreateKnowForm = {
   kbName: string
   kbDesc: string
 }
+export interface articleMenu {
+  articleId: number
+  title: string
+  description: string
+}
+export interface groupMenu {
+  groupId: number
+  groupName: string
+  sortNum: number
+  iconName: string
+  childrenData: articleMenu[]
+}
+export interface GroupResponseData extends ResponseData {
+  data: {
+    article: articleMenu[]
+    group: groupMenu[]
+  }
+}

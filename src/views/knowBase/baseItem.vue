@@ -13,8 +13,7 @@ defineProps({
 const router = useRouter()
 const toDocs = (knowId: number) => {
   router.push({
-    path: '/docs',
-    query: { knowId },
+    path: `/docs/${knowId}`,
   })
 }
 const beTop = async (id: number, isTop: boolean) => {

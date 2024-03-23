@@ -23,8 +23,14 @@ const routes = <RouteRecordRaw[]>[
     ],
   },
   {
-    path: '/docs',
+    path: '/docs/:knowId',
     component: () => import('@/views/docs/index.vue'),
+    children: [
+      {
+        path: '/docs/:knowId/:articleId',
+        component: () => import('@/views/docs/components/previewEditor.vue'),
+      },
+    ],
   },
 ]
 

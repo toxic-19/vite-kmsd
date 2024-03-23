@@ -1,44 +1,10 @@
 <script setup lang="ts">
 import Tree from './tree.vue'
-import { reactive, ref } from 'vue'
-const tree = reactive({
-  article: [
-    {
-      articleId: 1,
-      title: '产品授权说明',
-      description: '商业授权及价格',
-    },
-    {
-      articleId: 2,
-      title: '关于zyplayer-doc项目',
-      description: '关于zyplayer-doc项目',
-    },
-  ],
-  group: [
-    {
-      groupId: 1,
-      groupName: 'Vue2',
-      sortNum: 1,
-      childrenData: [
-        {
-          articleId: 1,
-          title: '产品授权说明',
-          description: '商业授权及价格',
-        },
-        {
-          articleId: 2,
-          title: '关于zyplayer-doc项目',
-          description: '关于zyplayer-doc项目',
-        },
-      ],
-    },
-    {
-      groupId: 2,
-      groupName: '实习',
-      sortNum: 2,
-    },
-  ],
-})
+import { onMounted, reactive, ref } from 'vue'
+import { treeData } from '../type'
+import { getGroupList } from '@/api/knowBase'
+import { useRoute } from 'vue-router'
+const tree = ref<treeData>({})
 const topArticles = reactive([
   {
     articleId: 1,
@@ -57,11 +23,24 @@ const onSearch = (searchValue: string) => {
   console.log('use value', searchValue)
   console.log('or use this.value', articleName.value)
 }
+const route = useRoute()
+const getTreeData = async () => {
+  const { data } = await getGroupList(+route.params.knowId)
+  tree.value = data
+}
+onMounted(() => {
+  getTreeData()
+})
 </script>
 
 <template>
   <div class="base-info">
     <div>个人知识库</div>
+    <div class="settings">
+      <a-tooltip title="知识库设置">
+        <SvgIcon name="setting" width="24px" height="24px"></SvgIcon>
+      </a-tooltip>
+    </div>
   </div>
   <a-input v-model:value="articleName" placeholder="请输入" style="width: 230px; margin-left: 15px" @search="onSearch">
     <template #suffix>
@@ -71,19 +50,12 @@ const onSearch = (searchValue: string) => {
   <div class="doc-menu">
     <a-collapse v-model:activeKey="activeKey" ghost>
       <a-collapse-panel key="1" header="置顶文章" :show-arrow="false">
-        <Tree :article-data="topArticles"></Tree>
+        <Tree v-bind="$attrs" :article-data="topArticles"></Tree>
       </a-collapse-panel>
       <a-collapse-panel key="2" header="知识库目录" :show-arrow="false">
-        <Tree :article-data="tree.article" :group-data="tree.group"></Tree>
-        <Tree :article-data="tree.article" :group-data="tree.group"></Tree>
-        <Tree :article-data="tree.article" :group-data="tree.group"></Tree>
+        <Tree v-bind="$attrs" :article-data="tree.article" :group-data="tree.group"></Tree>
       </a-collapse-panel>
     </a-collapse>
-  </div>
-  <div class="settings">
-    <a-tooltip title="知识库设置">
-      <SvgIcon name="setting" width="24px" height="24px"></SvgIcon>
-    </a-tooltip>
   </div>
 </template>
 
@@ -92,7 +64,7 @@ const onSearch = (searchValue: string) => {
   width: 240px;
   margin-left: 10px;
   margin-top: 20px;
-  height: calc(100vh - 145px);
+  height: calc(100vh - 110px);
   overflow-y: scroll;
   border: 1px solid rgba(75, 99, 138, 0.1);
   &::-webkit-scrollbar {
@@ -130,7 +102,6 @@ const onSearch = (searchValue: string) => {
 }
 .settings {
   height: 40px;
-  width: 240px;
   padding-left: 20px;
   display: flex;
   align-items: center;

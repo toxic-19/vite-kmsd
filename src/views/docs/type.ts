@@ -1,12 +1,17 @@
-export type articleMenu = {
+export interface articleMenu {
   articleId: number
   title: string
   description: string
 }
-export type groupMenu = {
+export interface groupMenu {
   groupId: number
   groupName: string
   sortNum: number
   iconName: string
-  childrenData: Array<articleMenu>
+  childrenData: articleMenu[]
+}
+
+export interface treeData {
+  article?: Array<articleMenu>
+  group?: groupMenu[]
 }
