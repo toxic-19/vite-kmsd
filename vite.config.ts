@@ -40,7 +40,7 @@ export default (): UserConfigExport => {
         // 此时variable中的变量即可在项目中使用了。
         scss: {
           javascriptEnabled: true,
-          additionalData: '@import "./src/styles/variable.scss";',
+          additionalData: '@import "./src/styles/mixins.scss";',
         },
       },
     },

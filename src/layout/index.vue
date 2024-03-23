@@ -87,7 +87,7 @@ const clickMenu = (menu) => {
 }
 .content {
   height: 100vh;
-  width: calc(100vw - 170px);
+  width: calc(100vw - 100px);
   overflow-y: scroll;
 }
 </style>

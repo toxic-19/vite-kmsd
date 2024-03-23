@@ -23,14 +23,13 @@ const initVditor = (mdContent) => {
       }
       getOutline()
       const firstSpan = document.getElementById('outline').querySelector('span')
-      router.push(`/docs/${knowId}/${articleId}/#${firstSpan.innerText}`)
+      router.push(`/docs/${knowId}/${articleId}/#${firstSpan?.innerText}`)
     },
   })
 }
 const initOutline = () => {
   const headingElements = []
   const scrollDOM = document.getElementById('content')
-  console.log(scrollDOM)
   Array.from(document.getElementById('preview').children).forEach((item) => {
     if (item.tagName.length === 2 && item.tagName !== 'HR' && item.tagName.indexOf('H') === 0) {
       headingElements.push(item)
@@ -64,7 +63,6 @@ const getOutline = () => {
   const outlineElement = document.getElementById('outline')
   Vditor.outlineRender(document.getElementById('preview'), outlineElement)
   if (outlineElement.innerText.trim() !== '') {
-    // outlineElement.style.display = 'block'
     initOutline()
     clickOutLine()
   }
@@ -81,12 +79,11 @@ const clickOutLine = () => {
 const showOutLine = () => {
   const outlineElement = document.getElementById('outline')
   const flag = outlineElement.style.display !== 'block'
-  console.log(outlineElement.style.display)
   outlineElement.style.display = flag ? 'block' : 'none'
 }
 const getArticleContent = async (articleId: number) => {
   const { data } = await request(`/article/articleId/${articleId}`)
-  mdContent.value = data.content
+  mdContent.value = data?.content
   initVditor(mdContent.value)
 }
 watch(

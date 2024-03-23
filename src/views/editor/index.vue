@@ -115,5 +115,6 @@ const closeDocMenu = () => {
   height: calc(100vh - 54px);
   padding-left: 20px;
   overflow-y: scroll;
+  @include scrollBar;
 }
 </style>

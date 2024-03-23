@@ -1,23 +1,11 @@
 <script setup lang="ts">
-import Tree from './tree.vue'
-import { onMounted, reactive, ref } from 'vue'
-import { treeData } from '../type'
-import { getGroupList } from '@/api/knowBase'
+import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { getGroupList } from '@/api/knowBase'
+import { treeData } from '../type'
+import Tree from './tree.vue'
 const tree = ref<treeData>({})
-const topArticles = reactive([
-  {
-    articleId: 1,
-    title: '产品授权说明',
-    description: '商业授权及价格',
-  },
-  {
-    articleId: 2,
-    title: '关于zyplayer-doc项目',
-    description: '关于zyplayer-doc项目',
-  },
-])
-const activeKey = ref(['1', '2', '3', '4'])
+const activeKey = ref(['1'])
 const articleName = ref<string>('')
 const onSearch = (searchValue: string) => {
   console.log('use value', searchValue)
@@ -49,11 +37,11 @@ onMounted(() => {
   </a-input>
   <div class="doc-menu">
     <a-collapse v-model:activeKey="activeKey" ghost>
-      <a-collapse-panel key="1" header="置顶文章" :show-arrow="false">
-        <Tree v-bind="$attrs" :article-data="topArticles"></Tree>
-      </a-collapse-panel>
-      <a-collapse-panel key="2" header="知识库目录" :show-arrow="false">
-        <Tree v-bind="$attrs" :article-data="tree.article" :group-data="tree.group"></Tree>
+      <!--      <a-collapse-panel key="1" header="置顶文章" :show-arrow="false">-->
+      <!--        <Tree :article-data="topArticles"></Tree>-->
+      <!--      </a-collapse-panel>-->
+      <a-collapse-panel key="1" header="知识库目录" :show-arrow="false">
+        <Tree :article-data="tree.article" :group-data="tree.group"></Tree>
       </a-collapse-panel>
     </a-collapse>
   </div>
@@ -67,17 +55,7 @@ onMounted(() => {
   height: calc(100vh - 110px);
   overflow-y: scroll;
   border: 1px solid rgba(75, 99, 138, 0.1);
-  &::-webkit-scrollbar {
-    width: 4px;
-  }
-  &::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    background-color: rgba(0, 0, 0, 0.2);
-  }
-  &::-webkit-scrollbar-track {
-    border-radius: 0;
-    background-color: rgba(0, 0, 0, 0.1);
-  }
+  @include scrollBar;
 }
 .base-info {
   display: flex;

@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "build:test": "vue-tsc && vite build --mode test",
     "build:pro": "vue-tsc && vite build --mode production",
-    "format": "prettier --write \"./**/*.{html,vue,ts,js,json,md,svg}\"",
+    "format": "prettier --write \"./**/*.{html,vue,ts,js,json,md,svg,scss}\"",
     "lint": "eslint src",
     "fix": "eslint src --fix",
     "lint:eslint": "eslint src/**/*.{ts,vue} --cache --fix",

@@ -5,15 +5,12 @@ import { useCollapsedStore } from '@/stores/icon'
 import { storeToRefs } from 'pinia'
 const store = useCollapsedStore()
 const { leftWidth } = storeToRefs(store)
-const getContent = (id) => {
-  console.log('index', id)
-}
 </script>
 
 <template>
   <div class="docs">
     <div class="docs-left">
-      <doc-menu :content="getContent" :name="true"></doc-menu>
+      <doc-menu></doc-menu>
     </div>
     <EditorIndex></EditorIndex>
   </div>

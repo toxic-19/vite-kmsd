@@ -1,0 +1,115 @@
+/* 清除浮动 */
+@mixin clearfix {
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+/* 文字溢出省略 */
+@mixin textOverflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 文字溢出省略  $clamp:第几行开始省略 */
+@mixin multilineEllipsis($clamp) {
+  display: -webkit-box;
+  word-break: break-all;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $clamp;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 滚动条样式 */
+@mixin scrollBar {
+  &::-webkit-scrollbar-track-piece {
+    background: #eaeaee;
+  }
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(75, 99, 137, 0.7);
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 0;
+    background-color: rgba(75, 99, 137, 0.2);
+  }
+}
+
+/* 水平居中 */
+@mixin pct($pct) {
+  width: #{$pct};
+  position: relative;
+  margin: 0 auto;
+}
+
+/* 三角形 */
+@mixin triangle($width, $height, $color, $direction) {
+  $width: $width/2;
+  $color-border-style: $height solid $color;
+  $transparent-border-style: $width solid transparent;
+  height: 0;
+  width: 0;
+
+  @if $direction==up {
+    border-bottom: $color-border-style;
+    border-left: $transparent-border-style;
+    border-right: $transparent-border-style;
+  } @else if $direction==right {
+    border-left: $color-border-style;
+    border-top: $transparent-border-style;
+    border-bottom: $transparent-border-style;
+  } @else if $direction==down {
+    border-top: $color-border-style;
+    border-left: $transparent-border-style;
+    border-right: $transparent-border-style;
+  } @else if $direction==left {
+    border-right: $color-border-style;
+    border-top: $transparent-border-style;
+    border-bottom: $transparent-border-style;
+  }
+}
+
+/* 绝对定位上下居中 */
+@mixin yCenter() {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* 绝对定位水平居中 */
+@mixin xCenter() {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* 绝对定位水平垂直居中 */
+@mixin xyCenter() {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* 阴影 */
+@mixin shadow-1-down {
+  box-shadow: 0 1px 2px -2px rgba(0, 0, 0, 0, 0.16);
+}
+
+@mixin shadow-2-down {
+  box-shadow: 0 3px 6px -4px rgba(0, 0, 0, 0, 0.12);
+}
+
+@mixin shadow-3-down {
+  box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0, 0.08);
+}
