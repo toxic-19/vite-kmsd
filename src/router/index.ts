@@ -28,7 +28,7 @@ const routes = <RouteRecordRaw[]>[
     children: [
       {
         path: '/docs/:knowId/:articleId',
-        component: () => import('@/views/docs/components/previewEditor.vue'),
+        component: () => import('@/views/editor/index.vue'),
       },
     ],
   },

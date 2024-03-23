@@ -1,0 +1,119 @@
+<script setup lang="ts">
+import { useCollapsedStore } from '@/stores/icon'
+import PreviewEditor from './previewEditor.vue'
+// 可以在组件中的任意位置访问 `stores` 变量 ✨
+const store = useCollapsedStore()
+const closeDocMenu = () => {
+  store.collapseMenu()
+}
+</script>
+
+<template>
+  <div class="editor">
+    <header class="doc-header">
+      <div class="doc-icon" @click="closeDocMenu">
+        <SvgIcon name="menu-collapsed" width="20px" height="20px"></SvgIcon>
+      </div>
+      <div class="doc-info">
+        <div class="info-title">Monica的UI参考</div>
+        <div class="info-tags">
+          <div class="tags-item">Vue2</div>
+          <div class="tags-item">JS</div>
+        </div>
+      </div>
+      <div class="doc-btn">
+        <div class="self-edit-btn">
+          <SvgIcon name="edit"></SvgIcon>
+          <!--          <span>编辑</span>-->
+        </div>
+        <div class="self-edit-btn save-btn">
+          <SvgIcon name="save"></SvgIcon>
+          <!--          <span>保存</span>-->
+        </div>
+      </div>
+    </header>
+    <div class="preview" id="content">
+      <preview-editor></preview-editor>
+    </div>
+  </div>
+</template>
+
+<style scoped lang="scss">
+.editor {
+  width: 100%;
+}
+.doc-header {
+  display: flex;
+  align-items: center;
+  //justify-content: space-between;
+  width: 100%;
+  background-color: #ffffff;
+  top: 0;
+  z-index: 10;
+  .doc-info {
+    width: calc(100% - 140px);
+    height: 100%;
+    margin-bottom: 8px;
+    .info-title {
+      font-size: 16px;
+      line-height: 28px;
+      font-family: '华文新魏', serif;
+    }
+    .info-tags {
+      display: flex;
+      height: 18px;
+      .tags-item {
+        font-size: 12px;
+        padding: 1px 5px;
+        background: rgba(74, 98, 136, 0.2);
+        margin-right: 5px;
+        border-radius: 3px;
+        color: #097553;
+      }
+    }
+  }
+  .doc-btn {
+    //width: 210px;
+    display: flex;
+    .self-edit-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 32px;
+      padding: 5px 10px;
+      border: 1px solid #4b638a;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-right: 10px;
+      span {
+        font-size: 14px;
+        padding-left: 10px;
+        padding-right: 6px;
+      }
+      &:hover {
+        background: #f8f6f6;
+      }
+    }
+    .save-btn {
+      color: #ffffff;
+      background: #1758ee;
+      &:hover {
+        background: rgba(23, 88, 238, 0.8);
+      }
+    }
+  }
+  .doc-icon {
+    .svg-icon {
+      margin-right: 10px;
+      padding: 10px;
+      cursor: pointer;
+    }
+  }
+}
+.preview {
+  width: 100%;
+  height: calc(100vh - 54px);
+  padding-left: 20px;
+  overflow-y: scroll;
+}
+</style>

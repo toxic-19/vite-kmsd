@@ -112,7 +112,7 @@ watch(
 
 <style scoped lang="scss">
 #previewWrap {
-  padding: 60px 0 20px 20px;
+  padding: 0 0 20px 20px;
   margin-right: 260px;
   #preview {
     margin: 0 auto;

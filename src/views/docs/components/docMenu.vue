@@ -38,7 +38,7 @@ onMounted(() => {
     <div>个人知识库</div>
     <div class="settings">
       <a-tooltip title="知识库设置">
-        <SvgIcon name="setting" width="24px" height="24px"></SvgIcon>
+        <SvgIcon name="operate" width="20px" height="20px"></SvgIcon>
       </a-tooltip>
     </div>
   </div>
@@ -86,7 +86,7 @@ onMounted(() => {
   width: 260px;
   height: 50px;
   font-weight: bold;
-  padding: 15px;
+  padding: 15px 5px 15px 15px;
   div {
     font-size: 15px;
   }
