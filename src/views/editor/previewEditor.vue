@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
-import { ref, watch } from 'vue'
+import { defineProps, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import request from '@/utils/request'
+// import request from '@/utils/request'
+const props = defineProps(['preview'])
 const router = useRouter()
 const route = useRoute()
-const mdContent = ref('')
 const initVditor = (mdContent) => {
   const dom = document.getElementById('preview') as HTMLDivElement
   const { knowId, articleId } = route.params
@@ -68,7 +68,6 @@ const getOutline = () => {
   }
 }
 const clickOutLine = () => {
-  // const spans = document.getElementById('outline').querySelectorAll('span[data-target-id]') as object
   const ulDOM = document.getElementById('outline').querySelector('ul')
   ulDOM.addEventListener('click', (event: any) => {
     const title = event.target.innerText.replace(/\s/g, '-')
@@ -81,15 +80,10 @@ const showOutLine = () => {
   const flag = outlineElement.style.display !== 'block'
   outlineElement.style.display = flag ? 'block' : 'none'
 }
-const getArticleContent = async (articleId: number) => {
-  const { data } = await request(`/article/articleId/${articleId}`)
-  mdContent.value = data?.content
-  initVditor(mdContent.value)
-}
 watch(
-  () => route.params.articleId,
+  () => props.preview,
   (newVal) => {
-    getArticleContent(+newVal)
+    initVditor(newVal)
   },
   { immediate: true },
 )
@@ -111,6 +105,7 @@ watch(
 </template>
 
 <style scoped lang="scss">
+@import './editor-reset.scss';
 #previewWrap {
   padding: 0 0 20px 20px;
   margin-right: 260px;
@@ -133,6 +128,7 @@ watch(
   --toolbar-icon-hover-color: #4285f4;
   --textarea-text-color: #616161;
   --hover-background-color: #f6f8fa;
+  @include scrollBar;
   &.dark {
     --border-color: #d1d5da;
     --toolbar-icon-hover-color: #fff;
@@ -188,60 +184,5 @@ watch(
   #outlineWrap {
     display: none !important;
   }
-}
-.vditor-reset ul[data-style='*'] {
-  list-style-type: disc;
-}
-
-.vditor-reset ul[data-style='*'] ul {
-  list-style-type: circle;
-}
-
-.vditor-reset ul[data-style='*'] ul ul {
-  list-style-type: square;
-}
-
-.vditor-reset ul[data-style='+'] {
-  list-style-type: '\2764';
-}
-
-.vditor-reset ul[data-style='+'] ul {
-  list-style-type: '\1f49a';
-}
-
-.vditor-reset ul[data-style='+'] ul ul {
-  list-style-type: '\1f49b';
-}
-
-.vditor-reset ul[data-style='-'] {
-  list-style-type: korean-hangul-formal;
-}
-
-.vditor-reset ul[data-style='-'] ul {
-  list-style-type: decimal-leading-zero;
-}
-
-.vditor-reset ul[data-style='-'] ul ul {
-  list-style-type: lower-alpha;
-}
-
-.vditor-reset ol[data-style='1)'] {
-  list-style-type: simp-chinese-formal;
-}
-
-.vditor-reset ol[data-style='1)'] ol {
-  list-style-type: simp-chinese-informal;
-}
-
-.vditor-reset ol[data-style='1)'] ol ol {
-  list-style-type: trad-chinese-formal;
-}
-:deep(.vditor-outline__item--current) {
-  color: #4285f4;
-  background-color: #f6f8fa;
-}
-:deep(.vditor-outline__action) {
-  width: 6px;
-  height: 6px;
 }
 </style>

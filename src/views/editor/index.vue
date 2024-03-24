@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useCollapsedStore } from '@/stores/icon'
 import PreviewEditor from './previewEditor.vue'
 import Editor from './editor.vue'
+import { useRoute } from 'vue-router'
+import request from '@/utils/request'
 const store = useCollapsedStore()
 const closeDocMenu = () => {
   store.collapseMenu()
@@ -14,6 +16,21 @@ const edit = () => {
 const save = () => {
   type.value = 'preview'
 }
+const docName = ref('')
+const docContent = ref('')
+const route = useRoute()
+const getArticleContent = async (articleId: number) => {
+  const { data } = await request(`/article/articleId/${articleId}`)
+  docContent.value = data?.content
+  docName.value = data?.title
+}
+watch(
+  () => route.params.articleId,
+  (newVal) => {
+    getArticleContent(+newVal)
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
@@ -23,7 +40,7 @@ const save = () => {
         <SvgIcon name="menu-collapsed" width="20px" height="20px"></SvgIcon>
       </div>
       <div class="doc-info">
-        <div class="info-title">Monica的UI参考</div>
+        <div class="info-title">{{ docName }}</div>
         <div class="info-tags">
           <a-tag color="pink">Vue2</a-tag>
           <a-tag color="red">Vue3</a-tag>
@@ -40,10 +57,10 @@ const save = () => {
       </div>
     </header>
     <div class="preview-content" id="content" v-if="type === 'preview'">
-      <preview-editor></preview-editor>
+      <preview-editor :preview="docContent"></preview-editor>
     </div>
     <div class="editor-content" id="editor" v-else>
-      <editor></editor>
+      <editor :edit-content="docContent"></editor>
     </div>
   </div>
 </template>

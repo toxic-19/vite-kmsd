@@ -1,0 +1,96 @@
+:deep(.vditor-reset) {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji',
+  'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+:deep(.vditor-reset pre > code) {
+  overflow-y: scroll;
+  @include scrollBar;
+}
+:deep(.vditor-toolbar.vditor-toolbar--pin) {
+  padding-left: 20px !important;
+}
+:deep(.vditor-ir pre.vditor-reset:focus) {
+  background-color: #fff;
+}
+:deep(p) {
+  font-size: 15px;
+  margin-bottom: 12px;
+  line-height: 30px;
+}
+:deep(span) {
+  font-size: 14px;
+  * {
+    font-size: 14px;
+  }
+}
+:deep(.nodeLabel) {
+  font-size: 13px;
+}
+:deep(li) {
+  font-size: 14px;
+}
+:deep(table) {
+  th,
+  td {
+    font-size: 14px;
+  }
+}
+:deep(a) {
+  font-size: 15px;
+  padding: 0 4px;
+}
+.vditor-reset ul[data-style='*'] {
+  list-style-type: disc;
+}
+
+.vditor-reset ul[data-style='*'] ul {
+  list-style-type: circle;
+}
+
+.vditor-reset ul[data-style='*'] ul ul {
+  list-style-type: square;
+}
+
+.vditor-reset ul[data-style='+'] {
+  list-style-type: '\2764';
+}
+
+.vditor-reset ul[data-style='+'] ul {
+  list-style-type: '\1f49a';
+}
+
+.vditor-reset ul[data-style='+'] ul ul {
+  list-style-type: '\1f49b';
+}
+
+.vditor-reset ul[data-style='-'] {
+  list-style-type: korean-hangul-formal;
+}
+
+.vditor-reset ul[data-style='-'] ul {
+  list-style-type: decimal-leading-zero;
+}
+
+.vditor-reset ul[data-style='-'] ul ul {
+  list-style-type: lower-alpha;
+}
+
+.vditor-reset ol[data-style='1)'] {
+  list-style-type: simp-chinese-formal;
+}
+
+.vditor-reset ol[data-style='1)'] ol {
+  list-style-type: simp-chinese-informal;
+}
+
+.vditor-reset ol[data-style='1)'] ol ol {
+  list-style-type: trad-chinese-formal;
+}
+:deep(.vditor-outline__item--current) {
+  color: #4285f4;
+  background-color: #f6f8fa;
+}
+:deep(.vditor-outline__action) {
+  width: 6px;
+  height: 6px;
+}
