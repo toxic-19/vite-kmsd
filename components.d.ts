@@ -12,6 +12,8 @@ declare module 'vue' {
     ACollapsePanel: typeof import('ant-design-vue/es')['CollapsePanel']
     AInput: typeof import('ant-design-vue/es')['Input']
     AInputSearch: (typeof import('ant-design-vue/es'))['InputSearch']
+    ASwitch: typeof import('ant-design-vue/es')['Switch']
+    ATag: typeof import('ant-design-vue/es')['Tag']
     ATextarea: typeof import('ant-design-vue/es')['Textarea']
     ATooltip: typeof import('ant-design-vue/es')['Tooltip']
     ATree: (typeof import('ant-design-vue/es'))['Tree']

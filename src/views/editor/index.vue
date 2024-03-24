@@ -1,15 +1,23 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useCollapsedStore } from '@/stores/icon'
 import PreviewEditor from './previewEditor.vue'
-// 可以在组件中的任意位置访问 `stores` 变量 ✨
+import Editor from './editor.vue'
 const store = useCollapsedStore()
 const closeDocMenu = () => {
   store.collapseMenu()
 }
+const type = ref('preview')
+const edit = () => {
+  type.value = 'edit'
+}
+const save = () => {
+  type.value = 'preview'
+}
 </script>
 
 <template>
-  <div class="editor">
+  <div class="article">
     <header class="doc-header">
       <div class="doc-icon" @click="closeDocMenu">
         <SvgIcon name="menu-collapsed" width="20px" height="20px"></SvgIcon>
@@ -17,63 +25,59 @@ const closeDocMenu = () => {
       <div class="doc-info">
         <div class="info-title">Monica的UI参考</div>
         <div class="info-tags">
-          <div class="tags-item">Vue2</div>
-          <div class="tags-item">JS</div>
+          <a-tag color="pink">Vue2</a-tag>
+          <a-tag color="red">Vue3</a-tag>
+          <a-tag color="orange">JS</a-tag>
         </div>
       </div>
       <div class="doc-btn">
-        <div class="self-edit-btn">
+        <div class="self-edit-btn" @click="edit">
           <SvgIcon name="edit"></SvgIcon>
-          <!--          <span>编辑</span>-->
         </div>
-        <div class="self-edit-btn save-btn">
+        <div class="self-edit-btn save-btn" @click="save">
           <SvgIcon name="save"></SvgIcon>
-          <!--          <span>保存</span>-->
         </div>
       </div>
     </header>
-    <div class="preview" id="content">
+    <div class="preview-content" id="content" v-if="type === 'preview'">
       <preview-editor></preview-editor>
+    </div>
+    <div class="editor-content" id="editor" v-else>
+      <editor></editor>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
-.editor {
+.article {
   width: 100%;
 }
 .doc-header {
+  padding: 8px 0 12px;
   display: flex;
   align-items: center;
-  //justify-content: space-between;
   width: 100%;
   background-color: #ffffff;
   top: 0;
   z-index: 10;
   .doc-info {
+    display: flex;
+    align-items: center;
     width: calc(100% - 140px);
     height: 100%;
-    margin-bottom: 8px;
     .info-title {
-      font-size: 16px;
-      line-height: 28px;
-      font-family: '华文新魏', serif;
+      color: rgba(0, 0, 0, 0.85);
+      font-weight: 600;
+      font-size: 20px;
+      line-height: 32px;
+      margin-right: 10px;
     }
     .info-tags {
       display: flex;
-      height: 18px;
-      .tags-item {
-        font-size: 12px;
-        padding: 1px 5px;
-        background: rgba(74, 98, 136, 0.2);
-        margin-right: 5px;
-        border-radius: 3px;
-        color: #097553;
-      }
+      cursor: pointer;
     }
   }
   .doc-btn {
-    //width: 210px;
     display: flex;
     .self-edit-btn {
       display: flex;
@@ -110,11 +114,15 @@ const closeDocMenu = () => {
     }
   }
 }
-.preview {
+.preview-content,
+.editor-content {
   width: 100%;
-  height: calc(100vh - 54px);
+  height: calc(100vh - 70px);
   padding-left: 20px;
   overflow-y: scroll;
   @include scrollBar;
+}
+#editor {
+  padding-left: 0;
 }
 </style>

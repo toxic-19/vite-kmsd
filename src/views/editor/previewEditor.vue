@@ -77,7 +77,7 @@ const clickOutLine = () => {
   })
 }
 const showOutLine = () => {
-  const outlineElement = document.getElementById('outline')
+  const outlineElement = document.getElementById('outlineWrap')
   const flag = outlineElement.style.display !== 'block'
   outlineElement.style.display = flag ? 'block' : 'none'
 }
@@ -99,7 +99,10 @@ watch(
   <div id="previewWrap">
     <div id="preview" class="preview"></div>
   </div>
-  <div id="outline"></div>
+  <div id="outlineWrap">
+    <div id="outline-title">目录</div>
+    <div id="outline"></div>
+  </div>
   <div class="float-menu" @click="showOutLine">
     <a-tooltip title="文章目录">
       <SvgIcon name="float-menu" width="30px" height="38px"></SvgIcon>
@@ -113,10 +116,9 @@ watch(
   margin-right: 260px;
   #preview {
     margin: 0 auto;
-    /*max-width: 768px;*/
   }
 }
-#outline {
+#outlineWrap {
   display: none;
   position: fixed;
   width: 186px;
@@ -137,11 +139,24 @@ watch(
     --textarea-text-color: #a6aab0;
     --hover-background-color: #444d56;
   }
+  #outline-title {
+    font-size: 18px;
+    font-weight: bold;
+    padding-left: 16px;
+    margin-bottom: 16px;
+  }
+  #outline {
+    display: block;
+    width: 100%;
+    border-right: none;
+  }
+  :deep(ul li span) {
+    padding-left: 0 !important;
+  }
   li > span {
     cursor: pointer;
     display: block;
     border-left: 1px solid transparent;
-    padding: 0 10px;
 
     &:hover {
       color: #4285f4;
@@ -170,7 +185,7 @@ watch(
     padding: 0 20px 20px 0;
   }
 
-  #outline {
+  #outlineWrap {
     display: none !important;
   }
 }
@@ -221,9 +236,7 @@ watch(
 .vditor-reset ol[data-style='1)'] ol ol {
   list-style-type: trad-chinese-formal;
 }
-
 :deep(.vditor-outline__item--current) {
-  border-left: 1px solid #4285f4;
   color: #4285f4;
   background-color: #f6f8fa;
 }
