@@ -3,14 +3,13 @@ import Vditor from 'vditor'
 import 'vditor/dist/index.css'
 import { defineProps, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-// import request from '@/utils/request'
 const props = defineProps(['preview'])
 const router = useRouter()
 const route = useRoute()
 const mdContent = ref<string>('')
+const path = ref<string>('')
 const initVditor = () => {
   const dom = document.getElementById('preview') as HTMLDivElement
-  const { knowId, articleId } = route.params
   Vditor.preview(dom, mdContent.value, {
     mode: 'dark',
     anchor: 1,
@@ -24,7 +23,7 @@ const initVditor = () => {
       }
       getOutline()
       const firstSpan = document.getElementById('outline').querySelector('span')
-      router.push(`/docs/${knowId}/${articleId}/#${firstSpan?.innerText}`)
+      router.push(`${path.value}/#${firstSpan?.innerText}`)
     },
   })
 }
@@ -91,6 +90,15 @@ watch(
     initVditor()
   },
   { immediate: true },
+)
+watch(
+  () => route.fullPath,
+  (newVal) => {
+    path.value = newVal.replace(/\/#[^/]+/g, '')
+  },
+  {
+    immediate: true,
+  },
 )
 </script>
 

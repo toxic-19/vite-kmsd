@@ -27,15 +27,16 @@ watch(props, (newVal) => {
     return { ...item, iconName: 'collapsed' }
   })
   allData.value = [...articleList, ...groupList]
-  if (articleList.length) getPreview(allData.value[0]?.articleId)
-  else if (groupList.length) getPreview(props.groupData[0].childrenData[0].articleId)
+  if (articleList.length) {
+    getPreview(articleList[0]?.articleId)
+  } else if (groupList.length) getPreview(groupList[0].childrenData[0].articleId)
 })
 </script>
 
 <template>
   <div class="tree-item" v-for="item in allData" :key="item">
     <div class="doc-content" v-if="item.articleId">
-      <div class="title" @click="getPreview(item.articleId)" :class="{'active': item.articleId === selectedId}">
+      <div class="title" @click="getPreview(item.articleId)" :class="{ active: item.articleId === selectedId }">
         <SvgIcon name="md" width="13px" height="13px"></SvgIcon>
         <div class="name">{{ item.title }}</div>
         <div class="operate">
@@ -54,7 +55,7 @@ watch(props, (newVal) => {
       <div :class="[item.iconName === 'collapsed' ? '' : 'hidden-doc', 'doc-content children-doc']">
         <template v-for="child in item.childrenData" :key="child.articleId">
           <a-tooltip :title="child.title" color="#bab3c3">
-            <div class="title" @click="getPreview(child.articleId)" :class="{'active': child.articleId === selectedId}">
+            <div class="title" @click="getPreview(child.articleId)" :class="{ active: child.articleId === selectedId }">
               <SvgIcon name="md" width="13px" height="13px"></SvgIcon>
               <div class="name">{{ child.title }}</div>
               <div class="operate">
@@ -104,7 +105,7 @@ watch(props, (newVal) => {
         opacity: 1;
       }
     }
-    &:hover{
+    &:hover {
       background: rgba(201, 201, 209, 0.4);
       border-radius: 4px;
       border: 1px solid #bab3c3;
