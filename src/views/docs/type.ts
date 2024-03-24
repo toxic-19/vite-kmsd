@@ -10,3 +10,7 @@ export interface groupMenu {
   iconName: string
   childrenData: articleMenu[]
 }
+export interface treeData {
+  article?: Array<articleMenu>
+  group?: groupMenu[]
+}

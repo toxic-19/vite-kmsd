@@ -27,6 +27,7 @@ const getArticleContent = async (articleId: number) => {
 watch(
   () => route.params.articleId,
   (newVal) => {
+    type.value = 'preview'
     getArticleContent(+newVal)
   },
   { immediate: true },

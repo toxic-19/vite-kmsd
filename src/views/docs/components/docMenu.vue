@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { getGroupList } from '@/api/knowBase'
-import { treeData } from '../type'
+import { treeData } from '../type.ts'
 import Tree from './tree.vue'
 const tree = ref<treeData>({})
 const activeKey = ref(['1'])
@@ -37,9 +37,6 @@ onMounted(() => {
   </a-input>
   <div class="doc-menu">
     <a-collapse v-model:activeKey="activeKey" ghost>
-      <!--      <a-collapse-panel key="1" header="置顶文章" :show-arrow="false">-->
-      <!--        <Tree :article-data="topArticles"></Tree>-->
-      <!--      </a-collapse-panel>-->
       <a-collapse-panel key="1" header="知识库目录" :show-arrow="false">
         <Tree :article-data="tree.article" :group-data="tree.group"></Tree>
       </a-collapse-panel>

@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
-import { defineProps, watch } from 'vue'
+import { defineProps, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 // import request from '@/utils/request'
 const props = defineProps(['preview'])
 const router = useRouter()
 const route = useRoute()
-const initVditor = (mdContent) => {
+const mdContent = ref<string>('')
+const initVditor = () => {
   const dom = document.getElementById('preview') as HTMLDivElement
   const { knowId, articleId } = route.params
-  Vditor.preview(dom, mdContent, {
+  Vditor.preview(dom, mdContent.value, {
     mode: 'dark',
     anchor: 1,
     markdown: {
@@ -80,10 +81,14 @@ const showOutLine = () => {
   const flag = outlineElement.style.display !== 'block'
   outlineElement.style.display = flag ? 'block' : 'none'
 }
+onMounted(() => {
+  initVditor()
+})
 watch(
   () => props.preview,
   (newVal) => {
-    initVditor(newVal)
+    mdContent.value = newVal
+    initVditor()
   },
   { immediate: true },
 )
