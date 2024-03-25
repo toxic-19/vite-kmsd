@@ -4,7 +4,8 @@ import { useCollapsedStore } from '@/stores/icon'
 import PreviewEditor from './previewEditor.vue'
 import Editor from './editor.vue'
 import { useRoute } from 'vue-router'
-import request from '@/utils/request'
+import { getContentById, getTagsById } from '@/api/article'
+import { Tag } from '@/api/article/type'
 const store = useCollapsedStore()
 const closeDocMenu = () => {
   store.collapseMenu()
@@ -20,15 +21,22 @@ const docName = ref('')
 const docContent = ref('')
 const route = useRoute()
 const getArticleContent = async (articleId: number) => {
-  const { data } = await request(`/article/articleId/${articleId}`)
+  const { data } = await getContentById({ articleId })
   docContent.value = data?.content
   docName.value = data?.title
+}
+const tagsList = ref<Tag[]>([])
+const colors = ref(['#4a6288', '#80abd5', '#aecfe2', '#bab3c3', '#c6c9d2', '#a3acbc', '#ff5900', '#f8c01a', '#74bb8a', '#08521f'])
+const getTagsName = async (articleId: number) => {
+  const { data } = await getTagsById({ articleId })
+  tagsList.value = data
 }
 watch(
   () => route.params.articleId,
   (newVal) => {
     type.value = 'preview'
     getArticleContent(+newVal)
+    getTagsName(+newVal)
   },
   { immediate: true },
 )
@@ -43,9 +51,7 @@ watch(
       <div class="doc-info">
         <div class="info-title">{{ docName }}</div>
         <div class="info-tags">
-          <a-tag color="pink">Vue2</a-tag>
-          <a-tag color="red">Vue3</a-tag>
-          <a-tag color="orange">JS</a-tag>
+          <a-tag :color="colors[Math.floor(Math.random() * colors.length)]" v-for="tag in tagsList" :key="tag.tagId">{{ tag.tagName }}</a-tag>
         </div>
       </div>
       <div class="doc-btn">
@@ -138,7 +144,7 @@ watch(
   height: calc(100vh - 70px);
   padding-left: 20px;
   overflow-y: scroll;
-  @include scrollBar;
+  @include scrollBar();
 }
 #editor {
   padding-left: 0;

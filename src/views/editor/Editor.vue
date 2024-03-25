@@ -74,15 +74,67 @@ function reInitVditor() {
     },
     tab: '\t',
     upload: {
-      accept: 'image/*',
-      token: 'test',
-      url: '/api/upload/editor',
-      linkToImgUrl: '/api/upload/fetch',
+      accept: 'image/jpg, image/jpeg, image/png', // 规定上传的图片格式
+      url: '/upload', // 请求的接口
+      multiple: false,
+      fieldName: 'file',
+      max: 2 * 1024 * 1024, // 上传图片的大小
+      extraData: { token: localStorage.getItem('token') }, // 为 FormData 添加额外的参数
+      linkToImgUrl: '/upload',
       filename(name) {
         return name
-          .replace(/[^(a-zA-Z0-9\u4e00-\u9fa5\.)]/g, '')
-          .replace(/[\?\\/:|<>\*\[\]\(\)\$%\{\}@~]/g, '')
-          .replace('/\\s/g', '')
+      },
+      // validate(msg: string){
+      //   return msg
+      // },
+      // 粘贴图片回显处理，如果有图片加了防盗链，则让后台代理替换成自己的图片
+      linkToImgFormat(files) {
+        const resData = JSON.parse(files)
+        const code = resData.code
+        const msg = resData.msg
+        const data = resData.data
+        // 上传图片请求状态
+        if (code === '0') {
+          const success = {}
+          success[data.fileName] = data.url
+          // 图片回显
+          return JSON.stringify({
+            msg,
+            code,
+            data: {
+              errFiles: [],
+              successMap: success,
+            },
+          })
+        } else {
+          console.log(msg + '上传失败了')
+        }
+      },
+      // 上传图片回显处理
+      format(files, responseText) {
+        const resData = JSON.parse(responseText)
+        const code = resData.code
+        const msg = resData.msg
+        const data = resData.data
+        // 上传图片请求状态
+        if (code === '0') {
+          const success = {}
+          success[data.fileName] = data.url
+          // 图片回显
+          return JSON.stringify({
+            msg,
+            code,
+            data: {
+              errFiles: [],
+              successMap: success,
+            },
+          })
+        } else {
+          console.log(msg + '上传失败了')
+        }
+      },
+      error(msg) {
+        console.log(msg + '上传失败了')
       },
     },
     toolbarConfig: {
@@ -124,7 +176,9 @@ function reInitVditor() {
       },
     ],
     after() {
-      vditor.value.setValue(content.value)
+      if (vditor.value) {
+        vditor.value.setValue(content.value)
+      }
     },
   })
 }
@@ -167,7 +221,7 @@ watch(
   }
 }
 :deep(.vditor-reset) {
-  @include scrollBar;
+  @include scrollBar();
 }
 :deep(.vditor-outline li > span) {
   font-size: 14px;
