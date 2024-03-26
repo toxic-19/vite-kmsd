@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { getGroupList } from '@/api/knowBase'
 import { treeData } from '../type.ts'
 import Tree from './tree.vue'
@@ -16,6 +16,11 @@ const getTreeData = async () => {
   const { data } = await getGroupList(+route.params.knowId)
   tree.value = data
 }
+// 回到知识库首页
+const router = useRouter()
+const toKnowLedge = () => {
+  router.push('/knowledge')
+}
 onMounted(() => {
   getTreeData()
 })
@@ -23,10 +28,14 @@ onMounted(() => {
 
 <template>
   <div class="base-info">
-    <div>个人知识库</div>
+    <div class="left-icon">
+      <SvgIcon name="knowledgeBase" width="18px" height="18px" @click="toKnowLedge"></SvgIcon>
+      <SvgIcon name="collapsed" width="12px" height="12px"></SvgIcon>
+      <div class="knowledge-name">个人知识库</div>
+    </div>
     <div class="settings">
       <a-tooltip title="知识库设置">
-        <SvgIcon name="operate" width="20px" height="20px"></SvgIcon>
+        <SvgIcon name="operate" width="18px" height="18px"></SvgIcon>
       </a-tooltip>
     </div>
   </div>
@@ -49,19 +58,28 @@ onMounted(() => {
   width: 240px;
   margin-left: 10px;
   margin-top: 20px;
-  height: calc(100vh - 110px);
+  height: calc(100vh - 120px);
   overflow-y: scroll;
   border: 1px solid rgba(75, 99, 138, 0.1);
-  @include scrollBar;
+  @include scrollBar();
 }
 .base-info {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 260px;
-  height: 50px;
+  width: 254px;
+  height: 60px;
   font-weight: bold;
   padding: 15px 5px 15px 15px;
+  .left-icon {
+    display: flex;
+    .svg-icon {
+      margin-right: 2px;
+    }
+    [data-type='#icon-knowledgeBase'] {
+      cursor: pointer;
+    }
+  }
   div {
     font-size: 15px;
   }

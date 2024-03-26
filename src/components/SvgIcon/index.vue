@@ -23,7 +23,7 @@ defineProps({
 </script>
 
 <template>
-  <div class="svg-icon">
+  <div class="svg-icon" :data-type="prefix + name">
     <svg :style="{ width: width, height: height }">
       <use :xlink:href="prefix + name" :fill="color"></use>
     </svg>

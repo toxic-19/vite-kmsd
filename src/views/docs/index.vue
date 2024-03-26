@@ -5,6 +5,9 @@ import { useCollapsedStore } from '@/stores/icon'
 import { storeToRefs } from 'pinia'
 const store = useCollapsedStore()
 const { leftWidth } = storeToRefs(store)
+if (window.innerWidth <= 1200) {
+  store.collapseMenu()
+}
 </script>
 
 <template>

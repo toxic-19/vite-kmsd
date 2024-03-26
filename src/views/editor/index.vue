@@ -24,6 +24,7 @@ const getArticleContent = async (articleId: number) => {
   const { data } = await getContentById({ articleId })
   docContent.value = data?.content
   docName.value = data?.title
+  await getTagsName(articleId)
 }
 const tagsList = ref<Tag[]>([])
 const colors = ref(['#4a6288', '#80abd5', '#aecfe2', '#bab3c3', '#c6c9d2', '#a3acbc', '#ff5900', '#f8c01a', '#74bb8a', '#08521f'])
@@ -35,8 +36,9 @@ watch(
   () => route.params.articleId,
   (newVal) => {
     type.value = 'preview'
-    getArticleContent(+newVal)
-    getTagsName(+newVal)
+    if (newVal) {
+      getArticleContent(+newVal)
+    }
   },
   { immediate: true },
 )
@@ -141,7 +143,7 @@ watch(
 .preview-content,
 .editor-content {
   width: 100%;
-  height: calc(100vh - 70px);
+  height: calc(100vh - 60px);
   padding-left: 20px;
   overflow-y: scroll;
   @include scrollBar();
