@@ -6,6 +6,7 @@ import Editor from './editor.vue'
 import { useRoute } from 'vue-router'
 import { getContentById, getTagsById } from '@/api/article'
 import { Tag } from '@/api/article/type'
+import emptyPng from '@/assets/empty.png'
 const store = useCollapsedStore()
 const closeDocMenu = () => {
   store.collapseMenu()
@@ -66,7 +67,11 @@ watch(
       </div>
     </header>
     <div class="preview-content" id="content" v-if="type === 'preview'">
-      <preview-editor :preview="docContent"></preview-editor>
+      <a-empty v-if="docContent === null" :image="emptyPng" :image-style="{ height: '200px' }">
+        <template #description>暂无内容</template>
+        <a-button type="primary" @click="edit">Create Now</a-button>
+      </a-empty>
+      <preview-editor v-else :preview="docContent"></preview-editor>
     </div>
     <div class="editor-content" id="editor" v-else>
       <editor :edit-content="docContent"></editor>
@@ -150,5 +155,19 @@ watch(
 }
 #editor {
   padding-left: 0;
+}
+:deep(.ant-empty) {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  .ant-empty-description {
+    font-size: 18px;
+    color: #4a6288;
+    font-weight: bold;
+    font-family: -apple-system, serif;
+    margin-top: 10px;
+  }
 }
 </style>

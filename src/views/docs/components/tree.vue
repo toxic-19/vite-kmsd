@@ -43,7 +43,7 @@ watch(props, (newVal) => {
   <div class="tree-item" v-for="item in allData" :key="item">
     <div class="doc-content" v-if="item.articleId">
       <div class="title" @click="getPreview(item.articleId)" :class="{ active: item.articleId === selectedId }">
-        <SvgIcon name="md" width="13px" height="13px"></SvgIcon>
+        <SvgIcon name="markdown"></SvgIcon>
         <div class="name">{{ item.title }}</div>
         <div class="operate">
           <SvgIcon name="operate" width="14px" height="14px" class="operate-icon group-icon"></SvgIcon>
@@ -53,6 +53,7 @@ watch(props, (newVal) => {
     <div class="group-content" v-else>
       <div class="title">
         <SvgIcon :name="item.iconName" width="12px" height="12px" class="group-icon" @click="changeIcon(item)"></SvgIcon>
+        <SvgIcon name="folder"></SvgIcon>
         <div class="name">{{ item.groupName }}</div>
         <div class="operate">
           <a-dropdown placement="bottom">
@@ -63,8 +64,14 @@ watch(props, (newVal) => {
               <a-menu>
                 <a-menu-item @click.prevent="addArticle(item.groupId)">
                   <div class="flex">
-                    <SvgIcon name="md" width="13px" height="13px"></SvgIcon>
+                    <SvgIcon name="md" width="13px" height="13px" color="red"></SvgIcon>
                     <span>文档</span>
+                  </div>
+                </a-menu-item>
+                <a-menu-item @click.prevent="addArticle(item.groupId)">
+                  <div class="flex">
+                    <SvgIcon name="edit" width="13px" height="13px"></SvgIcon>
+                    <span>重命名</span>
                   </div>
                 </a-menu-item>
               </a-menu>
@@ -76,7 +83,7 @@ watch(props, (newVal) => {
         <template v-for="child in item.childrenData" :key="child.articleId">
           <a-tooltip :title="child.title" color="#bab3c3">
             <div class="title" @click="getPreview(child.articleId)" :class="{ active: child.articleId === selectedId }">
-              <SvgIcon name="md" width="13px" height="13px"></SvgIcon>
+              <SvgIcon name="markdown"></SvgIcon>
               <div class="name">{{ child.title }}</div>
               <div class="operate">
                 <SvgIcon name="operate" width="14px" height="14px" class="operate-icon group-icon"></SvgIcon>
@@ -92,6 +99,10 @@ watch(props, (newVal) => {
 <style scoped lang="scss">
 .flex {
   display: flex;
+  margin-bottom: 6px;
+  &:last-child {
+    margin-bottom: 0;
+  }
   div {
     margin-right: 6px;
   }
@@ -109,10 +120,10 @@ watch(props, (newVal) => {
     display: flex;
     align-items: center;
     border: 1px solid transparent;
-    transition: all 0.3s;
+    transition: all 0.1s;
     .name {
       width: 165px;
-      padding-left: 10px;
+      padding-left: 4px;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
@@ -124,7 +135,7 @@ watch(props, (newVal) => {
       opacity: 0;
     }
     &.active {
-      background: rgba(201, 201, 209, 0.4);
+      background: rgb(12, 91, 138, 0.1);
       border-radius: 4px;
       border: 1px solid #bab3c3;
       .operate {
@@ -132,7 +143,8 @@ watch(props, (newVal) => {
       }
     }
     &:hover {
-      background: rgba(201, 201, 209, 0.4);
+      //background: rgba(201, 201, 209, 0.2);
+      background: rgba(248, 247, 247, 0.4);
       border-radius: 4px;
       border: 1px solid #bab3c3;
       .operate {

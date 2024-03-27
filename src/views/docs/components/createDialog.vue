@@ -2,12 +2,14 @@
 import { defineEmits, defineExpose, ref } from 'vue'
 import { useKnowledgeStore } from '@/stores/knowledge'
 import { postArticle } from '@/api/article'
+import {storeToRefs} from "pinia";
 const store = useKnowledgeStore()
 const emit = defineEmits(['refreshMenu'])
 // 弹窗数据
 const open = ref<boolean>(false)
 const confirmLoading = ref<boolean>(false)
 const currentGroupId = ref<number>()
+const { currentKnowId } = storeToRefs(store)
 const showModal = (flag: boolean, groupId: number) => {
   open.value = flag
   currentGroupId.value = groupId
@@ -15,7 +17,7 @@ const showModal = (flag: boolean, groupId: number) => {
 const handleOk = () => {
   confirmLoading.value = true
   postArticle({
-    knowId: store.currentKnowId,
+    knowId: currentKnowId,
     ...formState.value,
     groupId: currentGroupId.value,
   }).then((res) => {

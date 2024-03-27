@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import DocMenu from './components/docMenu.vue'
+import DocMenu from './docMenu.vue'
 import EditorIndex from '@/views/editor/index.vue'
 import { useCollapsedStore } from '@/stores/icon'
 import { storeToRefs } from 'pinia'

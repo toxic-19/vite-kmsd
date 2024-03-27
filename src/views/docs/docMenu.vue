@@ -2,10 +2,14 @@
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getGroupList } from '@/api/knowBase'
-import { treeData } from '../type.ts'
-import Tree from './tree.vue'
-import CreateDialog from './createDialog.vue'
+import { useKnowledgeStore } from '@/stores/knowledge'
+import { storeToRefs } from 'pinia'
+import { treeData } from './type.ts'
+import Tree from './components/tree.vue'
+import CreateDialog from './components/createDialog.vue'
 
+const store = useKnowledgeStore()
+const { currentKnowId } = storeToRefs(store)
 const tree = ref<treeData>({})
 const activeKey = ref(['1'])
 const articleName = ref<string>('')
@@ -29,7 +33,10 @@ const createArticleRef = ref(null)
 const showModal = (groupId) => {
   createArticleRef.value.showModal(true, groupId)
 }
-// 创建文档请求
+
+const addInKnow = () => {
+  console.log('点击', currentKnowId)
+}
 
 onMounted(() => {
   getTreeData()
@@ -41,7 +48,7 @@ onMounted(() => {
     <div class="left-icon">
       <SvgIcon name="knowledgeBase" width="18px" height="18px" @click="toKnowLedge"></SvgIcon>
       <SvgIcon name="collapsed" width="12px" height="12px"></SvgIcon>
-      <div class="knowledge-name">个人知识库</div>
+      <div class="knowledge-name">{{ store.currentKnowName }}</div>
     </div>
     <div class="settings">
       <a-tooltip title="知识库设置">
@@ -58,6 +65,9 @@ onMounted(() => {
     <a-collapse v-model:activeKey="activeKey" ghost>
       <a-collapse-panel key="1" header="知识库目录" :show-arrow="false">
         <Tree :article-data="tree.article" :group-data="tree.group" @sendGrouId="showModal"></Tree>
+        <template #extra>
+          <SvgIcon name="add" width="14px" height="14px" class="add-icon group-icon" @click.stop="addInKnow"></SvgIcon>
+        </template>
       </a-collapse-panel>
     </a-collapse>
   </div>
@@ -126,5 +136,9 @@ onMounted(() => {
   padding: 3px 5px;
   color: #888;
   cursor: pointer;
+}
+:deep(.ant-collapse > .ant-collapse-item.ant-collapse-no-arrow > .ant-collapse-header) {
+  display: flex;
+  align-items: center;
 }
 </style>
