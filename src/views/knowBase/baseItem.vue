@@ -2,7 +2,9 @@
 import { defineProps, defineEmits } from 'vue'
 import { useRouter } from 'vue-router'
 import { postChangeTopStatus } from '@/api/knowBase'
+import { useKnowledgeStore } from '@/stores/knowledge'
 const emit = defineEmits(['refresh'])
+const store = useKnowledgeStore()
 defineProps({
   baseInfo: {
     type: Object,
@@ -11,10 +13,12 @@ defineProps({
   },
 })
 const router = useRouter()
-const toDocs = (knowId: number) => {
+const toDocs = (knowItem) => {
+  const { id, kbName } = knowItem
   router.push({
-    path: `/docs/${knowId}`,
+    path: `/docs/${id}`,
   })
+  store.setCurrent(id, kbName)
 }
 const beTop = async (id: number, isTop: boolean) => {
   console.log(id, isTop)
@@ -31,7 +35,7 @@ const beTop = async (id: number, isTop: boolean) => {
       <div class="title">{{ baseInfo.kbName }}</div>
       <div class="desc">{{ baseInfo.kbDesc }}</div>
     </div>
-    <div class="item-in" @click="toDocs(baseInfo.id)">
+    <div class="item-in" @click="toDocs(baseInfo)">
       <span>进入知识库</span>
       <SvgIcon name="arrow-right" width="13px" height="13px" />
     </div>

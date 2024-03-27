@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { defineProps, ref, watch } from 'vue'
+import {defineEmits, defineProps, ref, watch} from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { groupMenu, articleMenu } from '../type'
 const props = defineProps<{
   groupData?: groupMenu[]
   articleData?: articleMenu[]
 }>()
+const emit = defineEmits(['sendGrouId'])
 const allData = ref<Array<groupMenu | articleMenu>>([])
 const router = useRouter()
 const route = useRoute()
@@ -19,6 +20,11 @@ const getPreview = (articleId: number) => {
   router.push({
     path: `/docs/${knowId}/${articleId}`,
   })
+}
+
+const addArticle = (groupId) => {
+  // 传递groupId给docMenu组件
+  emit('sendGrouId', groupId)
 }
 watch(props, (newVal) => {
   let groupList = newVal.groupData || []
@@ -49,7 +55,21 @@ watch(props, (newVal) => {
         <SvgIcon :name="item.iconName" width="12px" height="12px" class="group-icon" @click="changeIcon(item)"></SvgIcon>
         <div class="name">{{ item.groupName }}</div>
         <div class="operate">
-          <SvgIcon name="add" width="14px" height="14px" class="add-icon group-icon"></SvgIcon>
+          <a-dropdown placement="bottom">
+            <a class="ant-dropdown-link" @click.prevent>
+              <SvgIcon name="add" width="14px" height="14px" class="add-icon group-icon"></SvgIcon>
+            </a>
+            <template #overlay>
+              <a-menu>
+                <a-menu-item @click.prevent="addArticle(item.groupId)">
+                  <div class="flex">
+                    <SvgIcon name="md" width="13px" height="13px"></SvgIcon>
+                    <span>文档</span>
+                  </div>
+                </a-menu-item>
+              </a-menu>
+            </template>
+          </a-dropdown>
         </div>
       </div>
       <div :class="[item.iconName === 'collapsed' ? '' : 'hidden-doc', 'doc-content children-doc']">
@@ -70,6 +90,12 @@ watch(props, (newVal) => {
 </template>
 
 <style scoped lang="scss">
+.flex {
+  display: flex;
+  div {
+    margin-right: 6px;
+  }
+}
 .tree-item {
   cursor: pointer;
   div {

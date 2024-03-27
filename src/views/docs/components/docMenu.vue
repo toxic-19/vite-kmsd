@@ -4,6 +4,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { getGroupList } from '@/api/knowBase'
 import { treeData } from '../type.ts'
 import Tree from './tree.vue'
+import CreateDialog from './createDialog.vue'
+
 const tree = ref<treeData>({})
 const activeKey = ref(['1'])
 const articleName = ref<string>('')
@@ -21,6 +23,14 @@ const router = useRouter()
 const toKnowLedge = () => {
   router.push('/knowledge')
 }
+
+// 创建文档弹窗
+const createArticleRef = ref(null)
+const showModal = (groupId) => {
+  createArticleRef.value.showModal(true, groupId)
+}
+// 创建文档请求
+
 onMounted(() => {
   getTreeData()
 })
@@ -47,10 +57,12 @@ onMounted(() => {
   <div class="doc-menu">
     <a-collapse v-model:activeKey="activeKey" ghost>
       <a-collapse-panel key="1" header="知识库目录" :show-arrow="false">
-        <Tree :article-data="tree.article" :group-data="tree.group"></Tree>
+        <Tree :article-data="tree.article" :group-data="tree.group" @sendGrouId="showModal"></Tree>
       </a-collapse-panel>
     </a-collapse>
   </div>
+
+  <create-dialog ref="createArticleRef" @refreshMenu="getTreeData"></create-dialog>
 </template>
 
 <style scoped lang="scss">
