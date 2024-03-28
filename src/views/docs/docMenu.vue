@@ -9,7 +9,7 @@ import Tree from './components/tree.vue'
 import CreateDialog from './components/createDialog.vue'
 
 const store = useKnowledgeStore()
-const { currentKnowId } = storeToRefs(store)
+const { currentKnowId, currentKnowName } = storeToRefs(store)
 const tree = ref<treeData>({})
 const activeKey = ref(['1'])
 const articleName = ref<string>('')
@@ -35,7 +35,8 @@ const showModal = (groupId) => {
 }
 
 const addInKnow = () => {
-  console.log('点击', currentKnowId)
+  console.log('点击', currentKnowId.value)
+  createArticleRef.value.showModal(true)
 }
 
 onMounted(() => {
@@ -48,7 +49,7 @@ onMounted(() => {
     <div class="left-icon">
       <SvgIcon name="knowledgeBase" width="18px" height="18px" @click="toKnowLedge"></SvgIcon>
       <SvgIcon name="collapsed" width="12px" height="12px"></SvgIcon>
-      <div class="knowledge-name">{{ store.currentKnowName }}</div>
+      <div class="knowledge-name">{{ currentKnowName }}</div>
     </div>
     <div class="settings">
       <a-tooltip title="知识库设置">
@@ -66,7 +67,21 @@ onMounted(() => {
       <a-collapse-panel key="1" header="知识库目录" :show-arrow="false">
         <Tree :article-data="tree.article" :group-data="tree.group" @sendGrouId="showModal"></Tree>
         <template #extra>
-          <SvgIcon name="add" width="14px" height="14px" class="add-icon group-icon" @click.stop="addInKnow"></SvgIcon>
+          <a-dropdown placement="bottom">
+            <a class="ant-dropdown-link" @click.prevent>
+              <SvgIcon name="add" width="14px" height="14px" class="add-icon group-icon"></SvgIcon>
+            </a>
+            <template #overlay>
+              <a-menu>
+                <a-menu-item @click.prevent="addInKnow()">
+                  <div class="flex">
+                    <SvgIcon name="md" width="13px" height="13px" color="red"></SvgIcon>
+                    <span>文档</span>
+                  </div>
+                </a-menu-item>
+              </a-menu>
+            </template>
+          </a-dropdown>
         </template>
       </a-collapse-panel>
     </a-collapse>
@@ -76,6 +91,16 @@ onMounted(() => {
 </template>
 
 <style scoped lang="scss">
+.flex {
+  display: flex;
+  margin-bottom: 6px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+  div {
+    margin-right: 6px;
+  }
+}
 .doc-menu {
   width: 240px;
   margin-left: 10px;

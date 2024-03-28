@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {defineEmits, defineProps, ref, watch} from 'vue'
+import { defineEmits, defineProps, ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { groupMenu, articleMenu } from '../type'
 const props = defineProps<{

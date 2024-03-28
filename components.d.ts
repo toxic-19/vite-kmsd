@@ -8,8 +8,8 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AButton: typeof import('ant-design-vue/es')['Button']
-    ACheckbox: typeof import('ant-design-vue/es')['Checkbox']
-    ACheckboxGroup: typeof import('ant-design-vue/es')['CheckboxGroup']
+    ACheckbox: (typeof import('ant-design-vue/es'))['Checkbox']
+    ACheckboxGroup: (typeof import('ant-design-vue/es'))['CheckboxGroup']
     ACollapse: typeof import('ant-design-vue/es')['Collapse']
     ACollapsePanel: typeof import('ant-design-vue/es')['CollapsePanel']
     ADropdown: typeof import('ant-design-vue/es')['Dropdown']
@@ -21,9 +21,9 @@ declare module 'vue' {
     AMenu: typeof import('ant-design-vue/es')['Menu']
     AMenuItem: typeof import('ant-design-vue/es')['MenuItem']
     AModal: typeof import('ant-design-vue/es')['Modal']
-    ARadio: typeof import('ant-design-vue/es')['Radio']
-    ARadioGroup: typeof import('ant-design-vue/es')['RadioGroup']
-    ASwitch: typeof import('ant-design-vue/es')['Switch']
+    ARadio: (typeof import('ant-design-vue/es'))['Radio']
+    ARadioGroup: (typeof import('ant-design-vue/es'))['RadioGroup']
+    ASwitch: (typeof import('ant-design-vue/es'))['Switch']
     ATag: typeof import('ant-design-vue/es')['Tag']
     ATextarea: typeof import('ant-design-vue/es')['Textarea']
     ATooltip: typeof import('ant-design-vue/es')['Tooltip']

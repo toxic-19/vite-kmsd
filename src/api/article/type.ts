@@ -12,7 +12,7 @@ export interface TagResData extends ResponseData {
 }
 // 创建新文章
 export interface CreateArticle {
-  knowId: number // 必须在知识库id下
+  knowId?: number // 必须在知识库id下
   groupId?: number // 不一定需要分组id
   title: string
   description: string
