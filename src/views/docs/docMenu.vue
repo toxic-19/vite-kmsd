@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, provide, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getGroupList } from '@/api/knowBase'
 import { useKnowledgeStore } from '@/stores/knowledge'
@@ -7,7 +7,6 @@ import { storeToRefs } from 'pinia'
 import { treeData } from './type.ts'
 import Tree from './components/tree.vue'
 import CreateDialog from './components/createDialog.vue'
-
 const store = useKnowledgeStore()
 const { currentKnowId, currentKnowName } = storeToRefs(store)
 const tree = ref<treeData>({})
@@ -39,6 +38,7 @@ const addInKnow = () => {
   createArticleRef.value.showModal(true)
 }
 
+provide('refreshMenu', getTreeData)
 onMounted(() => {
   getTreeData()
 })
@@ -67,15 +67,18 @@ onMounted(() => {
       <a-collapse-panel key="1" header="知识库目录" :show-arrow="false">
         <Tree :article-data="tree.article" :group-data="tree.group" @sendGrouId="showModal"></Tree>
         <template #extra>
+          <a-tooltip title="刷新">
+            <SvgIcon name="refresh" width="16px" height="16px" @click.stop="getTreeData"></SvgIcon>
+          </a-tooltip>
           <a-dropdown placement="bottom">
             <a class="ant-dropdown-link" @click.prevent>
               <SvgIcon name="add" width="14px" height="14px" class="add-icon group-icon"></SvgIcon>
             </a>
             <template #overlay>
               <a-menu>
-                <a-menu-item @click.prevent="addInKnow()">
+                <a-menu-item @click.stop="addInKnow">
                   <div class="flex">
-                    <SvgIcon name="md" width="13px" height="13px" color="red"></SvgIcon>
+                    <SvgIcon name="md" width="13px" height="13px"></SvgIcon>
                     <span>文档</span>
                   </div>
                 </a-menu-item>
@@ -154,7 +157,7 @@ onMounted(() => {
   padding-block: 12px !important;
 }
 :deep(.ant-collapse .ant-collapse-content > .ant-collapse-content-box) {
-  padding: 0 16px;
+  padding: 0 6px 0 16px;
 }
 :deep(.ant-collapse > .ant-collapse-item > .ant-collapse-header .ant-collapse-header-text) {
   font-size: 13px;
@@ -166,4 +169,16 @@ onMounted(() => {
   display: flex;
   align-items: center;
 }
+:deep(.ant-collapse-extra) {
+  display: flex;
+  width: 40px;
+  justify-content: space-between;
+}
+//:deep(.ant-collapse > .ant-collapse-item.ant-collapse-no-arrow > .ant-collapse-header) {
+//  position: fixed;
+//  width: 233px;
+//}
+//:deep(.ant-collapse-ghost >.ant-collapse-item >.ant-collapse-content) {
+//  padding-bottom: 50px;
+//}
 </style>

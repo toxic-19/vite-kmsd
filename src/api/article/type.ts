@@ -28,3 +28,7 @@ export interface CreateResData extends ResponseData {
     createdAt: string
   }
 }
+export interface UpdateArticle {
+  title?: string
+  content?: string
+}

@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { defineEmits, defineProps, ref, watch } from 'vue'
+import {defineEmits, defineProps, inject, ref, watch} from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { groupMenu, articleMenu } from '../type'
+import { updateArticle } from '@/api/article'
 const props = defineProps<{
   groupData?: groupMenu[]
   articleData?: articleMenu[]
 }>()
 const emit = defineEmits(['sendGrouId'])
 const allData = ref<Array<groupMenu | articleMenu>>([])
+const getTreeData = inject('refreshMenu')
 const router = useRouter()
 const route = useRoute()
 const changeIcon = (item) => {
@@ -21,10 +23,25 @@ const getPreview = (articleId: number) => {
     path: `/docs/${knowId}/${articleId}`,
   })
 }
-
 const addArticle = (groupId) => {
   // 传递groupId给docMenu组件
   emit('sendGrouId', groupId)
+}
+const reNameId = ref<number>(0)
+const reNameTitle = ref<string>('')
+const reName = (item) => {
+  reNameId.value = item.articleId
+  reNameTitle.value = item.title
+}
+const updateTitle = () => {
+  console.log(reNameTitle.value)
+  updateArticle(reNameId.value, {
+    title: reNameTitle.value
+  }).then(res => {
+    reNameId.value = 0
+    reNameTitle.value = ''
+    getTreeData()
+  })
 }
 watch(props, (newVal) => {
   let groupList = newVal.groupData || []
@@ -44,9 +61,24 @@ watch(props, (newVal) => {
     <div class="doc-content" v-if="item.articleId">
       <div class="title" @click="getPreview(item.articleId)" :class="{ active: item.articleId === selectedId }">
         <SvgIcon name="markdown"></SvgIcon>
-        <div class="name">{{ item.title }}</div>
+        <div class="name" v-if="reNameId !== item.articleId">{{ item.title }}</div>
+        <a-input v-else v-model:value="reNameTitle" @pressEnter="updateTitle"></a-input>
         <div class="operate">
-          <SvgIcon name="operate" width="14px" height="14px" class="operate-icon group-icon"></SvgIcon>
+          <a-dropdown placement="bottom">
+            <a class="ant-dropdown-link" @click.prevent>
+              <SvgIcon name="operate" width="14px" height="14px" class="operate-icon group-icon"></SvgIcon>
+            </a>
+            <template #overlay>
+              <a-menu>
+                <a-menu-item @click.prevent="reName(item)">
+                  <div class="flex">
+                    <SvgIcon name="edit" width="13px" height="13px"></SvgIcon>
+                    <span>重命名</span>
+                  </div>
+                </a-menu-item>
+              </a-menu>
+            </template>
+          </a-dropdown>
         </div>
       </div>
     </div>
