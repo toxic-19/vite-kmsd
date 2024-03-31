@@ -1,9 +1,21 @@
 :deep(.vditor-reset) {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji',
+  * {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji',
     'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  }
+}
+:deep(.vditor-tip .vditor-tip--show) {
+  display: none;
+  * {
+    display: none;
+  }
+}
+:deep(.vditor-reset img) {
+  width: 50%;
 }
 :deep(.vditor-reset pre > code) {
   overflow-y: scroll;
+  font-size: 16px;
   @include scrollBar;
 }
 :deep(.vditor-toolbar.vditor-toolbar--pin) {
@@ -40,6 +52,9 @@
 :deep(a) {
   font-size: 15px;
   padding: 0 4px;
+}
+:deep(strong) {
+  font-size: inherit;
 }
 .vditor-reset ul[data-style='*'] {
   list-style-type: disc;

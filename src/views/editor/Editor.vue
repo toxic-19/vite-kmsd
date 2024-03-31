@@ -2,6 +2,7 @@
 import { ref, onMounted, watch, defineProps } from 'vue'
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
+import {message} from "ant-design-vue";
 const props = defineProps(['editContent'])
 const vditor = ref<Vditor>()
 function reInitVditor() {
@@ -73,68 +74,26 @@ function reInitVditor() {
       ],
     },
     tab: '\t',
+    fullscreen: {
+      index: 99,
+    },
     upload: {
       accept: 'image/jpg, image/jpeg, image/png', // 规定上传的图片格式
-      url: '/upload', // 请求的接口
+      url: '/dev/upload', // 请求的接口
       multiple: false,
       fieldName: 'file',
       max: 2 * 1024 * 1024, // 上传图片的大小
-      extraData: { token: localStorage.getItem('token') }, // 为 FormData 添加额外的参数
-      linkToImgUrl: '/upload',
-      filename(name) {
-        return name
-      },
-      // validate(msg: string){
-      //   return msg
-      // },
-      // 粘贴图片回显处理，如果有图片加了防盗链，则让后台代理替换成自己的图片
-      linkToImgFormat(files) {
-        const resData = JSON.parse(files)
-        const code = resData.code
-        const msg = resData.msg
-        const data = resData.data
-        // 上传图片请求状态
-        if (code === '0') {
-          const success = {}
-          success[data.fileName] = data.url
-          // 图片回显
-          return JSON.stringify({
-            msg,
-            code,
-            data: {
-              errFiles: [],
-              successMap: success,
-            },
-          })
-        } else {
-          console.log(msg + '上传失败了')
+      // extraData: { token: localStorage.getItem('token') }, // 为 FormData 添加额外的参数
+      linkToImgUrl: '/dev/upload', // 粘贴图片请求接口
+      // format 和 success error 不能一起定义 否则format不会执行
+      success(editor: HTMLPreElement, msg: string) {
+        const { data } = JSON.parse(msg)
+        if (vditor.value) {
+          vditor.value.insertValue(`<img src="${data}" alt=""/>`)
         }
       },
-      // 上传图片回显处理
-      format(files, responseText) {
-        const resData = JSON.parse(responseText)
-        const code = resData.code
-        const msg = resData.msg
-        const data = resData.data
-        // 上传图片请求状态
-        if (code === '0') {
-          const success = {}
-          success[data.fileName] = data.url
-          // 图片回显
-          return JSON.stringify({
-            msg,
-            code,
-            data: {
-              errFiles: [],
-              successMap: success,
-            },
-          })
-        } else {
-          console.log(msg + '上传失败了')
-        }
-      },
-      error(msg) {
-        console.log(msg + '上传失败了')
+      error(msg: string) {
+        message.error(msg || '上传失败')
       },
     },
     toolbarConfig: {
@@ -175,6 +134,16 @@ function reInitVditor() {
         toolbar: ['edit-mode', 'preview', 'both', 'code-theme'],
       },
     ],
+    cache: {
+      /** 缓存 key，第一个参数为元素且启用缓存时必填 */
+      id: 'cacheMd',
+      /** 是否使用 localStorage 进行缓存。默认值: true */
+      enable: true,
+      /** 缓存后的回调 */
+      after() {
+        // console.log(markdown)
+      },
+    },
     after() {
       if (vditor.value) {
         vditor.value.setValue(content.value)

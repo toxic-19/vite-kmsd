@@ -75,10 +75,12 @@ const clickOutLine = () => {
     window.location = `/docs/${knowId}/${articleId}/#${title}`
   })
 }
+const outlineWidth = ref<string>('50px')
 const showOutLine = () => {
   const outlineElement = document.getElementById('outlineWrap')
-  const flag = outlineElement.style.display !== 'block'
-  outlineElement.style.display = flag ? 'block' : 'none'
+  const flag = outlineElement.style.width == '0px'
+  outlineElement.style.width = flag ? '240px' : '0px'
+  outlineWidth.value = flag ? '260px' : '50px'
 }
 onMounted(() => {
   initVditor()
@@ -106,7 +108,7 @@ watch(
   <div id="previewWrap">
     <div id="preview" class="preview"></div>
   </div>
-  <div id="outlineWrap">
+  <div id="outlineWrap" style="width: 0">
     <div id="outline-title">目录</div>
     <div id="outline"></div>
   </div>
@@ -121,15 +123,15 @@ watch(
 @import './editor-reset.scss';
 #previewWrap {
   padding: 0 0 20px 20px;
-  margin-right: 260px;
+  margin-right: v-bind(outlineWidth);
   #preview {
     margin: 0 auto;
   }
 }
 #outlineWrap {
-  display: none;
+  //display: none;
   position: fixed;
-  width: 186px;
+  //width: 186px;
   top: 164px;
   right: 20px;
   bottom: 120px;
@@ -137,6 +139,7 @@ watch(
   font-size: 12px;
   border-left: 1px solid var(--border-color);
   border-right: 0;
+  overflow-x: hidden;
   --border-color: #eee;
   --toolbar-icon-hover-color: #4285f4;
   --textarea-text-color: #616161;
@@ -184,6 +187,7 @@ watch(
   border: 1px solid transparent;
   box-shadow: 1px 2px 6px 2px rgba(183, 183, 183, 0.8);
   transition: all 0.3s;
+  z-index: 999;
   &:hover {
     border: 1px solid #d9d6d6;
   }

@@ -4,9 +4,10 @@ import { useCollapsedStore } from '@/stores/icon'
 import PreviewEditor from './previewEditor.vue'
 import Editor from './editor.vue'
 import { useRoute } from 'vue-router'
-import { getContentById, getTagsById } from '@/api/article'
+import { getContentById, getTagsById, updateArticle } from '@/api/article'
 import { Tag } from '@/api/article/type'
 import emptyPng from '@/assets/empty.png'
+import { message } from 'ant-design-vue'
 const store = useCollapsedStore()
 const closeDocMenu = () => {
   store.collapseMenu()
@@ -15,15 +16,25 @@ const type = ref('preview')
 const edit = () => {
   type.value = 'edit'
 }
+const docId = ref<number>()
 const save = () => {
-  type.value = 'preview'
+  // type.value = 'preview'
+  const content = localStorage.getItem('cacheMd')
+  console.log(content)
+  updateArticle(docId.value, {
+    content,
+  }).then(() => {
+    getArticleContent(docId.value)
+    message.success('上传成功')
+    type.value = 'preview'
+  })
 }
 const docName = ref('')
 const docContent = ref('')
 const route = useRoute()
 const getArticleContent = async (articleId: number) => {
   const { data } = await getContentById({ articleId })
-  docContent.value = data?.content
+  docContent.value = data?.content || ''
   docName.value = data?.title
   await getTagsName(articleId)
 }
@@ -39,6 +50,7 @@ watch(
     type.value = 'preview'
     if (newVal) {
       getArticleContent(+newVal)
+      docId.value = +newVal
     }
   },
   { immediate: true },
@@ -58,16 +70,18 @@ watch(
         </div>
       </div>
       <div class="doc-btn">
-        <div class="self-edit-btn" @click="edit">
+        <div class="self-edit-btn" v-if="type === 'preview'" @click="edit">
           <SvgIcon name="edit"></SvgIcon>
+          <span>编辑</span>
         </div>
-        <div class="self-edit-btn save-btn" @click="save">
+        <div class="self-edit-btn save-btn" v-else @click="save">
           <SvgIcon name="save"></SvgIcon>
+          <span>保存</span>
         </div>
       </div>
     </header>
     <div class="preview-content" id="content" v-if="type === 'preview'">
-      <a-empty v-if="docContent === null" :image="emptyPng" :image-style="{ height: '200px' }">
+      <a-empty v-if="!docContent" :image="emptyPng" :image-style="{ height: '200px' }">
         <template #description>暂无内容</template>
         <a-button type="primary" @click="edit">Create Now</a-button>
       </a-empty>
@@ -115,6 +129,7 @@ watch(
       align-items: center;
       justify-content: center;
       height: 32px;
+      min-width: 90px;
       padding: 5px 10px;
       border: 1px solid #4b638a;
       border-radius: 6px;

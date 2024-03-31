@@ -3,6 +3,9 @@ import {defineEmits, defineProps, inject, ref, watch} from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { groupMenu, articleMenu } from '../type'
 import { updateArticle } from '@/api/article'
+import ArticleDropdown from "@/views/docs/components/articleDropdown.vue";
+import GroupDropdown from "@/views/docs/components/groupDropdown.vue";
+import {message} from "ant-design-vue";
 const props = defineProps<{
   groupData?: groupMenu[]
   articleData?: articleMenu[]
@@ -38,6 +41,7 @@ const updateTitle = () => {
   updateArticle(reNameId.value, {
     title: reNameTitle.value
   }).then(res => {
+    message.success('重命名成功')
     reNameId.value = 0
     reNameTitle.value = ''
     getTreeData()
@@ -64,21 +68,7 @@ watch(props, (newVal) => {
         <div class="name" v-if="reNameId !== item.articleId">{{ item.title }}</div>
         <a-input v-else v-model:value="reNameTitle" @pressEnter="updateTitle"></a-input>
         <div class="operate">
-          <a-dropdown placement="bottom">
-            <a class="ant-dropdown-link" @click.prevent>
-              <SvgIcon name="operate" width="14px" height="14px" class="operate-icon group-icon"></SvgIcon>
-            </a>
-            <template #overlay>
-              <a-menu>
-                <a-menu-item @click.prevent="reName(item)">
-                  <div class="flex">
-                    <SvgIcon name="edit" width="13px" height="13px"></SvgIcon>
-                    <span>重命名</span>
-                  </div>
-                </a-menu-item>
-              </a-menu>
-            </template>
-          </a-dropdown>
+          <article-dropdown @reDocName="reName(item)"></article-dropdown>
         </div>
       </div>
     </div>
@@ -87,41 +77,16 @@ watch(props, (newVal) => {
         <SvgIcon :name="item.iconName" width="12px" height="12px" class="group-icon" @click="changeIcon(item)"></SvgIcon>
         <SvgIcon name="folder"></SvgIcon>
         <div class="name">{{ item.groupName }}</div>
-        <div class="operate">
-          <a-dropdown placement="bottom">
-            <a class="ant-dropdown-link" @click.prevent>
-              <SvgIcon name="add" width="14px" height="14px" class="add-icon group-icon"></SvgIcon>
-            </a>
-            <template #overlay>
-              <a-menu>
-                <a-menu-item @click.prevent="addArticle(item.groupId)">
-                  <div class="flex">
-                    <SvgIcon name="md" width="13px" height="13px" color="red"></SvgIcon>
-                    <span>文档</span>
-                  </div>
-                </a-menu-item>
-                <a-menu-item @click.prevent="addArticle(item.groupId)">
-                  <div class="flex">
-                    <SvgIcon name="edit" width="13px" height="13px"></SvgIcon>
-                    <span>重命名</span>
-                  </div>
-                </a-menu-item>
-              </a-menu>
-            </template>
-          </a-dropdown>
-        </div>
+        <group-dropdown @addDoc="addArticle(item.groupId)"></group-dropdown>
       </div>
       <div :class="[item.iconName === 'collapsed' ? '' : 'hidden-doc', 'doc-content children-doc']">
         <template v-for="child in item.childrenData" :key="child.articleId">
-          <a-tooltip :title="child.title" color="#bab3c3">
             <div class="title" @click="getPreview(child.articleId)" :class="{ active: child.articleId === selectedId }">
               <SvgIcon name="markdown"></SvgIcon>
-              <div class="name">{{ child.title }}</div>
-              <div class="operate">
-                <SvgIcon name="operate" width="14px" height="14px" class="operate-icon group-icon"></SvgIcon>
-              </div>
+              <div class="name" v-if="reNameId !== child.articleId">{{ child.title }}</div>
+              <a-input v-else v-model:value="reNameTitle" @pressEnter="updateTitle"></a-input>
+              <article-dropdown @reDocName="reName(child)"></article-dropdown>
             </div>
-          </a-tooltip>
         </template>
       </div>
     </div>

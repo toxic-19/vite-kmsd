@@ -46,6 +46,7 @@ export default (): UserConfigExport => {
     },
     server: {
       host: true,
+      hmr: true,
       port: 9951,
       proxy: {
         '/dev': {
