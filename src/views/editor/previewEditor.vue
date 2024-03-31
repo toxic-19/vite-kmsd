@@ -89,7 +89,9 @@ watch(
   () => props.preview,
   (newVal) => {
     mdContent.value = newVal
-    initVditor()
+    if (mdContent.value) {
+      initVditor()
+    }
   },
   { immediate: true },
 )

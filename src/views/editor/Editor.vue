@@ -74,9 +74,6 @@ function reInitVditor() {
       ],
     },
     tab: '\t',
-    fullscreen: {
-      index: 99,
-    },
     upload: {
       accept: 'image/jpg, image/jpeg, image/png', // 规定上传的图片格式
       url: '/dev/upload', // 请求的接口
@@ -126,7 +123,6 @@ function reInitVditor() {
       'undo',
       'redo',
       '|',
-      'fullscreen',
       'outline',
       'export',
       {

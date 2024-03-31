@@ -74,7 +74,11 @@ watch(
           <SvgIcon name="edit"></SvgIcon>
           <span>编辑</span>
         </div>
-        <div class="self-edit-btn save-btn" v-else @click="save">
+        <div class="self-edit-btn" v-if="type === 'edit'" @click="type = 'preview'">
+          <SvgIcon name="back" width="18px" height="18px"></SvgIcon>
+          <span>返回</span>
+        </div>
+        <div class="self-edit-btn save-btn" v-if="type === 'edit'" @click="save">
           <SvgIcon name="save"></SvgIcon>
           <span>保存</span>
         </div>
