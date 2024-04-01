@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {defineEmits, defineProps, inject, ref, watch} from 'vue'
+import type {Directive} from "vue"
 import { useRouter, useRoute } from 'vue-router'
 import { groupMenu, articleMenu } from '../type'
 import { updateArticle } from '@/api/article'
@@ -15,7 +16,7 @@ const allData = ref<Array<groupMenu | articleMenu>>([])
 const getTreeData = inject('refreshMenu')
 const router = useRouter()
 const route = useRoute()
-const changeIcon = (item) => {
+const changeIcon = (item: groupMenu) => {
   item.iconName = item.iconName === 'collapsed' ? 'open' : 'collapsed'
 }
 const selectedId = ref<number>(0)
@@ -26,13 +27,13 @@ const getPreview = (articleId: number) => {
     path: `/docs/${knowId}/${articleId}`,
   })
 }
-const addArticle = (groupId) => {
+const addArticle = (groupId: number) => {
   // 传递groupId给docMenu组件
   emit('sendGrouId', groupId)
 }
 const reNameId = ref<number>(0)
 const reNameTitle = ref<string>('')
-const reName = (item) => {
+const reName = (item: articleMenu) => {
   reNameId.value = item.articleId
   reNameTitle.value = item.title
 }
@@ -40,12 +41,19 @@ const updateTitle = () => {
   console.log(reNameTitle.value)
   updateArticle(reNameId.value, {
     title: reNameTitle.value
-  }).then(res => {
+  }).then(() => {
     message.success('重命名成功')
     reNameId.value = 0
     reNameTitle.value = ''
     getTreeData()
   })
+}
+// 1. 输入框聚焦指令
+const vFocus: Directive = { // 在setup中 任何以 v 开头的驼峰式命名的变量都可以被用作一个自定义指令
+  mounted: (el: HTMLElement) => {
+    console.log("direction", el)
+    el.focus() // mounted: 元素插入到父元素时调用
+  }
 }
 watch(props, (newVal) => {
   let groupList = newVal.groupData || []
@@ -56,7 +64,12 @@ watch(props, (newVal) => {
   allData.value = [...articleList, ...groupList]
   if (articleList.length) {
     getPreview(articleList[0]?.articleId)
-  } else if (groupList.length) getPreview(groupList[0].childrenData[0].articleId)
+  } else {
+    const noArticle = groupList.every(item => !item.childrenData.length)
+    console.log(noArticle, 'noArticle')
+    // TODO: 不一定要一进来就展示第一页；可以用来展示知识库设置。
+  }
+  // else if (groupList.length) getPreview(groupList[0].childrenData?.[0]?.articleId)
 })
 </script>
 
@@ -66,7 +79,7 @@ watch(props, (newVal) => {
       <div class="title" @click="getPreview(item.articleId)" :class="{ active: item.articleId === selectedId }">
         <SvgIcon name="markdown"></SvgIcon>
         <div class="name" v-if="reNameId !== item.articleId">{{ item.title }}</div>
-        <a-input v-else v-model:value="reNameTitle" @pressEnter="updateTitle"></a-input>
+        <a-input v-else v-focus v-model:value="reNameTitle" @pressEnter="updateTitle"></a-input>
         <div class="operate">
           <article-dropdown @reDocName="reName(item)"></article-dropdown>
         </div>
@@ -84,7 +97,7 @@ watch(props, (newVal) => {
             <div class="title" @click="getPreview(child.articleId)" :class="{ active: child.articleId === selectedId }">
               <SvgIcon name="markdown"></SvgIcon>
               <div class="name" v-if="reNameId !== child.articleId">{{ child.title }}</div>
-              <a-input v-else v-model:value="reNameTitle" @pressEnter="updateTitle"></a-input>
+              <a-input v-else v-focus v-model:value="reNameTitle" @pressEnter="updateTitle"></a-input>
               <article-dropdown @reDocName="reName(child)"></article-dropdown>
             </div>
         </template>

@@ -8,7 +8,7 @@ import { treeData } from './type.ts'
 import Tree from './components/tree.vue'
 import CreateDialog from './components/createDialog.vue'
 const store = useKnowledgeStore()
-const { currentKnowId, currentKnowName } = storeToRefs(store)
+const { currentKnowName } = storeToRefs(store)
 const tree = ref<treeData>({})
 const activeKey = ref(['1'])
 const articleName = ref<string>('')
@@ -29,13 +29,16 @@ const toKnowLedge = () => {
 
 // 创建文档弹窗
 const createArticleRef = ref(null)
-const showModal = (groupId) => {
-  createArticleRef.value.showModal(true, groupId)
+const showModal = (groupId: number) => {
+  createArticleRef.value?.showModal(true, groupId)
 }
 
-const addInKnow = () => {
-  console.log('点击', currentKnowId.value)
-  createArticleRef.value.showModal(true)
+const addArticleInKnow = () => {
+  // eslint-disable-next-line no-undef
+  createArticleRef.value?.showModal(true, null, 1)
+}
+const addGroupInKnow = () => {
+  createArticleRef.value?.showModal(true, null, 2)
 }
 
 provide('refreshMenu', getTreeData)
@@ -76,10 +79,16 @@ onMounted(() => {
             </a>
             <template #overlay>
               <a-menu>
-                <a-menu-item @click.stop="addInKnow">
+                <a-menu-item @click.stop="addArticleInKnow">
                   <div class="flex">
                     <SvgIcon name="md" width="13px" height="13px"></SvgIcon>
                     <span>文档</span>
+                  </div>
+                </a-menu-item>
+                <a-menu-item @click.stop="addGroupInKnow">
+                  <div class="flex">
+                    <SvgIcon name="group" width="13px" height="13px"></SvgIcon>
+                    <span>分组</span>
                   </div>
                 </a-menu-item>
               </a-menu>
@@ -89,7 +98,6 @@ onMounted(() => {
       </a-collapse-panel>
     </a-collapse>
   </div>
-
   <create-dialog ref="createArticleRef" @refreshMenu="getTreeData"></create-dialog>
 </template>
 

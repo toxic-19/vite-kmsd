@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue'
 import { useCollapsedStore } from '@/stores/icon'
 import PreviewEditor from './previewEditor.vue'
-import Editor from './editor.vue'
+import Editor from './Editor.vue'
 import { useRoute } from 'vue-router'
 import { getContentById, getTagsById, updateArticle } from '@/api/article'
 import { Tag } from '@/api/article/type'

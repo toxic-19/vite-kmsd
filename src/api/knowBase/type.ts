@@ -44,3 +44,7 @@ export interface GroupResponseData extends ResponseData {
     group: groupMenu[]
   }
 }
+export interface createGroupData {
+  knowId: number
+  groupName: string
+}

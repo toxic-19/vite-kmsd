@@ -2,9 +2,16 @@
 import { ref, onMounted, watch, defineProps } from 'vue'
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
-import {message} from "ant-design-vue";
+import { message } from 'ant-design-vue'
 const props = defineProps(['editContent'])
 const vditor = ref<Vditor>()
+interface Data {
+  name: string
+  url: string
+}
+interface Success {
+  [key: string]: string
+}
 function reInitVditor() {
   vditor.value = new Vditor('editor-md', {
     cdn: '/vditor',
@@ -79,15 +86,34 @@ function reInitVditor() {
       url: '/dev/upload', // 请求的接口
       multiple: false,
       fieldName: 'file',
-      max: 2 * 1024 * 1024, // 上传图片的大小
+      max: 5242880, // 上传图片的大小5M
       // extraData: { token: localStorage.getItem('token') }, // 为 FormData 添加额外的参数
       linkToImgUrl: '/dev/upload', // 粘贴图片请求接口
       // format 和 success error 不能一起定义 否则format不会执行
-      success(editor: HTMLPreElement, msg: string) {
-        const { data } = JSON.parse(msg)
-        if (vditor.value) {
-          vditor.value.insertValue(`<img src="${data}" alt=""/>`)
+      // success(_, msg: string) {
+      //   const { data } = JSON.parse(msg)
+      //   if (vditor.value) {
+      //     vditor.value.insertValue(`&lt;img src="${data}" alt=""&gt;`)
+      //   }
+      // },
+      format: (_, responseText) => {
+        const { code, data } = JSON.parse(responseText)
+        if (code === 200) {
+          let success: Success = {}
+          data.forEach((item: Data) => {
+            success[item.name] = item.url // {name, url}
+          })
+          console.log(success)
+          return JSON.stringify({
+            msg: '',
+            code: 0,
+            data: {
+              errFiles: [],
+              succMap: success, // 一个对象 key[name] - value[url]
+            },
+          })
         }
+        return 'false'
       },
       error(msg: string) {
         message.error(msg || '上传失败')
