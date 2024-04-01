@@ -48,3 +48,8 @@ export interface createGroupData {
   knowId: number
   groupName: string
 }
+
+export interface updateGroupData {
+  groupId: number
+  groupName: string
+}

@@ -4,6 +4,7 @@ import type {Directive} from "vue"
 import { useRouter, useRoute } from 'vue-router'
 import { groupMenu, articleMenu } from '../type'
 import { updateArticle } from '@/api/article'
+import { postReNameGroup } from '@/api/knowBase'
 import ArticleDropdown from "@/views/docs/components/articleDropdown.vue";
 import GroupDropdown from "@/views/docs/components/groupDropdown.vue";
 import {message} from "ant-design-vue";
@@ -27,10 +28,13 @@ const getPreview = (articleId: number) => {
     path: `/docs/${knowId}/${articleId}`,
   })
 }
+// 新增文章
 const addArticle = (groupId: number) => {
   // 传递groupId给docMenu组件
   emit('sendGrouId', groupId)
 }
+
+// 文章重命名
 const reNameId = ref<number>(0)
 const reNameTitle = ref<string>('')
 const reName = (item: articleMenu) => {
@@ -38,7 +42,6 @@ const reName = (item: articleMenu) => {
   reNameTitle.value = item.title
 }
 const updateTitle = () => {
-  console.log(reNameTitle.value)
   updateArticle(reNameId.value, {
     title: reNameTitle.value
   }).then(() => {
@@ -48,6 +51,26 @@ const updateTitle = () => {
     getTreeData()
   })
 }
+
+// 分组重命名
+const reGroupId = ref<number>(0)
+const reGroupTitle = ref<string>('')
+const reGroupName = (item: groupMenu) => {
+  reGroupId.value = item.groupId
+  reGroupTitle.value = item.groupName
+}
+const updateGroup = () => {
+  postReNameGroup({
+    groupId: reGroupId.value,
+    groupName: reGroupTitle.value
+  }).then(() => {
+    message.success('重命名成功')
+    reGroupId.value = 0
+    reGroupTitle.value = ''
+    getTreeData()
+  })
+}
+
 // 1. 输入框聚焦指令
 const vFocus: Directive = { // 在setup中 任何以 v 开头的驼峰式命名的变量都可以被用作一个自定义指令
   mounted: (el: HTMLElement) => {
@@ -89,8 +112,9 @@ watch(props, (newVal) => {
       <div class="title">
         <SvgIcon :name="item.iconName" width="12px" height="12px" class="group-icon" @click="changeIcon(item)"></SvgIcon>
         <SvgIcon name="folder"></SvgIcon>
-        <div class="name">{{ item.groupName }}</div>
-        <group-dropdown @addDoc="addArticle(item.groupId)"></group-dropdown>
+        <div class="name" v-if="reGroupId !== item.groupId">{{ item.groupName }}</div>
+        <a-input v-else v-focus v-model:value="reGroupTitle" @pressEnter="updateGroup"></a-input>
+        <group-dropdown @addDoc="addArticle(item.groupId)" @reGroupName="reGroupName(item)"></group-dropdown>
       </div>
       <div :class="[item.iconName === 'collapsed' ? '' : 'hidden-doc', 'doc-content children-doc']">
         <template v-for="child in item.childrenData" :key="child.articleId">
