@@ -45,6 +45,19 @@
   }
 }
 
+@mixin scrollBarInX {
+  &::-webkit-scrollbar{
+    background-color: #F5F5F5;
+    height: 6px;
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb{
+    background-color: #b3c0d1;
+    height: 11px;
+    border-radius: 10px;
+  }
+}
+
 /* 水平居中 */
 @mixin pct($pct) {
   width: #{$pct};

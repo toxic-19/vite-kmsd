@@ -113,7 +113,7 @@ watch(props, (newVal) => {
     getPreview(articleList[0]?.articleId)
   } else {
     const noArticle = groupList.every((item) => !item.childrenData.length)
-    console.log(noArticle, 'noArticle')
+    console.log('noArticle', noArticle)
     // TODO: 不一定要一进来就展示第一页；可以用来展示知识库设置。
   }
   // else if (groupList.length) getPreview(groupList[0].childrenData?.[0]?.articleId)
@@ -127,9 +127,7 @@ watch(props, (newVal) => {
         <SvgIcon name="markdown"></SvgIcon>
         <div class="name" v-if="reNameId !== item.articleId">{{ item.title }}</div>
         <a-input v-else v-focus v-model:value="reNameTitle" @pressEnter="updateTitle"></a-input>
-        <div class="operate">
-          <article-dropdown @reDocName="reName(item)" @delete="deleteDoc(item)"></article-dropdown>
-        </div>
+        <article-dropdown @reDocName="reName(item)" @delete="deleteDoc(item)"></article-dropdown>
       </div>
     </div>
     <div class="group-content" v-else>

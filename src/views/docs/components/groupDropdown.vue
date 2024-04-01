@@ -49,7 +49,8 @@ const addDoc = () => {
 }
 .operate {
   display: flex;
-  width: 30px;
+  width: 28px;
   opacity: 0;
+  padding-right: 6px;
 }
 </style>

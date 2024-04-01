@@ -4,7 +4,7 @@ export type GetContentForm = {
 }
 // 文章下的标签详情
 export interface Tag {
-  tagId: number
+  id: number
   tagName: string
 }
 export interface TagResData extends ResponseData {
