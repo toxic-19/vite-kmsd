@@ -22,7 +22,12 @@ const clickMenu = (menu) => {
         <span>KMSD</span>
       </div>
       <ul class="catalog">
-        <li v-for="menu in menuList" :key="menu.id" :class="{ active: activeCategory === menu.id }" @click="clickMenu(menu)">
+        <li
+          v-for="menu in menuList"
+          :key="menu.id"
+          :class="{ active: activeCategory === menu.id }"
+          @click="clickMenu(menu)"
+        >
           <SvgIcon :name="menu.icon" width="20px" height="20px"></SvgIcon>
           <span>{{ menu.name }}</span>
         </li>

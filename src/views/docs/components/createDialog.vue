@@ -126,8 +126,23 @@ defineExpose({
 
 <template>
   <div class="create-dialog">
-    <a-modal v-model:open="open" centered title="创建文章" destroy-on-close :confirm-loading="confirmLoading" @cancel="clearForm" @ok="handleOk">
-      <a-form v-if="type === 1" ref="createDocRef" :model="formState" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
+    <a-modal
+      v-model:open="open"
+      centered
+      title="创建文章"
+      destroy-on-close
+      :confirm-loading="confirmLoading"
+      @cancel="clearForm"
+      @ok="handleOk"
+    >
+      <a-form
+        v-if="type === 1"
+        ref="createDocRef"
+        :model="formState"
+        :rules="rules"
+        :label-col="labelCol"
+        :wrapper-col="wrapperCol"
+      >
         <a-form-item label="文章标题" name="title">
           <a-input v-model:value="formState.title" placeholder="请输入文章标题" />
         </a-form-item>
@@ -159,7 +174,14 @@ defineExpose({
           </a-select>
         </a-form-item>
       </a-form>
-      <a-form v-else ref="createDocRef" :model="formState" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
+      <a-form
+        v-else
+        ref="createDocRef"
+        :model="formState"
+        :rules="rules"
+        :label-col="labelCol"
+        :wrapper-col="wrapperCol"
+      >
         <a-form-item label="分组标题" name="groupName">
           <a-input v-model:value="formState.groupName" placeholder="请输入分组标题" />
         </a-form-item>

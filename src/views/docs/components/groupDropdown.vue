@@ -20,7 +20,7 @@ const addDoc = () => {
         <a-menu>
           <a-menu-item @click.prevent="addDoc">
             <div class="flex">
-              <SvgIcon name="md" width="13px" height="13px" color="red"></SvgIcon>
+              <SvgIcon name="addMd" width="15px" height="15px" color="red"></SvgIcon>
               <span>文档</span>
             </div>
           </a-menu-item>

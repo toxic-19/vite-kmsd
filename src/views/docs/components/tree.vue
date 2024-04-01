@@ -1,20 +1,23 @@
 <script setup lang="ts">
-import {defineEmits, defineProps, inject, ref, watch} from 'vue'
-import type {Directive} from "vue"
+import { defineEmits, defineProps, inject, ref, watch } from 'vue'
+import type { Directive } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { groupMenu, articleMenu } from '../type'
-import { updateArticle } from '@/api/article'
+import { deleteArticle, updateArticle } from '@/api/article'
 import { postReNameGroup } from '@/api/knowBase'
-import ArticleDropdown from "@/views/docs/components/articleDropdown.vue";
-import GroupDropdown from "@/views/docs/components/groupDropdown.vue";
-import {message} from "ant-design-vue";
+import ArticleDropdown from '@/views/docs/components/articleDropdown.vue'
+import GroupDropdown from '@/views/docs/components/groupDropdown.vue'
+import { message } from 'ant-design-vue'
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
+import { createVNode } from 'vue'
+import { Modal } from 'ant-design-vue'
 const props = defineProps<{
   groupData?: groupMenu[]
   articleData?: articleMenu[]
 }>()
 const emit = defineEmits(['sendGrouId'])
 const allData = ref<Array<groupMenu | articleMenu>>([])
-const getTreeData = inject('refreshMenu')
+const getTreeData = inject('refreshMenu') as Function
 const router = useRouter()
 const route = useRoute()
 const changeIcon = (item: groupMenu) => {
@@ -43,7 +46,7 @@ const reName = (item: articleMenu) => {
 }
 const updateTitle = () => {
   updateArticle(reNameId.value, {
-    title: reNameTitle.value
+    title: reNameTitle.value,
   }).then(() => {
     message.success('重命名成功')
     reNameId.value = 0
@@ -62,7 +65,7 @@ const reGroupName = (item: groupMenu) => {
 const updateGroup = () => {
   postReNameGroup({
     groupId: reGroupId.value,
-    groupName: reGroupTitle.value
+    groupName: reGroupTitle.value,
   }).then(() => {
     message.success('重命名成功')
     reGroupId.value = 0
@@ -71,12 +74,33 @@ const updateGroup = () => {
   })
 }
 
+const deleteDoc = (article: articleMenu) => {
+  const { articleId } = article
+  Modal.confirm({
+    title: 'Are you sure delete this article?',
+    icon: createVNode(ExclamationCircleOutlined),
+    okText: 'Yes',
+    okType: 'danger',
+    cancelText: 'No',
+    async onOk() {
+      return await deleteArticle({ articleId }).then(({ data }) => {
+        if (data == articleId) {
+          message.success('删除成功')
+          getTreeData()
+        }
+      })
+    },
+    onCancel() {},
+  })
+}
+
 // 1. 输入框聚焦指令
-const vFocus: Directive = { // 在setup中 任何以 v 开头的驼峰式命名的变量都可以被用作一个自定义指令
+const vFocus: Directive = {
+  // 在setup中 任何以 v 开头的驼峰式命名的变量都可以被用作一个自定义指令
   mounted: (el: HTMLElement) => {
-    console.log("direction", el)
+    console.log('direction', el)
     el.focus() // mounted: 元素插入到父元素时调用
-  }
+  },
 }
 watch(props, (newVal) => {
   let groupList = newVal.groupData || []
@@ -88,7 +112,7 @@ watch(props, (newVal) => {
   if (articleList.length) {
     getPreview(articleList[0]?.articleId)
   } else {
-    const noArticle = groupList.every(item => !item.childrenData.length)
+    const noArticle = groupList.every((item) => !item.childrenData.length)
     console.log(noArticle, 'noArticle')
     // TODO: 不一定要一进来就展示第一页；可以用来展示知识库设置。
   }
@@ -104,13 +128,19 @@ watch(props, (newVal) => {
         <div class="name" v-if="reNameId !== item.articleId">{{ item.title }}</div>
         <a-input v-else v-focus v-model:value="reNameTitle" @pressEnter="updateTitle"></a-input>
         <div class="operate">
-          <article-dropdown @reDocName="reName(item)"></article-dropdown>
+          <article-dropdown @reDocName="reName(item)" @delete="deleteDoc(item)"></article-dropdown>
         </div>
       </div>
     </div>
     <div class="group-content" v-else>
       <div class="title">
-        <SvgIcon :name="item.iconName" width="12px" height="12px" class="group-icon" @click="changeIcon(item)"></SvgIcon>
+        <SvgIcon
+          :name="item.iconName"
+          width="12px"
+          height="12px"
+          class="group-icon"
+          @click="changeIcon(item)"
+        ></SvgIcon>
         <SvgIcon name="folder"></SvgIcon>
         <div class="name" v-if="reGroupId !== item.groupId">{{ item.groupName }}</div>
         <a-input v-else v-focus v-model:value="reGroupTitle" @pressEnter="updateGroup"></a-input>
@@ -118,12 +148,12 @@ watch(props, (newVal) => {
       </div>
       <div :class="[item.iconName === 'collapsed' ? '' : 'hidden-doc', 'doc-content children-doc']">
         <template v-for="child in item.childrenData" :key="child.articleId">
-            <div class="title" @click="getPreview(child.articleId)" :class="{ active: child.articleId === selectedId }">
-              <SvgIcon name="markdown"></SvgIcon>
-              <div class="name" v-if="reNameId !== child.articleId">{{ child.title }}</div>
-              <a-input v-else v-focus v-model:value="reNameTitle" @pressEnter="updateTitle"></a-input>
-              <article-dropdown @reDocName="reName(child)"></article-dropdown>
-            </div>
+          <div class="title" @click="getPreview(child.articleId)" :class="{ active: child.articleId === selectedId }">
+            <SvgIcon name="markdown"></SvgIcon>
+            <div class="name" v-if="reNameId !== child.articleId">{{ child.title }}</div>
+            <a-input v-else v-focus v-model:value="reNameTitle" @pressEnter="updateTitle"></a-input>
+            <article-dropdown @reDocName="reName(child)" @delete="deleteDoc(child)"></article-dropdown>
+          </div>
         </template>
       </div>
     </div>

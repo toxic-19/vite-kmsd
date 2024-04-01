@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { defineEmits } from 'vue'
-const emit = defineEmits(['reDocName'])
+const emit = defineEmits(['reDocName', 'delete'])
 
 const reName = () => {
   emit('reDocName')
-  console.log('点击')
+}
+const deleteArticle = () => {
+  emit('delete')
 }
 </script>
 
@@ -16,10 +18,16 @@ const reName = () => {
       </a>
       <template #overlay>
         <a-menu>
-          <a-menu-item @click.prevent="reName()">
+          <a-menu-item @click.prevent="reName">
             <div class="flex">
               <SvgIcon name="edit" width="13px" height="13px"></SvgIcon>
               <span>重命名</span>
+            </div>
+          </a-menu-item>
+          <a-menu-item @click.prevent="deleteArticle">
+            <div class="flex">
+              <SvgIcon name="delete" width="13px" height="13px"></SvgIcon>
+              <span>删除</span>
             </div>
           </a-menu-item>
         </a-menu>

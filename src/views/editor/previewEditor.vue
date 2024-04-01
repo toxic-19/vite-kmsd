@@ -53,7 +53,9 @@ const initOutline = () => {
           currentElement.classList.remove('vditor-outline__item--current')
         }
         let index = i > 0 ? i : 0
-        document.querySelector('span[data-target-id="' + toc[index].id + '"]').classList.add('vditor-outline__item--current')
+        document
+          .querySelector('span[data-target-id="' + toc[index].id + '"]')
+          .classList.add('vditor-outline__item--current')
         break
       }
     }

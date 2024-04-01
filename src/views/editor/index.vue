@@ -39,7 +39,18 @@ const getArticleContent = async (articleId: number) => {
   await getTagsName(articleId)
 }
 const tagsList = ref<Tag[]>([])
-const colors = ref(['#4a6288', '#80abd5', '#aecfe2', '#bab3c3', '#c6c9d2', '#a3acbc', '#ff5900', '#f8c01a', '#74bb8a', '#08521f'])
+const colors = ref([
+  '#4a6288',
+  '#80abd5',
+  '#aecfe2',
+  '#bab3c3',
+  '#c6c9d2',
+  '#a3acbc',
+  '#ff5900',
+  '#f8c01a',
+  '#74bb8a',
+  '#08521f',
+])
 const getTagsName = async (articleId: number) => {
   const { data } = await getTagsById({ articleId })
   tagsList.value = data
@@ -66,7 +77,9 @@ watch(
       <div class="doc-info">
         <div class="info-title">{{ docName }}</div>
         <div class="info-tags">
-          <a-tag :color="colors[Math.floor(Math.random() * colors.length)]" v-for="tag in tagsList" :key="tag.tagId">{{ tag.tagName }}</a-tag>
+          <a-tag :color="colors[Math.floor(Math.random() * colors.length)]" v-for="tag in tagsList" :key="tag.tagId">
+            {{ tag.tagName }}
+          </a-tag>
         </div>
       </div>
       <div class="doc-btn">
