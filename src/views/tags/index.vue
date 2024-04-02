@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { getCurrentInstance, onMounted, reactive, ref, watch } from 'vue'
 import { getTagList } from '@/api/tag'
 import { Article, Tag } from './contant.ts'
 import { getArticleByTagId } from '@/api/article'
@@ -9,16 +9,17 @@ import 'highlight.js/styles/foundation.css'
 import { useRandomColorStore } from '@/stores/colors'
 const store = useRandomColorStore()
 // 获取tag列表
-const tagList = ref<Array<Tag>>([])
+const showTagList = ref<Array<Tag>>([])
+const allTagList = ref<Array<Tag>>([])
 const selectedTagId = ref<number>()
+let savedList = JSON.parse(localStorage.getItem('checkedTagList') as string)
 const getTagsList = async () => {
+  const savedList = JSON.parse(localStorage.getItem('checkedTagList') as string)
   const { data } = await getTagList()
-  tagList.value = data
+  allTagList.value = data
+  showTagList.value = data?.filter((item) => savedList.includes(item.tagName))
   selectTag(data[0])
-  treeData.value = data?.map((item) => ({
-    title: item.tagName,
-    key: item.id,
-  }))
+  treeData.value = data.map((item) => item.tagName)
 }
 const articleList = ref<Array<Article>>([])
 const selectTag = (item: Tag) => {
@@ -46,18 +47,34 @@ const toHtml = (value: string) => {
 const colorsList = ref<string[]>([])
 
 // 树选择展示
-const treeData = ref<Array<{ title: string; key: number }>>([])
-const checkedKeys = ref<number[]>([])
-const checkAll = () => {
-  const keys = treeData.value.map((item) => item.key)
-  checkedKeys.value = keys
+const treeData = ref<Array<string | undefined>>([])
+const visible = ref<boolean>(false)
+const state = reactive({
+  indeterminate: true,
+  checkAll: false,
+  checkedList: savedList || [],
+})
+const onCheckAllChange = (e: any) => {
+  Object.assign(state, {
+    checkedList: e.target.checked ? treeData.value : [],
+    indeterminate: false,
+  })
 }
-const onCheck = (keys: Array<number>) => {
-  checkedKeys.value = keys
+watch(
+  () => state.checkedList,
+  (val) => {
+    state.indeterminate = !!val.length && val.length < treeData.value.length
+    state.checkAll = val.length === treeData.value.length
+    localStorage.setItem('checkedTagList', JSON.stringify(state.checkedList))
+    getTagsList()
+  },
+)
+const dropdownClick = () => {
+  visible.value = true
 }
 onMounted(async () => {
   await getTagsList()
-  store.getColors(tagList.value.length)
+  store.getColors(allTagList.value.length)
   colorsList.value = store.colorsList
 })
 </script>
@@ -66,7 +83,7 @@ onMounted(async () => {
   <div class="tags">
     <div
       class="tag-item"
-      v-for="(tag, index) in tagList"
+      v-for="(tag, index) in showTagList"
       :key="tag.id"
       :class="{ 'tag-active': tag.id === selectedTagId }"
       :style="{ 'background-color': colorsList[index] }"
@@ -74,15 +91,25 @@ onMounted(async () => {
     >
       {{ tag.tagName }}
     </div>
-  </div>
-  <div>
-    <a-button @click="checkAll">全选</a-button>
-    <a-tree v-model:checkedKeys="checkedKeys" checkable multiple :tree-data="treeData" @check="onCheck">
-      <template #title="{ title, key }">
-        <span v-if="key === '1'" style="color: #1890ff">{{ title }}</span>
-        <template v-else>{{ title }}</template>
-      </template>
-    </a-tree>
+    <div class="dropdown">
+      <a-dropdown v-model:open="visible" placement="bottom">
+        <a class="ant-dropdown-link" @click.prevent>
+          <SvgIcon name="choose-tag" width="30px" height="30px"></SvgIcon>
+        </a>
+        <template #overlay>
+          <div class="select-box" @click="dropdownClick">
+            <a-checkbox
+              v-model:checked="state.checkAll"
+              :indeterminate="state.indeterminate"
+              @change="onCheckAllChange"
+            >
+              Show all
+            </a-checkbox>
+            <a-checkbox-group v-model:value="state.checkedList" :options="treeData" />
+          </div>
+        </template>
+      </a-dropdown>
+    </div>
   </div>
   <div class="article-content">
     <div class="doc-item" v-for="doc in articleList" :key="doc.id">
@@ -133,7 +160,7 @@ onMounted(async () => {
     text-align: center;
     font-size: 12px;
     padding: 4px 12px;
-    margin: 6px 4px;
+    margin: 6px 10px;
     border: 1px solid transparent;
     border-radius: 6px;
     cursor: pointer;
@@ -145,8 +172,6 @@ onMounted(async () => {
       font-weight: bold;
       font-size: 13px;
       transform: scale(1.2);
-      margin-left: 20px;
-      margin-right: 20px;
     }
   }
 }
@@ -246,5 +271,31 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.dropdown {
+  margin-left: auto;
+  align-self: end;
+}
+.select-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 6px;
+  width: 200px;
+  height: 300px;
+  padding: 10px 0;
+  overflow-y: scroll;
+  z-index: 99;
+  background-color: #ffffff;
+  border: 1px solid rgba(76, 99, 140, 0.4);
+  border-radius: 6px;
+  @include scrollBar;
+}
+:deep(.ant-checkbox-wrapper) {
+  width: 150px;
+}
+:deep(.ant-checkbox-group) {
+  flex-direction: column;
+  row-gap: 6px;
 }
 </style>
