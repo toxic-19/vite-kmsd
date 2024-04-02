@@ -7,7 +7,7 @@ export const useKnowledgeStore = defineStore(
   () => {
     const currentKnowName = ref<string>('')
     const currentKnowId = ref<number>(0)
-    function setCurrent(id, name) {
+    function setCurrent(id: number, name: string) {
       currentKnowId.value = id
       currentKnowName.value = name
     }

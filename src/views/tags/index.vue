@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getCurrentInstance, onMounted, reactive, ref, watch } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 import { getTagList } from '@/api/tag'
 import { Article, Tag } from './contant.ts'
 import { getArticleByTagId } from '@/api/article'

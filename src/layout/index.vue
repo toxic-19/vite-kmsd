@@ -1,41 +1,30 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-const router = useRouter()
-const menuList = [
-  { id: 0, name: '主页', icon: 'home', path: '/home' },
-  { id: 1, name: '知识库', icon: 'knowledgeBase', path: '/knowledge' },
-  { id: 2, name: '文档', icon: 'tags', path: '/tags' },
-]
-const activeCategory = ref(0) // 当前目录激活
-const clickMenu = (menu) => {
-  activeCategory.value = menu.id
-  router.push(menu.path)
-}
+import HeaderBar from './HeaderBar.vue'
 </script>
 
 <template>
   <div class="layout">
-    <div class="left">
-      <div class="top-icon">
-        <img src="/vite.svg" width="24px" alt="" />
-        <span>KMSD</span>
-      </div>
-      <ul class="catalog">
-        <li
-          v-for="menu in menuList"
-          :key="menu.id"
-          :class="{ active: activeCategory === menu.id }"
-          @click="clickMenu(menu)"
-        >
-          <SvgIcon :name="menu.icon" width="20px" height="20px"></SvgIcon>
-          <span>{{ menu.name }}</span>
-        </li>
-      </ul>
-      <div class="avatar">
-        <img src="@/assets/avatar.jpg" alt="" />
-      </div>
-    </div>
+    <header-bar></header-bar>
+    <!--    <div class="left">-->
+    <!--      <div class="top-icon">-->
+    <!--        <img src="/vite.svg" width="24px" alt="" />-->
+    <!--        <span>KMSD</span>-->
+    <!--      </div>-->
+    <!--      <ul class="catalog">-->
+    <!--        <li-->
+    <!--          v-for="menu in menuList"-->
+    <!--          :key="menu.id"-->
+    <!--          :class="{ active: activeCategory === menu.id }"-->
+    <!--          @click="clickMenu(menu)"-->
+    <!--        >-->
+    <!--          <SvgIcon :name="menu.icon" width="20px" height="20px"></SvgIcon>-->
+    <!--          <span>{{ menu.name }}</span>-->
+    <!--        </li>-->
+    <!--      </ul>-->
+    <!--      <div class="avatar">-->
+    <!--        <img src="@/assets/avatar.jpg" alt="" />-->
+    <!--      </div>-->
+    <!--    </div>-->
     <div class="content">
       <router-view></router-view>
     </div>
@@ -44,7 +33,7 @@ const clickMenu = (menu) => {
 
 <style scoped lang="scss">
 .layout {
-  display: flex;
+  //display: flex;
   height: 100vh;
 }
 .left {
@@ -91,8 +80,9 @@ const clickMenu = (menu) => {
   }
 }
 .content {
-  height: 100vh;
-  width: calc(100vw - 100px);
+  height: calc(100vh - 50px);
+  width: 100%;
   overflow-y: scroll;
+  @include scrollBar;
 }
 </style>
