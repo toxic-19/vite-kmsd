@@ -73,7 +73,7 @@ onMounted(() => {
           <a-tooltip title="刷新">
             <SvgIcon name="refresh" width="16px" height="16px" @click.stop="getTreeData"></SvgIcon>
           </a-tooltip>
-          <a-dropdown placement="bottom">
+          <a-dropdown placement="bottom" :arrow="{ pointAtCenter: true }">
             <a class="ant-dropdown-link" @click.prevent>
               <SvgIcon name="add" width="14px" height="14px" class="add-icon group-icon"></SvgIcon>
             </a>
@@ -81,13 +81,13 @@ onMounted(() => {
               <a-menu>
                 <a-menu-item @click.stop="addArticleInKnow">
                   <div class="flex">
-                    <SvgIcon name="md" width="13px" height="13px"></SvgIcon>
+                    <SvgIcon name="addMd" width="13px" height="13px"></SvgIcon>
                     <span>文档</span>
                   </div>
                 </a-menu-item>
                 <a-menu-item @click.stop="addGroupInKnow">
                   <div class="flex">
-                    <SvgIcon name="group" width="13px" height="13px"></SvgIcon>
+                    <SvgIcon name="folder" width="13px" height="13px"></SvgIcon>
                     <span>分组</span>
                   </div>
                 </a-menu-item>

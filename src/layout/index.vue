@@ -5,26 +5,6 @@ import HeaderBar from './HeaderBar.vue'
 <template>
   <div class="layout">
     <header-bar></header-bar>
-    <!--    <div class="left">-->
-    <!--      <div class="top-icon">-->
-    <!--        <img src="/vite.svg" width="24px" alt="" />-->
-    <!--        <span>KMSD</span>-->
-    <!--      </div>-->
-    <!--      <ul class="catalog">-->
-    <!--        <li-->
-    <!--          v-for="menu in menuList"-->
-    <!--          :key="menu.id"-->
-    <!--          :class="{ active: activeCategory === menu.id }"-->
-    <!--          @click="clickMenu(menu)"-->
-    <!--        >-->
-    <!--          <SvgIcon :name="menu.icon" width="20px" height="20px"></SvgIcon>-->
-    <!--          <span>{{ menu.name }}</span>-->
-    <!--        </li>-->
-    <!--      </ul>-->
-    <!--      <div class="avatar">-->
-    <!--        <img src="@/assets/avatar.jpg" alt="" />-->
-    <!--      </div>-->
-    <!--    </div>-->
     <div class="content">
       <router-view></router-view>
     </div>
@@ -82,6 +62,7 @@ import HeaderBar from './HeaderBar.vue'
 .content {
   height: calc(100vh - 50px);
   width: 100%;
+  background-color: rgba(206, 216, 228, 0.4);
   overflow-y: scroll;
   @include scrollBar;
 }

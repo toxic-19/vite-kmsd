@@ -1,4 +1,5 @@
 export const ERROR_STATUS_MAP = new Map([
+  [0, '参数错误或是参数缺少'],
   [400, 'Request Error(400)'],
   [401, 'token is out of date(401)'],
   [403, 'Authentication(403)'],

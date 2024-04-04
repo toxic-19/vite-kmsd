@@ -22,7 +22,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-for="item in allList" :key="item.title">
+  <div class="knowBase-item" v-for="item in allList" :key="item.title">
     <div class="knowBase-title">{{ item.title }}</div>
     <div class="flex-container" v-if="item.list.length">
       <template v-for="base in item.list" :key="base.knowId">
@@ -34,6 +34,10 @@ onMounted(() => {
 </template>
 
 <style scoped lang="scss">
+.knowBase-item {
+  width: 80%;
+  margin: 0 auto;
+}
 .knowBase-title {
   padding: 24px 0 0 24px;
   font-size: 16px;

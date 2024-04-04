@@ -9,11 +9,9 @@ enum API {
   article_list_url = '/article/getByTagId', // 通过tagId获取文章列表
 }
 export const getContentById = (params: GetContentForm) => axiosInstance.get<any>(API.article_content_url, { params })
-export const getTagsById = (params: GetContentForm) =>
-  axiosInstance.get<any, TagResData>(API.article_tagsName_url, { params })
+export const getTagsById = (params: GetContentForm) => axiosInstance.get<any, TagResData>(API.article_tagsName_url, { params })
 export const postArticle = (data: CreateArticle) => axiosInstance.post<any, CreateResData>(API.article_create_url, data)
 export const updateArticle = (articleId: number, data: UpdateArticle) =>
   axiosInstance.post(`${API.article_update_url}/${articleId}`, data)
-export const deleteArticle = (params: { articleId: number }) =>
-  axiosInstance.post(API.article_delete_url, {}, { params })
+export const deleteArticle = (params: { articleId: number }) => axiosInstance.post(API.article_delete_url, {}, { params })
 export const getArticleByTagId = (params: { tagId: number }) => axiosInstance.get<any>(API.article_list_url, { params })

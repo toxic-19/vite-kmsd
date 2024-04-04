@@ -5,6 +5,7 @@ const router = useRouter()
 const store = useBreadcrumbsStore()
 const menuList = [
   { id: 0, name: '主页', icon: 'home', path: '/home' },
+  { id: 3, name: '项目', icon: 'project', path: '/project' },
   { id: 1, name: '知识库', icon: 'knowledgeBase', path: '/knowledge' },
   { id: 2, name: '文档', icon: 'tags', path: '/tags' },
 ]
@@ -17,8 +18,33 @@ const changeTab = (path) => {
 <template>
   <div class="header">
     <a-tabs v-model:activeKey="store.currentPath" @change="changeTab">
-      <a-tab-pane v-for="tab in menuList" :key="tab.path" :tab="tab.name"></a-tab-pane>
+      <a-tab-pane v-for="tab in menuList" :key="tab.path">
+        <template #tab>
+          <span style="display: flex; font-size: 15px; align-items: center">
+            <SvgIcon :name="tab.icon" style="margin-right: 8px"></SvgIcon>
+            {{ tab.name }}
+          </span>
+        </template>
+      </a-tab-pane>
     </a-tabs>
+    <div class="info">
+      <a-dropdown style="margin-left: 20px" placement="bottom" :arrow="{ pointAtCenter: true }">
+        <div class="title">
+          <span>toxic1910</span>
+          <img class="avatar" src="@/assets/avatar.jpg" />
+        </div>
+        <template #overlay>
+          <a-menu>
+            <a-menu-item>
+              <div style="display: flex; justify-content: space-around">
+                <SvgIcon name="person"></SvgIcon>
+                个人中心
+              </div>
+            </a-menu-item>
+          </a-menu>
+        </template>
+      </a-dropdown>
+    </div>
   </div>
 </template>
 
@@ -32,13 +58,41 @@ const changeTab = (path) => {
   justify-content: center;
   font-size: 16px;
 }
-
-:deep(.ant-tabs-tab) {
-  padding: 15px 0 !important;
-  margin: 0 32px;
+.info {
+  position: absolute;
+  right: 28px;
+  top: 12px;
+  .title {
+    height: 30px;
+    display: flex;
+    align-items: center;
+    img {
+      border-radius: 50%;
+      width: 26px;
+      height: 26px;
+      margin: 0 10px;
+    }
+    span {
+      font-size: 16px;
+    }
+  }
 }
-:deep(.ant-tabs .ant-tabs-tab-btn) {
-  font-size: 15px;
+:deep(.ant-tabs > .ant-tabs-nav) {
+  margin-bottom: 0;
+  height: 50px;
+}
+:deep(.ant-tabs > .ant-tabs-nav .ant-tabs-nav-wrap) {
+  padding-top: 10px;
+}
+:deep(.ant-tabs-nav) {
+  &::before {
+    content: '';
+    border-bottom: none;
+  }
+}
+:deep(.ant-tabs-tab) {
+  padding: 6px 0 !important;
+  margin: 0 32px;
 }
 :deep(.ant-tabs .ant-tabs-tab + .ant-tabs-tab) {
   margin: 0 32px;

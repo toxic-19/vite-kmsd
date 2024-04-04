@@ -132,13 +132,7 @@ watch(props, (newVal) => {
     </div>
     <div class="group-content" v-else>
       <div class="title">
-        <SvgIcon
-          :name="item.iconName"
-          width="12px"
-          height="12px"
-          class="group-icon"
-          @click="changeIcon(item)"
-        ></SvgIcon>
+        <SvgIcon :name="item.iconName" width="12px" height="12px" class="group-icon" @click="changeIcon(item)"></SvgIcon>
         <SvgIcon name="folder"></SvgIcon>
         <div class="name" v-if="reGroupId !== item.groupId">{{ item.groupName }}</div>
         <a-input v-else v-focus v-model:value="reGroupTitle" @pressEnter="updateGroup"></a-input>

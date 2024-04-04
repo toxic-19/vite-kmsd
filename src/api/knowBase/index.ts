@@ -1,12 +1,5 @@
 import axiosInstance from '@/utils/request'
-import {
-  createGroupData,
-  CreateKnowForm,
-  GroupResponseData,
-  knowLedgeRespData,
-  updateGroupData,
-  UpdateTopForm,
-} from './type'
+import { createGroupData, CreateKnowForm, GroupResponseData, knowLedgeRespData, updateGroupData, UpdateTopForm } from './type'
 enum API {
   knowledge_list_url = '/knowledge-base', // 获取全部知识库
   knowledge_changeTop_url = '/knowledge-base/changeTop', // 知识库的置顶

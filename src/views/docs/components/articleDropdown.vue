@@ -12,7 +12,7 @@ const deleteArticle = () => {
 
 <template>
   <div class="operate">
-    <a-dropdown placement="bottom">
+    <a-dropdown placement="bottom" :arrow="{ pointAtCenter: true }">
       <a class="ant-dropdown-link" @click.prevent>
         <SvgIcon name="operate" width="14px" height="14px" class="operate-icon group-icon"></SvgIcon>
       </a>

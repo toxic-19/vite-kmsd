@@ -20,6 +20,10 @@ const routes = <RouteRecordRaw[]>[
         path: '/tags',
         component: () => import('@/views/tags/index.vue'),
       },
+      {
+        path: '/project',
+        component: () => import('@/views/project/index.vue'),
+      },
     ],
   },
   {

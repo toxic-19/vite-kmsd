@@ -12,7 +12,7 @@ const addDoc = () => {
 
 <template>
   <div class="operate">
-    <a-dropdown placement="bottom">
+    <a-dropdown placement="bottom" :arrow="{ pointAtCenter: true }">
       <a class="ant-dropdown-link" @click.prevent>
         <SvgIcon name="add" width="14px" height="14px" class="add-icon group-icon"></SvgIcon>
       </a>

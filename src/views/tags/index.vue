@@ -77,6 +77,10 @@ onMounted(async () => {
   store.getColors(allTagList.value.length)
   colorsList.value = store.colorsList
 })
+
+const targetFn = () => {
+  return document.querySelector('.content') // 监听滚动的容器
+}
 </script>
 
 <template>
@@ -92,17 +96,13 @@ onMounted(async () => {
       {{ tag.tagName }}
     </div>
     <div class="dropdown">
-      <a-dropdown v-model:open="visible" placement="bottom">
+      <a-dropdown v-model:open="visible" placement="bottom" :arrow="{ pointAtCenter: true }">
         <a class="ant-dropdown-link" @click.prevent>
           <SvgIcon name="choose-tag" width="30px" height="30px"></SvgIcon>
         </a>
         <template #overlay>
           <div class="select-box" @click="dropdownClick">
-            <a-checkbox
-              v-model:checked="state.checkAll"
-              :indeterminate="state.indeterminate"
-              @change="onCheckAllChange"
-            >
+            <a-checkbox v-model:checked="state.checkAll" :indeterminate="state.indeterminate" @change="onCheckAllChange">
               Show all
             </a-checkbox>
             <a-checkbox-group v-model:value="state.checkedList" :options="treeData" />
@@ -125,19 +125,21 @@ onMounted(async () => {
         </div>
       </div>
       <div class="short-content">
-        {{ toHtml(doc.content) }}
+        <!--        {{ toHtml(doc.content) }}-->
+        {{ doc.content }}
       </div>
       <div class="other">
         <div class="create-time time">
           <SvgIcon name="createdAt" width="18px" height="18px"></SvgIcon>
-          {{ doc.createdAt }}
+          {{ new Date(doc.createdAt).toLocaleString() }}
         </div>
         <div class="update-time time">
           <SvgIcon name="updatedAt" width="18px" height="18px"></SvgIcon>
-          {{ doc.updatedAt }}
+          {{ new Date(doc.updatedAt).toLocaleString() }}
         </div>
       </div>
     </div>
+    <a-back-top :target="targetFn" :visibilityHeight="50" />
   </div>
   <div class="empty-status" v-if="!articleList.length">
     <empty-status></empty-status>
@@ -256,7 +258,6 @@ onMounted(async () => {
       display: flex;
       .time {
         display: flex;
-        align-items: center;
         height: 20px;
         margin-right: 20px;
       }

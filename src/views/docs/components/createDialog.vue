@@ -174,14 +174,7 @@ defineExpose({
           </a-select>
         </a-form-item>
       </a-form>
-      <a-form
-        v-else
-        ref="createDocRef"
-        :model="formState"
-        :rules="rules"
-        :label-col="labelCol"
-        :wrapper-col="wrapperCol"
-      >
+      <a-form v-else ref="createDocRef" :model="formState" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-form-item label="分组标题" name="groupName">
           <a-input v-model:value="formState.groupName" placeholder="请输入分组标题" />
         </a-form-item>
