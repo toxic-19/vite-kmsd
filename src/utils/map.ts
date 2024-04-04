@@ -11,3 +11,8 @@ export const ERROR_STATUS_MAP = new Map([
   [502, 'Network Error(502)'],
   [503, '服务不可用(503)'],
 ])
+
+const progressTemplates = {
+  '1': ['产品评审', ['前端', '后端'], '联调', '测试', '验收'],
+}
+export const TEMPLATE_MAP = new Map([[1, progressTemplates['1']]])
