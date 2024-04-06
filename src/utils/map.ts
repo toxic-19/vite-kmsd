@@ -13,6 +13,10 @@ export const ERROR_STATUS_MAP = new Map([
 ])
 
 const progressTemplates = {
-  '1': ['产品评审', ['前端', '后端'], '联调', '测试', '验收'],
+  '1': ['产品评审', '前端', '后端', '联调', '测试', '验收'],
+  '2': ['市场调研', '产品定义', '设计原型', '开发测试', '用户测试', '产品发布'],
 }
-export const TEMPLATE_MAP = new Map([[1, progressTemplates['1']]])
+export const TEMPLATE_MAP = new Map([
+  [1, progressTemplates['1']],
+  [2, progressTemplates['2']],
+])

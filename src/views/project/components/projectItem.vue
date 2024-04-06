@@ -63,7 +63,7 @@ const deleteProject = () => {
       <a-card-meta>
         <template #title>
           <template v-if="reNameId !== projectContent.id">{{ projectContent.projectName }}</template>
-          <a-input v-else type="text" v-model:value="reNameValue" @pressEnter="sureUpdateName"></a-input>
+          <a-input v-else type="text" autofocus v-model:value="reNameValue" @pressEnter="sureUpdateName"></a-input>
         </template>
         <template #description>创建时间：{{ showCreateOrUpdateTime(projectContent.createdAt) }}</template>
       </a-card-meta>
@@ -128,7 +128,7 @@ const deleteProject = () => {
 <style lang="scss" scoped>
 .card-box {
   flex: 1;
-  max-width: 310px;
+  max-width: 276px;
   min-width: 230px;
   height: 310px;
   position: relative;

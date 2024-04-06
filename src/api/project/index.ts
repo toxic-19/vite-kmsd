@@ -1,5 +1,11 @@
 import axiosInstance from '@/utils/request.ts'
-import { CreateProjectBody, CreateProjectResponseData, ProjectResponseData, UpdateProjectQuery } from '@/api/project/type.ts'
+import {
+  CreateProjectBody,
+  CreateProjectResponseData,
+  GetAllProjectQuery,
+  ProjectResponseData,
+  UpdateProjectQuery,
+} from '@/api/project/type.ts'
 
 enum API {
   project_create_url = '/project/create', // 创建一个新的项目
@@ -8,5 +14,5 @@ enum API {
 }
 export const postCreateProject = (data: CreateProjectBody) =>
   axiosInstance.post<any, CreateProjectResponseData>(API.project_create_url, data)
-export const getProjectList = () => axiosInstance.get<any, ProjectResponseData>(API.project_list_url)
+export const getProjectList = (params: GetAllProjectQuery) => axiosInstance.get<any, ProjectResponseData>(API.project_list_url, { params })
 export const postUpdateProject = (params: UpdateProjectQuery) => axiosInstance.post(API.project_update_name_url, {}, { params })

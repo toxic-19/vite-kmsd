@@ -1,5 +1,8 @@
 import { ResponseData } from '@/api'
-
+export interface GetAllProjectQuery {
+  isHangUp: string
+  projectName: string
+}
 export interface CreateProjectBody {
   projectName: string
   projectCover?: string
@@ -14,6 +17,7 @@ export type OneProject = {
   projectName: string
   projectCover: string
   processTemplate: number
+  isHangUp: boolean
   updatedAt: string
   createdAt: string
   process: Array<string | Array<string>>
