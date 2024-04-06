@@ -3,6 +3,7 @@ import { ref, watch } from 'vue'
 import { VxeTableInstance } from 'vxe-table'
 import { RowVO } from '@/api/project/type.ts'
 const props = defineProps(['tableData'])
+const emit = defineEmits(['addOne'])
 const tableData = ref(props.tableData)
 watch(
   () => props.tableData,
@@ -20,19 +21,17 @@ const taskStatusList = ref([
   { label: '已关闭', value: 4 },
 ])
 const formatSex = (value: string) => {
-  console.log(value, '================================')
   return taskStatusList.value.find((item) => value === item.value)?.label
 }
 const xTable = ref<VxeTableInstance>()
 // 临时显示在表格中
-const insertEvent = async (row?: RowVO | number) => {
+const insertEvent = async () => {
   const $table = xTable.value
-  console.log(row)
   if ($table) {
     const record = {
       taskName: '',
       taskStatus: 0,
-      dateStart: '2021-01-01',
+      dateStart: '',
     }
     const { row: newRow } = await $table.insertAt(record, -1)
     await $table.setEditCell(newRow, 'taskName')
@@ -43,15 +42,19 @@ const getInsertEvent = () => {
     console.log(xTable.value?.getInsertRecords())
   }
 }
-const saveOneTask = (row) => {
-  console.log(row)
+const saveOneTask = async (row) => {
+  emit('addOne', row)
 }
 </script>
 <template>
   <div class="table">
     <div class="add-icon">
-      <a-button type="dashed" @click="insertEvent">新增任务</a-button>
-      <a-button type="dashed" @click="getInsertEvent">批量保存</a-button>
+      <a-tooltip title="新建任务">
+        <SvgIcon name="add-task" width="20px" height="20px" @click="insertEvent"></SvgIcon>
+      </a-tooltip>
+      <a-tooltip title="批量保存">
+        <SvgIcon name="save-more" width="20px" height="20px" @click="getInsertEvent"></SvgIcon>
+      </a-tooltip>
     </div>
     <vxe-table
       ref="xTable"
@@ -59,6 +62,7 @@ const saveOneTask = (row) => {
       border="inner"
       show-overflow
       keep-source
+      min-height="400px"
       :data="tableData"
       :column-config="{ resizable: true }"
       :edit-config="{ trigger: 'dblclick', mode: 'cell', showStatus: true, showIcon: false }"
@@ -96,7 +100,7 @@ const saveOneTask = (row) => {
       </vxe-column>
       <vxe-column title="操作" width="100" show-overflow>
         <template #default="{ row }">
-          <a-button type="dashed" @click="saveOneTask(row)">保存</a-button>
+          <a-button type="dashed" @click="saveOneTask(row)">{{ row?.id ? '保存' : '新建' }}</a-button>
         </template>
       </vxe-column>
       <template v-slot:empty>
@@ -117,8 +121,13 @@ const saveOneTask = (row) => {
 }
 .add-icon {
   position: absolute;
-  top: -40px;
+  top: -30px;
   right: 0;
+  display: flex;
+  grid-gap: 20px;
+  .svg-icon {
+    cursor: pointer;
+  }
 }
 :deep(.vxe-table--render-default.vxe-editable .vxe-body--column) {
   line-height: 48px;

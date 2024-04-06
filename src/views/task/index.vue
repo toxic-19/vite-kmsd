@@ -3,9 +3,10 @@ import { useRouter } from 'vue-router'
 import { useBreadcrumbsStore } from '@/stores/breadcrumbs.ts'
 import { storeToRefs } from 'pinia'
 import EditTable from './editTable.vue'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { RowVO } from '@/api/project/type.ts'
-import { getTaskListByName } from '@/api/project'
+import { getTaskListByName, postCreateOneTask } from '@/api/project'
+import { message } from 'ant-design-vue'
 const store = useBreadcrumbsStore()
 const router = useRouter()
 const { currentProject } = storeToRefs(store)
@@ -20,6 +21,9 @@ const tableData = ref<RowVO[]>([
     dateEnd: '',
   },
 ])
+onMounted(() => {
+  getTaskList(activeProcess.value, currentProject.value.id)
+})
 const changeProcess = (name: string) => {
   activeProcess.value = name
   getTaskList(name, currentProject.value.id)
@@ -27,7 +31,17 @@ const changeProcess = (name: string) => {
 const getTaskList = async (processName: string, projectId: number) => {
   const { data } = await getTaskListByName({ processName, projectId })
   tableData.value = data
-  console.log(tableData.value)
+}
+const createOneTask = async (row) => {
+  const { code } = await postCreateOneTask({
+    ...row,
+    projectId: currentProject.value.id,
+    processName: activeProcess.value,
+  })
+  if (code === 200) {
+    message.success('创建成功')
+  }
+  getTaskList(activeProcess.value, currentProject.value.id)
 }
 </script>
 
@@ -61,7 +75,7 @@ const getTaskList = async (processName: string, projectId: number) => {
     </div>
   </div>
   <div class="task-panel">
-    <edit-table :table-data="tableData"></edit-table>
+    <edit-table :table-data="tableData" @add-one="createOneTask"></edit-table>
   </div>
 </template>
 
