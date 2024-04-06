@@ -24,6 +24,10 @@ const routes = <RouteRecordRaw[]>[
         path: '/project',
         component: () => import('@/views/project/index.vue'),
       },
+      {
+        path: '/task/:projectId',
+        component: () => import('@/views/task/index.vue'),
+      },
     ],
   },
   {

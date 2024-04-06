@@ -4,6 +4,9 @@ import { OneProject } from '@/api/project/type.ts'
 import { showCreateOrUpdateTime } from '@/utils/constant.ts'
 import { postUpdateProject } from '@/api/project'
 import { message } from 'ant-design-vue'
+import { useRouter } from 'vue-router'
+import { useBreadcrumbsStore } from '@/stores/breadcrumbs.ts'
+const store = useBreadcrumbsStore()
 const props = defineProps(['project'])
 const emit = defineEmits(['refresh'])
 const projectContent = computed<OneProject>(() => {
@@ -42,10 +45,15 @@ const sureUpdateName = async () => {
 const deleteProject = () => {
   console.log('delete')
 }
+const router = useRouter()
+const toTaskPage = () => {
+  router.push(`/task/${projectContent.value.id}`)
+  store.setProject(projectContent.value)
+}
 </script>
 <template>
   <div class="card-box">
-    <a-card hoverable class="card">
+    <a-card hoverable class="card" @click="toTaskPage">
       <template #cover>
         <img alt="example" src="@/assets/projectCover.png" />
       </template>

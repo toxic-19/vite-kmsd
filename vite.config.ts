@@ -4,6 +4,7 @@ import path from 'path'
 import { UserConfigExport } from 'vite'
 import { AntDesignVueResolver } from 'unplugin-vue-components/dist/resolvers'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
+import { createStyleImportPlugin, VxeTableResolve } from 'vite-plugin-style-import'
 // import { viteMockServe } from 'vite-plugin-mock'
 
 // https://vitejs.dev/config/
@@ -20,6 +21,13 @@ export default (): UserConfigExport => {
           }),
         ],
       }),
+      // VxeTable 组件配置
+      createStyleImportPlugin({
+        resolves: [VxeTableResolve()],
+      }),
+      // createStyleImportPlugin({
+      //   resolvers: [VxeTableResolve()],
+      // }),
       // SVG icons 配置
       createSvgIconsPlugin({
         iconDirs: [path.resolve(process.cwd(), 'src/assets/svg')],
