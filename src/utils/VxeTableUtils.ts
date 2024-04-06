@@ -6,7 +6,7 @@ import {
 
   // 表格功能
   // Filter,
-  // Edit,
+  Edit,
   // Menu,
   // Export,
   // Keyboard,
@@ -29,10 +29,10 @@ import {
   // RadioGroup,
   // RadioButton,
   // Switch,
-  // Input,
-  // Select,
+  Input,
+  Select,
   // Optgroup,
-  // Option,
+  Option,
   // Textarea,
   // Button,
   // Modal,
@@ -63,6 +63,7 @@ function useTable(app: App) {
   app
     .use(Icon)
     .use(Column)
+    .use(Edit)
     // .use(Colgroup)
     // .use(Grid)
     // .use(Tooltip)
@@ -77,10 +78,10 @@ function useTable(app: App) {
     // .use(RadioGroup)
     // .use(RadioButton)
     // .use(Switch)
-    // .use(Input)
-    // .use(Select)
+    .use(Input)
+    .use(Select)
     // .use(Optgroup)
-    // .use(Option)
+    .use(Option)
     // .use(Textarea)
     // .use(Button)
     // .use(Modal)

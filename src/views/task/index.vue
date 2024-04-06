@@ -3,10 +3,32 @@ import { useRouter } from 'vue-router'
 import { useBreadcrumbsStore } from '@/stores/breadcrumbs.ts'
 import { storeToRefs } from 'pinia'
 import EditTable from './editTable.vue'
+import { ref } from 'vue'
+import { RowVO } from '@/api/project/type.ts'
+import { getTaskListByName } from '@/api/project'
 const store = useBreadcrumbsStore()
 const router = useRouter()
 const { currentProject } = storeToRefs(store)
-console.log(currentProject)
+const activeProcess = ref(currentProject.value?.process[0])
+const tableData = ref<RowVO[]>([
+  {
+    id: 10001,
+    taskName: 'Test1',
+    taskStatus: '',
+    days: 2,
+    dateStart: '',
+    dateEnd: '',
+  },
+])
+const changeProcess = (name: string) => {
+  activeProcess.value = name
+  getTaskList(name, currentProject.value.id)
+}
+const getTaskList = async (processName: string, projectId: number) => {
+  const { data } = await getTaskListByName({ processName, projectId })
+  tableData.value = data
+  console.log(tableData.value)
+}
 </script>
 
 <template>
@@ -18,13 +40,19 @@ console.log(currentProject)
       <div v-if="Array.isArray(item)" class="level"></div>
       <template v-if="Array.isArray(item)">
         <div style="display: flex; flex-direction: column; background-color: #ebeff4">
-          <div v-for="child in item" :key="child" class="text child">
+          <div
+            v-for="child in item"
+            :key="child"
+            class="text child"
+            :class="{ 'active-process': activeProcess === child }"
+            @click="changeProcess(child)"
+          >
             <div class="circle"></div>
             <div class="process-name">{{ child }}</div>
           </div>
         </div>
       </template>
-      <div v-else class="text">
+      <div v-else class="text" :class="{ 'active-process': activeProcess === item }" @click="changeProcess(item)">
         <div class="circle"></div>
         <div class="process-name">{{ item }}</div>
       </div>
@@ -33,7 +61,7 @@ console.log(currentProject)
     </div>
   </div>
   <div class="task-panel">
-    <edit-table></edit-table>
+    <edit-table :table-data="tableData"></edit-table>
   </div>
 </template>
 
@@ -74,6 +102,7 @@ console.log(currentProject)
     cursor: pointer;
     display: flex;
     align-items: center;
+    transition: all 0.6s;
     &.child {
       margin-bottom: 20px;
       &:last-child {
@@ -102,6 +131,14 @@ console.log(currentProject)
     height: 22px;
     font-size: 14px;
     font-weight: 300;
+  }
+  .active-process {
+    background-color: #65c48f;
+    color: #fff;
+    border-color: #ffffff;
+    .circle {
+      background-color: #495d81;
+    }
   }
 }
 :deep(.ant-page-header) {

@@ -1,158 +1,129 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-interface RowVO {
-  id: number
-  name: string
-  nickname: string
-  role: string
-  sex: string
-  sex2: string[]
-  num1: number
-  age: number
-  address: string
-  date12: string
-  date13: string
-}
-const tableData = ref<RowVO[]>([
-  {
-    id: 10001,
-    name: 'Test1',
-    nickname: 'T1',
-    role: 'Develop',
-    sex: '0',
-    sex2: ['0'],
-    num1: 40,
-    age: 28,
-    address: 'Shenzhen',
-    date12: '',
-    date13: '',
+import { ref, watch } from 'vue'
+import { VxeTableInstance } from 'vxe-table'
+import { RowVO } from '@/api/project/type.ts'
+const props = defineProps(['tableData'])
+const tableData = ref(props.tableData)
+watch(
+  () => props.tableData,
+  (newVal) => {
+    if (newVal) {
+      tableData.value = newVal
+    }
   },
-  {
-    id: 10002,
-    name: 'Test2',
-    nickname: 'T2',
-    role: 'Designer',
-    sex: '1',
-    sex2: ['0', '1'],
-    num1: 20,
-    age: 22,
-    address: 'Guangzhou',
-    date12: '',
-    date13: '2020-08-20',
-  },
-  {
-    id: 10003,
-    name: 'Test3',
-    nickname: 'T3',
-    role: 'Test',
-    sex: '0',
-    sex2: ['1'],
-    num1: 200,
-    age: 32,
-    address: 'Shanghai',
-    date12: '2020-09-10',
-    date13: '',
-  },
-  {
-    id: 10004,
-    name: 'Test4',
-    nickname: 'T4',
-    role: 'Designer',
-    sex: '1',
-    sex2: ['1'],
-    num1: 30,
-    age: 23,
-    address: 'Shenzhen',
-    date12: '',
-    date13: '2020-12-04',
-  },
+)
+const taskStatusList = ref([
+  { label: '刚发布', value: 0 },
+  { label: '未开始', value: 1 },
+  { label: '进行中', value: 2 },
+  { label: '已完成', value: 3 },
+  { label: '已关闭', value: 4 },
 ])
-
-const sexList1 = ref([
-  { label: '', value: '' },
-  { label: '男', value: '1' },
-  { label: '女', value: '0' },
-])
-
 const formatSex = (value: string) => {
-  if (value === '1') {
-    return '男'
-  }
-  if (value === '0') {
-    return '女'
-  }
-  return ''
+  console.log(value, '================================')
+  return taskStatusList.value.find((item) => value === item.value)?.label
 }
-
-const formatMultiSex = (values: string[]) => {
-  if (values) {
-    return values.map((val) => formatSex(val)).join(',')
+const xTable = ref<VxeTableInstance>()
+// 临时显示在表格中
+const insertEvent = async (row?: RowVO | number) => {
+  const $table = xTable.value
+  console.log(row)
+  if ($table) {
+    const record = {
+      taskName: '',
+      taskStatus: 0,
+      dateStart: '2021-01-01',
+    }
+    const { row: newRow } = await $table.insertAt(record, -1)
+    await $table.setEditCell(newRow, 'taskName')
   }
-  return ''
+}
+const getInsertEvent = () => {
+  if (xTable.value) {
+    console.log(xTable.value?.getInsertRecords())
+  }
+}
+const saveOneTask = (row) => {
+  console.log(row)
 }
 </script>
 <template>
-  <div>
+  <div class="table">
+    <div class="add-icon">
+      <a-button type="dashed" @click="insertEvent">新增任务</a-button>
+      <a-button type="dashed" @click="getInsertEvent">批量保存</a-button>
+    </div>
     <vxe-table
-      border
+      ref="xTable"
+      round
+      border="inner"
       show-overflow
+      keep-source
       :data="tableData"
       :column-config="{ resizable: true }"
-      :edit-config="{ trigger: 'dblclick', mode: 'cell' }"
+      :edit-config="{ trigger: 'dblclick', mode: 'cell', showStatus: true, showIcon: false }"
     >
       <vxe-column type="seq" width="60"></vxe-column>
-      <vxe-column field="name" title="Name" :edit-render="{ autofocus: '.vxe-input--inner' }">
+      <vxe-column field="taskName" title="任务名称" :edit-render="{ autofocus: '.vxe-input--inner' }">
         <template #edit="{ row }">
-          <vxe-input v-model="row.name" type="text"></vxe-input>
+          <vxe-input v-model="row.taskName" type="text"></vxe-input>
         </template>
       </vxe-column>
-      <vxe-column field="role" title="Role" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-input v-model="row.role" type="text" placeholder="请输入昵称"></vxe-input>
-        </template>
-      </vxe-column>
-      <vxe-column field="sex" title="Sex" :edit-render="{}">
+      <vxe-column field="taskStatus" title="任务状态" :edit-render="{}">
         <template #default="{ row }">
-          <span>{{ formatSex(row.sex) }}</span>
+          <span>{{ formatSex(row.taskStatus) }}</span>
         </template>
         <template #edit="{ row }">
-          <vxe-select v-model="row.sex" transfer>
-            <vxe-option v-for="item in sexList1" :key="item.value" :value="item.value" :label="item.label"></vxe-option>
+          <vxe-select v-model="row.taskStatus" transfer>
+            <vxe-option v-for="item in taskStatusList" :key="item.value" :value="item.value" :label="item.label"></vxe-option>
           </vxe-select>
         </template>
       </vxe-column>
-      <vxe-column field="sex2" title="多选下拉" :edit-render="{}">
+      <vxe-column field="days" title="人天" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.days" type="number" placeholder="请输入数值"></vxe-input>
+        </template>
+      </vxe-column>
+      <vxe-column field="dateStart" title="预计开始时间" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.dateStart" type="date" placeholder="请选择日期" transfer></vxe-input>
+        </template>
+      </vxe-column>
+      <vxe-column field="dateEnd" title="预计结束时间" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.dateEnd" type="date" placeholder="请选择日期" transfer></vxe-input>
+        </template>
+      </vxe-column>
+      <vxe-column title="操作" width="100" show-overflow>
         <template #default="{ row }">
-          <span>{{ formatMultiSex(row.sex2) }}</span>
-        </template>
-        <template #edit="{ row }">
-          <vxe-select v-model="row.sex2" multiple transfer>
-            <vxe-option v-for="item in sexList1" :key="item.value" :value="item.value" :label="item.label"></vxe-option>
-          </vxe-select>
+          <a-button type="dashed" @click="saveOneTask(row)">保存</a-button>
         </template>
       </vxe-column>
-      <vxe-column field="num6" title="Number" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-input v-model="row.num6" type="number" placeholder="请输入数值"></vxe-input>
-        </template>
-      </vxe-column>
-      <vxe-column field="date12" title="Date" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-input v-model="row.date12" type="date" placeholder="请选择日期" transfer></vxe-input>
-        </template>
-      </vxe-column>
-      <vxe-column field="date13" title="Week" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-input v-model="row.date13" type="week" placeholder="请选择日期" transfer></vxe-input>
-        </template>
-      </vxe-column>
-      <vxe-column field="address" title="Address" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-input v-model="row.address" type="text"></vxe-input>
-        </template>
-      </vxe-column>
+      <template v-slot:empty>
+        <div style="padding: 20px 0">
+          <empty-status></empty-status>
+        </div>
+      </template>
     </vxe-table>
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.table {
+  width: 76%;
+  height: 100%;
+  margin: 40px auto;
+  position: relative;
+}
+.add-icon {
+  position: absolute;
+  top: -40px;
+  right: 0;
+}
+:deep(.vxe-table--render-default.vxe-editable .vxe-body--column) {
+  line-height: 48px;
+}
+:deep(.vxe-table--render-wrapper) {
+  background: #ffffff;
+}
+</style>

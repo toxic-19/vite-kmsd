@@ -4,7 +4,7 @@ import ProjectItem from './components/projectItem.vue'
 import { getProjectList } from '@/api/project'
 import { OneProject } from '@/api/project/type.ts'
 import { SearchOutlined, CloseOutlined, ApartmentOutlined } from '@ant-design/icons-vue'
-import CreateProjectDialog from "@/views/project/components/createProjectDialog.vue";
+import CreateProjectDialog from '@/views/project/components/createProjectDialog.vue'
 const projectList = ref<OneProject[]>()
 const inputProjectName = ref<string>('')
 const getAllProjectList = async () => {
