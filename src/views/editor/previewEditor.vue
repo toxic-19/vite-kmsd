@@ -167,6 +167,9 @@ watch(
   :deep(ul li span) {
     padding-left: 0 !important;
   }
+  :deep(ul li) {
+    line-height: 20px;
+  }
   li > span {
     cursor: pointer;
     display: block;

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { VxeTableInstance } from 'vxe-table'
-import { RowVO } from '@/api/project/type.ts'
 const props = defineProps(['tableData'])
 const emit = defineEmits(['addOne'])
 const tableData = ref(props.tableData)
@@ -37,32 +36,33 @@ const insertEvent = async () => {
     await $table.setEditCell(newRow, 'taskName')
   }
 }
-const getInsertEvent = () => {
-  if (xTable.value) {
-    console.log(xTable.value?.getInsertRecords())
-  }
-}
+// 获取临时保存和修改的记录
+// const getInsertEvent = () => {
+//   if (xTable.value) {
+//     console.log(xTable.value?.getInsertRecords())
+//   }
+// }
 const saveOneTask = async (row) => {
+  console.log(row)
   emit('addOne', row)
 }
 </script>
 <template>
   <div class="table">
-    <div class="add-icon">
-      <a-tooltip title="新建任务">
-        <SvgIcon name="add-task" width="20px" height="20px" @click="insertEvent"></SvgIcon>
-      </a-tooltip>
-      <a-tooltip title="批量保存">
-        <SvgIcon name="save-more" width="20px" height="20px" @click="getInsertEvent"></SvgIcon>
-      </a-tooltip>
-    </div>
+    <a-tooltip title="新建任务">
+      <div class="add-icon">
+        <SvgIcon name="add" width="13px" height="13px" @click="insertEvent"></SvgIcon>
+      </div>
+    </a-tooltip>
+    <!--      <a-tooltip title="全部保存">-->
+    <!--        <SvgIcon name="save-more" width="20px" height="20px" @click="getInsertEvent"></SvgIcon>-->
+    <!--      </a-tooltip>-->
     <vxe-table
       ref="xTable"
       round
       border="inner"
       show-overflow
       keep-source
-      min-height="400px"
       :data="tableData"
       :column-config="{ resizable: true }"
       :edit-config="{ trigger: 'dblclick', mode: 'cell', showStatus: true, showIcon: false }"
@@ -98,9 +98,9 @@ const saveOneTask = async (row) => {
           <vxe-input v-model="row.dateEnd" type="date" placeholder="请选择日期" transfer></vxe-input>
         </template>
       </vxe-column>
-      <vxe-column title="操作" width="100" show-overflow>
+      <vxe-column title="操作" width="100" show-overflow align="center">
         <template #default="{ row }">
-          <a-button type="dashed" @click="saveOneTask(row)">{{ row?.id ? '保存' : '新建' }}</a-button>
+          <a-button type="dashed" @click="saveOneTask(row)">{{ row?.id ? '保存修改' : '新建' }}</a-button>
         </template>
       </vxe-column>
       <template v-slot:empty>
@@ -120,19 +120,36 @@ const saveOneTask = async (row) => {
   position: relative;
 }
 .add-icon {
+  width: 44px;
+  height: 24px;
+  border: 2px solid #f8f8f9;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  background-color: #f8f8f9;
   position: absolute;
-  top: -30px;
-  right: 0;
+  bottom: -22px;
+  left: -1px;
   display: flex;
+  justify-content: center;
   grid-gap: 20px;
-  .svg-icon {
-    cursor: pointer;
-  }
+  z-index: 2;
+  box-shadow: 2px 2px 10px 0 rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+:deep(.vxe-table) {
+  box-shadow: 2px 2px 10px 4px rgba(0, 0, 0, 0.1);
 }
 :deep(.vxe-table--render-default.vxe-editable .vxe-body--column) {
   line-height: 48px;
 }
 :deep(.vxe-table--render-wrapper) {
   background: #ffffff;
+}
+:deep(.vxe-cell--label, .vxe-cell--title) {
+  font-family: 'lucida grande', 'lucida sans unicode', lucida, helvetica, 'Hiragino Sans GB', 'Microsoft YaHei',
+    'WenQuanYi Micro Hei', sans-serif;
+}
+:deep(.vxe-body--row) {
+  background-color: rgba(222, 216, 216, 0.1);
 }
 </style>

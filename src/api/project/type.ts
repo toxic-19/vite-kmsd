@@ -49,6 +49,14 @@ export interface CreateTaskBody {
   dateStart: Date
   dateEnd: Date
 }
+export interface UpdateTaskBody {
+  id: number
+  days?: number
+  dateEnd?: string
+  dateStart?: string
+  taskName?: string
+  taskStatus?: number
+}
 export interface OneTask {
   id: number
   taskName: string

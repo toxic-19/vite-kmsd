@@ -38,7 +38,7 @@ const reset = () => {
 }
 const createProjectRef = ref(null)
 const create = () => {
-  console.log(createProjectRef.value)
+  createProjectRef.value.showModal(true)
 }
 </script>
 

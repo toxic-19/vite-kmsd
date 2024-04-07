@@ -5,7 +5,7 @@ import { storeToRefs } from 'pinia'
 import EditTable from './editTable.vue'
 import { onMounted, ref } from 'vue'
 import { RowVO } from '@/api/project/type.ts'
-import { getTaskListByName, postCreateOneTask } from '@/api/project'
+import { getTaskListByName, postCreateOneTask, postUpdateOneTask } from '@/api/project'
 import { message } from 'ant-design-vue'
 const store = useBreadcrumbsStore()
 const router = useRouter()
@@ -33,13 +33,16 @@ const getTaskList = async (processName: string, projectId: number) => {
   tableData.value = data
 }
 const createOneTask = async (row) => {
-  const { code } = await postCreateOneTask({
-    ...row,
-    projectId: currentProject.value.id,
-    processName: activeProcess.value,
-  })
+  const { id, days, dateEnd, dateStart, taskName, taskStatus } = row
+  // 判断是修改还是创建
+  const API = id ? postUpdateOneTask : postCreateOneTask
+  const data = id
+    ? { id, days, dateEnd, dateStart, taskName, taskStatus }
+    : { ...row, projectId: currentProject.value.id, processName: activeProcess.value }
+  console.log(id, data)
+  const { code } = await API(data)
   if (code === 200) {
-    message.success('创建成功')
+    message.success(`${id ? '修改' : '创建'}成功`)
   }
   getTaskList(activeProcess.value, currentProject.value.id)
 }
@@ -117,6 +120,7 @@ const createOneTask = async (row) => {
     display: flex;
     align-items: center;
     transition: all 0.6s;
+    box-shadow: 1px 1px 6px 0 rgba(0, 0, 0, 0.1);
     &.child {
       margin-bottom: 20px;
       &:last-child {
@@ -149,7 +153,8 @@ const createOneTask = async (row) => {
   .active-process {
     background-color: #65c48f;
     color: #fff;
-    border-color: #ffffff;
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 2px 10px 4px rgba(0, 0, 0, 0.2);
     .circle {
       background-color: #495d81;
     }

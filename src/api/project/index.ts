@@ -7,6 +7,7 @@ import {
   GetTaskListQuery,
   ProjectResponseData,
   UpdateProjectQuery,
+  UpdateTaskBody,
 } from '@/api/project/type.ts'
 
 enum API {
@@ -15,6 +16,7 @@ enum API {
   project_update_name_url = '/project/updateName', // 项目重命名
   task_create_one_url = '/task/create', // 新建一个任务
   task_list_url = '/task', // 获取项目下流程的任务列表
+  task_update_url = '/task/update', // 修改项目
 }
 export const postCreateProject = (data: CreateProjectBody) =>
   axiosInstance.post<any, CreateProjectResponseData>(API.project_create_url, data)
@@ -23,3 +25,4 @@ export const getProjectList = (params: GetAllProjectQuery) =>
 export const postUpdateProject = (params: UpdateProjectQuery) => axiosInstance.post(API.project_update_name_url, {}, { params })
 export const getTaskListByName = (params: GetTaskListQuery) => axiosInstance.get(API.task_list_url, { params })
 export const postCreateOneTask = (data: CreateTaskBody) => axiosInstance.post(API.task_create_one_url, data)
+export const postUpdateOneTask = (data: UpdateTaskBody) => axiosInstance.post(API.task_update_url, data)
