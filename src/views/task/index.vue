@@ -3,27 +3,16 @@ import { useRouter } from 'vue-router'
 import { useBreadcrumbsStore } from '@/stores/breadcrumbs.ts'
 import { storeToRefs } from 'pinia'
 import EditTable from './editTable.vue'
+import TaskGantt from './taskGantt/index.vue'
 import { onMounted, ref } from 'vue'
 import { RowVO } from '@/api/project/type.ts'
-import { getTaskListByName, postCreateOneTask, postUpdateOneTask } from '@/api/project'
+import {getTaskListByName, postCreateOneTask, postTaskListByProjectId, postUpdateOneTask} from '@/api/project'
 import { message } from 'ant-design-vue'
 const store = useBreadcrumbsStore()
 const router = useRouter()
 const { currentProject } = storeToRefs(store)
 const activeProcess = ref(currentProject.value?.process[0])
-const tableData = ref<RowVO[]>([
-  {
-    id: 10001,
-    taskName: 'Test1',
-    taskStatus: '',
-    days: 2,
-    dateStart: '',
-    dateEnd: '',
-  },
-])
-onMounted(() => {
-  getTaskList(activeProcess.value, currentProject.value.id)
-})
+const tableData = ref<RowVO[]>([])
 const changeProcess = (name: string) => {
   activeProcess.value = name
   getTaskList(name, currentProject.value.id)
@@ -39,47 +28,67 @@ const createOneTask = async (row) => {
   const data = id
     ? { id, days, dateEnd, dateStart, taskName, taskStatus }
     : { ...row, projectId: currentProject.value.id, processName: activeProcess.value }
-  console.log(id, data)
   const { code } = await API(data)
   if (code === 200) {
     message.success(`${id ? '修改' : '创建'}成功`)
   }
   getTaskList(activeProcess.value, currentProject.value.id)
 }
+const showGantt = ref<boolean>(true)
+const taskLabelList = ref()
+const getAllTaskList = async () => {
+  const { data } = await postTaskListByProjectId({ projectId: currentProject.value.id })
+  taskLabelList.value = data
+}
+onMounted(() => {
+  getTaskList(activeProcess.value, currentProject.value.id)
+  getAllTaskList()
+})
 </script>
 
 <template>
-  <div class="header">
-    <a-page-header style="border: 1px solid rgb(235, 237, 240)" :title="currentProject?.projectName" @back="router.back()" />
-  </div>
-  <div class="process">
-    <div v-for="(item, index) in currentProject?.process" :key="index" class="process-item">
-      <div v-if="Array.isArray(item)" class="level"></div>
-      <template v-if="Array.isArray(item)">
-        <div style="display: flex; flex-direction: column; background-color: #ebeff4">
-          <div
-            v-for="child in item"
-            :key="child"
-            class="text child"
-            :class="{ 'active-process': activeProcess === child }"
-            @click="changeProcess(child)"
-          >
-            <div class="circle"></div>
-            <div class="process-name">{{ child }}</div>
-          </div>
-        </div>
-      </template>
-      <div v-else class="text" :class="{ 'active-process': activeProcess === item }" @click="changeProcess(item)">
-        <div class="circle"></div>
-        <div class="process-name">{{ item }}</div>
-      </div>
-      <div class="line"></div>
-      <SvgIcon name="process"></SvgIcon>
+  <task-gantt v-if="showGantt" @close-gantt="showGantt = false" :project-label="taskLabelList"></task-gantt>
+  <template v-if="!showGantt">
+    <div class="header">
+      <a-page-header
+        style="border: 1px solid rgb(235, 237, 240); width: 88%"
+        :title="currentProject?.projectName"
+        @back="router.back()"
+      >
+        <template #extra>
+          <SvgIcon name="gantt" text="甘特图" @click="showGantt = true"></SvgIcon>
+        </template>
+      </a-page-header>
     </div>
-  </div>
-  <div class="task-panel">
-    <edit-table :table-data="tableData" @add-one="createOneTask"></edit-table>
-  </div>
+    <div class="process">
+      <div v-for="(item, index) in currentProject?.process" :key="index" class="process-item">
+        <div v-if="Array.isArray(item)" class="level"></div>
+        <template v-if="Array.isArray(item)">
+          <div style="display: flex; flex-direction: column; background-color: #ebeff4">
+            <div
+              v-for="child in item"
+              :key="child"
+              class="text child"
+              :class="{ 'active-process': activeProcess === child }"
+              @click="changeProcess(child)"
+            >
+              <div class="circle"></div>
+              <div class="process-name">{{ child }}</div>
+            </div>
+          </div>
+        </template>
+        <div v-else class="text" :class="{ 'active-process': activeProcess === item }" @click="changeProcess(item)">
+          <div class="circle"></div>
+          <div class="process-name">{{ item }}</div>
+        </div>
+        <div class="line"></div>
+        <SvgIcon name="process"></SvgIcon>
+      </div>
+    </div>
+    <div class="task-panel">
+      <edit-table :table-data="tableData" @add-one="createOneTask"></edit-table>
+    </div>
+  </template>
 </template>
 
 <style scoped lang="scss">
@@ -166,5 +175,9 @@ const createOneTask = async (row) => {
 :deep(.ant-page-header-heading-title) {
   font-size: 16px;
   color: #222222;
+}
+:deep(.ant-page-header-heading-extra) {
+  display: flex;
+  cursor: pointer;
 }
 </style>

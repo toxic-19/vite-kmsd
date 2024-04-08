@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { VxeTableInstance } from 'vxe-table'
+import { showCorrectTime } from '@/utils/constant.ts'
 const props = defineProps(['tableData'])
 const emit = defineEmits(['addOne'])
 const tableData = ref(props.tableData)
@@ -73,7 +74,7 @@ const saveOneTask = async (row) => {
           <vxe-input v-model="row.taskName" type="text"></vxe-input>
         </template>
       </vxe-column>
-      <vxe-column field="taskStatus" title="任务状态" :edit-render="{}">
+      <vxe-column field="taskStatus" title="任务状态" :edit-render="{}" width="120">
         <template #default="{ row }">
           <span>{{ formatSex(row.taskStatus) }}</span>
         </template>
@@ -83,19 +84,25 @@ const saveOneTask = async (row) => {
           </vxe-select>
         </template>
       </vxe-column>
-      <vxe-column field="days" title="人天" :edit-render="{}">
+      <vxe-column field="days" title="人天" :edit-render="{}" width="100">
         <template #edit="{ row }">
           <vxe-input v-model="row.days" type="number" placeholder="请输入数值"></vxe-input>
         </template>
       </vxe-column>
       <vxe-column field="dateStart" title="预计开始时间" :edit-render="{}">
+        <template #default="{ row }">
+          <span>{{ showCorrectTime(row.dateStart) }}</span>
+        </template>
         <template #edit="{ row }">
-          <vxe-input v-model="row.dateStart" type="date" placeholder="请选择日期" transfer></vxe-input>
+          <vxe-input v-model="row.dateStart" type="datetime" placeholder="请选择日期" transfer></vxe-input>
         </template>
       </vxe-column>
       <vxe-column field="dateEnd" title="预计结束时间" :edit-render="{}">
+        <template #default="{ row }">
+          <span>{{ showCorrectTime(row.dateEnd) }}</span>
+        </template>
         <template #edit="{ row }">
-          <vxe-input v-model="row.dateEnd" type="date" placeholder="请选择日期" transfer></vxe-input>
+          <vxe-input v-model="row.dateEnd" type="datetime" placeholder="请选择日期" transfer></vxe-input>
         </template>
       </vxe-column>
       <vxe-column title="操作" width="100" show-overflow align="center">

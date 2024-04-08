@@ -69,5 +69,7 @@ import HeaderBar from './HeaderBar.vue'
   background-color: rgba(206, 216, 228, 0.4);
   overflow-y: scroll;
   @include scrollBar;
+  @include scrollBarInX;
+  position: relative;
 }
 </style>

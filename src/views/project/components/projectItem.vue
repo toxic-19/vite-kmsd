@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { OneProject } from '@/api/project/type.ts'
-import { showCreateOrUpdateTime } from '@/utils/constant.ts'
+import { showCorrectTime } from '@/utils/constant.ts'
 import { postUpdateProject } from '@/api/project'
 import { message } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
@@ -73,7 +73,7 @@ const toTaskPage = () => {
           <template v-if="reNameId !== projectContent.id">{{ projectContent.projectName }}</template>
           <a-input v-else type="text" autofocus v-model:value="reNameValue" @pressEnter="sureUpdateName"></a-input>
         </template>
-        <template #description>创建时间：{{ showCreateOrUpdateTime(projectContent.createdAt) }}</template>
+        <template #description>创建时间：{{ showCorrectTime(projectContent.createdAt) }}</template>
       </a-card-meta>
       <div class="transfer" @click="transfer">
         <SvgIcon name="transfer" width="24px" height="24px"></SvgIcon>
