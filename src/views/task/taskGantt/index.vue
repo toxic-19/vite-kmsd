@@ -27,7 +27,7 @@ export default {
   computed: {
     TEMPLATE_MAP() {
       return TEMPLATE_MAP
-    }
+    },
   },
   components: { GanttView },
   props: {
@@ -64,37 +64,43 @@ export default {
   methods: {
     initData() {
       this.lists = []
-      console.log(Array.isArray(this.projectLabel))
-      this.projectLabel.forEach((taskData) => {
-        let notime = taskData.startdate === 0 || taskData.enddate === 0
-        let times = this.getTimeObj(taskData)
-        let start = times.start
-        let end = times.end
-        let color = '#058ce4'
-        if (taskData.taskStatus === 1) {
-          color = '#ff0000'
-        } else if (taskData.taskStatus === 2) {
-          color = '#BB9F35'
-        } else if (taskData.taskStatus === 3) {
-          color = '#449EDD'
-        } else if (taskData.taskStatus === 4) {
-          color = '#84A83B'
+      this.projectLabel.forEach((item) => {
+        if (this.filtrProjectId > 0) {
+          if (item.id !== this.filtrProjectId) {
+            return
+          }
         }
-        //
-        let tempTime = { start, end }
-        let findData = this.editData.find((t) => {
-          return t.id === taskData.id
-        })
-        if (findData) {
-          findData.backTime = cloneData(tempTime)
-          tempTime = cloneData(findData.newTime)
-        }
-        this.lists.push({
-          id: taskData.id,
-          label: taskData.taskName,
-          time: tempTime,
-          notime: notime,
-          style: { background: color },
+        item.taskLists.forEach((taskData) => {
+          let notime = taskData.dateStart === 0 || taskData.dateEnd === 0
+          let times = this.getTimeObj(taskData)
+          let start = times.start
+          let end = times.end
+          let color = '#058ce4'
+          if (taskData.taskStatus === 1) {
+            color = '#ff0000'
+          } else if (taskData.taskStatus === 2) {
+            color = '#BB9F35'
+          } else if (taskData.taskStatus === 3) {
+            color = '#449EDD'
+          } else if (taskData.taskStatus === 4) {
+            color = '#84A83B'
+          }
+          //
+          let tempTime = { start, end }
+          let findData = this.editData.find((t) => {
+            return t.id === taskData.id
+          })
+          if (findData) {
+            findData.backTime = cloneData(tempTime)
+            tempTime = cloneData(findData.newTime)
+          }
+          this.lists.push({
+            id: taskData.id,
+            label: taskData.taskName,
+            time: tempTime,
+            notime: notime,
+            style: { background: color },
+          })
         })
       })
       if (this.lists.length === 0 && this.filtrProjectId === 0) {
@@ -134,7 +140,6 @@ export default {
     },
 
     editSubmit(save) {
-      // let triggerTask = []
       this.editData.forEach((item) => {
         if (save) {
           this.editLoad++
@@ -146,10 +151,6 @@ export default {
             content: timeStart + ',' + timeEnd,
           }
           console.log(ajaxData)
-          // $A.apiAjax({
-          //   url: 'project/task/edit',
-          //   method: 'post',
-          // })
         } else {
           this.lists.some((task) => {
             if (task.id === item.id) {
