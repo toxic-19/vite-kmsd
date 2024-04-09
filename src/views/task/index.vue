@@ -6,7 +6,7 @@ import EditTable from './editTable.vue'
 import TaskGantt from './taskGantt/index.vue'
 import { onMounted, ref } from 'vue'
 import { RowVO } from '@/api/project/type.ts'
-import {getTaskListByName, postCreateOneTask, postTaskListByProjectId, postUpdateOneTask} from '@/api/project'
+import { getTaskListByName, postCreateOneTask, postTaskListByProjectId, postUpdateOneTask } from '@/api/project'
 import { message } from 'ant-design-vue'
 const store = useBreadcrumbsStore()
 const router = useRouter()
@@ -34,20 +34,14 @@ const createOneTask = async (row) => {
   }
   getTaskList(activeProcess.value, currentProject.value.id)
 }
-const showGantt = ref<boolean>(true)
-const taskLabelList = ref()
-const getAllTaskList = async () => {
-  const { data } = await postTaskListByProjectId({ projectId: currentProject.value.id })
-  taskLabelList.value = data
-}
+const showGantt = ref<boolean>(false)
 onMounted(() => {
   getTaskList(activeProcess.value, currentProject.value.id)
-  getAllTaskList()
 })
 </script>
 
 <template>
-  <task-gantt v-if="showGantt" @close-gantt="showGantt = false" :project-label="taskLabelList"></task-gantt>
+  <task-gantt v-if="showGantt" @close-gantt="showGantt = false"></task-gantt>
   <template v-if="!showGantt">
     <div class="header">
       <a-page-header

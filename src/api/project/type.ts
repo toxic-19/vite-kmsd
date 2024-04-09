@@ -3,6 +3,9 @@ export interface GetAllProjectQuery {
   isHangUp: string
   projectName: string
 }
+export interface GetProjectQuery {
+  projectId: number
+}
 export interface CreateProjectBody {
   projectName: string
   projectCover?: string

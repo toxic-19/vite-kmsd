@@ -4,6 +4,7 @@ import {
   CreateProjectResponseData,
   CreateTaskBody,
   GetAllProjectQuery,
+  GetProjectQuery,
   GetTaskListQuery,
   ProjectResponseData,
   UpdateProjectQuery,
@@ -27,4 +28,4 @@ export const postUpdateProject = (params: UpdateProjectQuery) => axiosInstance.p
 export const getTaskListByName = (params: GetTaskListQuery) => axiosInstance.get(API.task_list_url, { params })
 export const postCreateOneTask = (data: CreateTaskBody) => axiosInstance.post(API.task_create_one_url, data)
 export const postUpdateOneTask = (data: UpdateTaskBody) => axiosInstance.post(API.task_update_url, data)
-export const postTaskListByProjectId = (params: UpdateProjectQuery) => axiosInstance.post(API.task_listById_url, {}, { params })
+export const postTaskListByProjectId = (params: GetProjectQuery) => axiosInstance.post(API.task_listById_url, {}, { params })

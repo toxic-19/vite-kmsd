@@ -1,205 +1,193 @@
+<script setup lang="ts">
+import GanttView from './gantt.vue'
+import { cloneData, formatDate, runNum } from '@/utils/constant.ts'
+import { Modal } from 'ant-design-vue'
+import { TEMPLATE_MAP } from '@/utils/map.ts'
+import { onMounted, ref, watch } from 'vue'
+import { postTaskListByProjectId } from '@/api/project'
+import { useBreadcrumbsStore } from '@/stores/breadcrumbs.ts'
+import { storeToRefs } from 'pinia'
+type ListType = {
+  id: number
+  label: string
+  time: object
+  notime: boolean
+  style: Record<string, string>
+}
+const emit = defineEmits(['closeGantt'])
+const loadFinish = ref(false)
+const lists = ref<ListType[]>([])
+const editData = ref<Array<{ id: any; label: any; notime: any; backTime: any; newTime: any }>>([])
+const editShowInfo = ref(false)
+const editLoad = ref(0)
+const filtrProjectId = ref(0)
+const initData = () => {
+  lists.value = []
+  taskLabelList.value.forEach((item: any) => {
+    if (filtrProjectId.value > 0) {
+      if (item.id !== filtrProjectId.value) {
+        return
+      }
+    }
+    item.taskLists.forEach((taskData: any) => {
+      let notime = taskData.dateStart === 0 || taskData.dateEnd === 0
+      let times = getTimeObj(taskData)
+      let start = times.start
+      let end = times.end
+      let color = '#058ce4'
+      if (taskData.taskStatus === 1) {
+        color = '#ff0000'
+      } else if (taskData.taskStatus === 2) {
+        color = '#BB9F35'
+      } else if (taskData.taskStatus === 3) {
+        color = '#449EDD'
+      } else if (taskData.taskStatus === 4) {
+        color = '#84A83B'
+      }
+      //
+      let tempTime = { start, end }
+      let findData = editData.value.find((t) => {
+        return t.id === taskData.id
+      })
+      if (findData) {
+        findData.backTime = cloneData(tempTime)
+        tempTime = cloneData(findData.newTime)
+      }
+      lists.value.push({
+        id: taskData.id,
+        label: taskData.taskName,
+        time: tempTime,
+        notime: notime,
+        style: { background: color },
+      })
+    })
+  })
+  console.log(lists.value)
+  if (lists.value.length === 0 && filtrProjectId.value === 0) {
+    Modal.warning({
+      title: '温馨提示',
+      content: '任务列表为空，请先添加任务。',
+      onOk: () => {
+        emit('closeGantt')
+      },
+    })
+  }
+}
+
+const updateTime = (item: any) => {
+  const original = getRawTime(item.id)
+  if (Math.abs(original?.end - item.time.end) > 1000 || Math.abs(original?.start - item.time.start) > 1000) {
+    // 修改时间（变化超过1秒钟)
+    const backTime = cloneData(original)
+    const newTime = cloneData(item.time)
+    const findData = editData.value.find(({ id }) => id === item.id)
+    if (findData) {
+      findData.newTime = newTime
+    } else {
+      editData.value.push({
+        id: item.id,
+        label: item.label,
+        notime: item.notime,
+        backTime,
+        newTime,
+      })
+    }
+  }
+}
+
+const clickItem = (item: any) => {
+  console.log('详情', item)
+}
+
+const editSubmit = (save: any) => {
+  editData.value.forEach((item) => {
+    if (save) {
+      editLoad.value++
+      let timeStart = formatDate('Y-m-d H:i', Math.round(item.newTime.start / 1000))
+      let timeEnd = formatDate('Y-m-d H:i', Math.round(item.newTime.end / 1000))
+      let ajaxData = {
+        act: 'plannedtime',
+        taskid: item.id,
+        content: timeStart + ',' + timeEnd,
+      }
+      console.log(ajaxData)
+    } else {
+      lists.value.some((task) => {
+        if (task.id === item.id) {
+          task['time'] = item.backTime
+          return true
+        }
+      })
+    }
+  })
+  editData.value = []
+}
+
+const getRawTime = (taskId: number) => {
+  let times = null
+  taskLabelList.value.some((item) => {
+    item.taskLists.some((taskData) => {
+      if (taskData.id === taskId) {
+        times = getTimeObj(taskData)
+        return true
+      }
+    })
+    if (times) {
+      return true
+    }
+  })
+  return times
+}
+
+const getTimeObj = (taskData) => {
+  let start = taskData.dateStart || taskData.indate
+  let end = taskData.dateEnd || taskData.indate + 86400
+  if (end === start) {
+    end = Math.round(new Date(formatDate('Y-m-d 23:59:59', end)).getTime() / 1000)
+  }
+  end = Math.max(end, start + 60)
+  start *= 1000
+  end *= 1000
+  return { start, end }
+}
+
+const tapProject = (e) => {
+  filtrProjectId.value = runNum(e)
+  initData()
+}
+const store = useBreadcrumbsStore()
+const { currentProject } = storeToRefs(store)
+const taskLabelList = ref()
+const getAllTaskList = async () => {
+  const { data } = await postTaskListByProjectId({ projectId: currentProject.value.id })
+  taskLabelList.value = data
+  initData()
+  loadFinish.value = true
+}
+onMounted(() => {
+  getAllTaskList()
+})
+</script>
+
 <template>
   <div class="project-gstc-gantt">
-    <GanttView :lists="lists" :itemWidth="80" @on-change="updateTime" @on-click="clickItem" />
+    <GanttView :lists="lists" :menu-width="260" :itemWidth="80" @on-change="updateTime" @on-click="clickItem" />
     <a-dropdown class="project-gstc-dropdown-filtr" placement="bottom">
-      <SvgIcon class="project-gstc-dropdown-icon" name="funnel" text="流程"></SvgIcon>
+      <SvgIcon class="project-gstc-dropdown-icon" name="funnel"></SvgIcon>
       <template #overlay>
-        <div class="select-box" @click="dropdownClick">
+        <div class="select-box">
           <a-checkbox>全部</a-checkbox>
           <a-checkbox-group :options="TEMPLATE_MAP.get(1)" />
         </div>
       </template>
     </a-dropdown>
-    <div class="project-gstc-close" @click="$emit('closeGantt')">
+    <div class="project-gstc-close" @click="emit('closeGantt')">
       <SvgIcon name="back" text="返回"></SvgIcon>
     </div>
   </div>
 </template>
 
-<script>
-import GanttView from './gantt.vue'
-import { cloneData, formatDate, runNum } from '@/utils/constant.ts'
-import { Modal } from 'ant-design-vue'
-import { taskLabelList } from '../../../../mock/task.ts'
-import { TEMPLATE_MAP } from '@/utils/map.ts'
-export default {
-  name: 'TaskGantt',
-  computed: {
-    TEMPLATE_MAP() {
-      return TEMPLATE_MAP
-    },
-  },
-  components: { GanttView },
-  props: {
-    projectLabel: {
-      default: taskLabelList,
-    },
-  },
-  emits: ['closeGantt'],
-  data() {
-    return {
-      loadFinish: false,
-      lists: [],
-      editData: [],
-      editShowInfo: false,
-      editLoad: 0,
-      filtrProjectId: 0,
-    }
-  },
-
-  mounted() {
-    this.initData()
-    this.loadFinish = true
-  },
-
-  watch: {
-    projectLabel: {
-      handler(newVal) {
-        if (newVal?.length) this.initData()
-      },
-      deep: true,
-    },
-  },
-
-  methods: {
-    initData() {
-      this.lists = []
-      this.projectLabel.forEach((item) => {
-        if (this.filtrProjectId > 0) {
-          if (item.id !== this.filtrProjectId) {
-            return
-          }
-        }
-        item.taskLists.forEach((taskData) => {
-          let notime = taskData.dateStart === 0 || taskData.dateEnd === 0
-          let times = this.getTimeObj(taskData)
-          let start = times.start
-          let end = times.end
-          let color = '#058ce4'
-          if (taskData.taskStatus === 1) {
-            color = '#ff0000'
-          } else if (taskData.taskStatus === 2) {
-            color = '#BB9F35'
-          } else if (taskData.taskStatus === 3) {
-            color = '#449EDD'
-          } else if (taskData.taskStatus === 4) {
-            color = '#84A83B'
-          }
-          //
-          let tempTime = { start, end }
-          let findData = this.editData.find((t) => {
-            return t.id === taskData.id
-          })
-          if (findData) {
-            findData.backTime = cloneData(tempTime)
-            tempTime = cloneData(findData.newTime)
-          }
-          this.lists.push({
-            id: taskData.id,
-            label: taskData.taskName,
-            time: tempTime,
-            notime: notime,
-            style: { background: color },
-          })
-        })
-      })
-      if (this.lists.length === 0 && this.filtrProjectId === 0) {
-        Modal.warning({
-          title: '温馨提示',
-          content: '任务列表为空，请先添加任务。',
-          onOk: () => {
-            this.$emit('on-close')
-          },
-        })
-      }
-    },
-
-    updateTime(item) {
-      let original = this.getRawTime(item.id)
-      if (Math.abs(original.end - item.time.end) > 1000 || Math.abs(original.start - item.time.start) > 1000) {
-        //修改时间（变化超过1秒钟)
-        let backTime = cloneData(original)
-        let newTime = cloneData(item.time)
-        let findData = this.editData.find(({ id }) => id === item.id)
-        if (findData) {
-          findData.newTime = newTime
-        } else {
-          this.editData.push({
-            id: item.id,
-            label: item.label,
-            notime: item.notime,
-            backTime,
-            newTime,
-          })
-        }
-      }
-    },
-
-    clickItem(item) {
-      console.log('详情', item)
-    },
-
-    editSubmit(save) {
-      this.editData.forEach((item) => {
-        if (save) {
-          this.editLoad++
-          let timeStart = formatDate('Y-m-d H:i', Math.round(item.newTime.start / 1000))
-          let timeEnd = formatDate('Y-m-d H:i', Math.round(item.newTime.end / 1000))
-          let ajaxData = {
-            act: 'plannedtime',
-            taskid: item.id,
-            content: timeStart + ',' + timeEnd,
-          }
-          console.log(ajaxData)
-        } else {
-          this.lists.some((task) => {
-            if (task.id === item.id) {
-              this.$set(task, 'time', item.backTime)
-              return true
-            }
-          })
-        }
-      })
-      this.editData = []
-    },
-
-    getRawTime(taskId) {
-      let times = null
-      this.projectLabel.some((item) => {
-        item.taskLists.some((taskData) => {
-          if (taskData.id === taskId) {
-            times = this.getTimeObj(taskData)
-            return true
-          }
-        })
-        if (times) {
-          return true
-        }
-      })
-      return times
-    },
-
-    getTimeObj(taskData) {
-      let start = taskData.dateStart || taskData.indate
-      let end = taskData.dateEnd || taskData.indate + 86400
-      if (end === start) {
-        end = Math.round(new Date(formatDate('Y-m-d 23:59:59', end)).getTime() / 1000)
-      }
-      end = Math.max(end, start + 60)
-      start *= 1000
-      end *= 1000
-      return { start, end }
-    },
-
-    tapProject(e) {
-      this.filtrProjectId = runNum(e)
-      this.initData()
-    },
-  },
-}
-</script>
-
-<style lang="scss">
+<style lang="scss" scoped>
 .project-gstc-gantt {
   position: absolute;
   top: 15px;
