@@ -36,9 +36,9 @@ const reset = () => {
   current.value = ['isIng']
   search()
 }
-const createProjectRef = ref(null)
+const createProjectRef = ref<InstanceType<typeof CreateProjectDialog>>()
 const create = () => {
-  createProjectRef.value.showModal(true)
+  createProjectRef.value?.showModal(true)
 }
 </script>
 
@@ -67,6 +67,7 @@ const create = () => {
   display: flex;
   flex-wrap: wrap;
   grid-gap: 20px;
+  position: relative;
 }
 .search {
   display: flex;
@@ -91,7 +92,7 @@ const create = () => {
 }
 .create-btn {
   position: absolute;
-  right: 30px;
-  top: 60px;
+  right: 12%;
+  top: 10px;
 }
 </style>

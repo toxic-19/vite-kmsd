@@ -17,7 +17,7 @@ const { currentKnowId } = storeToRefs(store)
 const type = ref<number>(1) // type: group 2 or article 1
 const showModal = (flag: boolean, groupId?: number, typeNum?: number) => {
   open.value = flag
-  if (groupId) currentGroupId.value = groupId
+  if (groupId !== 0) currentGroupId.value = groupId
   type.value = typeNum || 1
 }
 const createDocRef = ref()

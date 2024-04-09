@@ -15,6 +15,10 @@ export interface UpdateProjectQuery {
   id: number
   projectName: string
 }
+export interface HangupProjectQuery {
+  id: number
+  isHangUp: boolean
+}
 export type OneProject = {
   id: number
   projectName: string

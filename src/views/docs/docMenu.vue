@@ -28,17 +28,17 @@ const toKnowLedge = () => {
 }
 
 // 创建文档弹窗
-const createArticleRef = ref(null)
+const createArticleRef = ref<InstanceType<typeof CreateDialog>>()
 const showModal = (groupId: number) => {
   createArticleRef.value?.showModal(true, groupId)
 }
 
 const addArticleInKnow = () => {
   // eslint-disable-next-line no-undef
-  createArticleRef.value?.showModal(true, null, 1)
+  createArticleRef.value?.showModal(true, 0, 1)
 }
 const addGroupInKnow = () => {
-  createArticleRef.value?.showModal(true, null, 2)
+  createArticleRef.value?.showModal(true, 0, 2)
 }
 
 provide('refreshMenu', getTreeData)

@@ -1,3 +1,5 @@
+import { ref } from 'vue'
+
 export const ERROR_STATUS_MAP = new Map([
   [0, '参数错误或是参数缺少'],
   [400, 'Request Error(400)'],
@@ -27,4 +29,12 @@ export const TEMPLATE_MAP = new Map([
   [4, progressTemplates['4']],
   [5, progressTemplates['5']],
   [6, progressTemplates['6']],
+])
+export const selectOptions = ref([
+  { value: 1, label: '软件开发' },
+  { value: 2, label: '需求设计' },
+  { value: 3, label: '前端开发' },
+  { value: 4, label: '后端开发' },
+  { value: 5, label: '产品开发' },
+  { value: 6, label: '测试开发' },
 ])

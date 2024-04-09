@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import { OneProject } from '@/api/project/type.ts'
 import { showCorrectTime } from '@/utils/constant.ts'
-import { postUpdateProject } from '@/api/project'
+import { postHangUpProject, postUpdateProject} from '@/api/project'
 import { message } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
 import { useBreadcrumbsStore } from '@/stores/breadcrumbs.ts'
@@ -13,7 +13,6 @@ const projectContent = computed<OneProject>(() => {
   return props.project
 })
 const taskList = [{ text: '项目总任务数' }, { text: '项目未完成任务' }, { text: '项目超期任务' }, { text: '项目已完成任务' }]
-
 // CSS翻转效果
 const rotateFront = ref('0deg')
 const rotateBack = ref('180deg')
@@ -21,15 +20,16 @@ const transfer = () => {
   rotateFront.value = rotateFront.value === '0deg' ? '180deg' : '0deg'
   rotateBack.value = rotateBack.value === '180deg' ? '360deg' : '180deg'
 }
+// 收藏项目
 const collectIcon = ref<string>('unCollect')
 const collect = () => {
   collectIcon.value = collectIcon.value === 'collected' ? 'unCollect' : 'collected'
 }
+// 重命名项目
 const reNameId = ref<number>(0)
 const reNameValue = ref<string>(projectContent.value.projectName)
 const reName = () => {
   reNameId.value = projectContent.value.id
-  console.log('reName')
 }
 const sureUpdateName = async () => {
   const { data } = await postUpdateProject({
@@ -42,11 +42,21 @@ const sureUpdateName = async () => {
   } else message.error('重命名失败')
   reNameId.value = 0
 }
-const deleteProject = () => {
-  console.log('delete')
+// 挂起项目
+const hangupIcon = computed(() => {
+  return projectContent.value.isHangUp ? 'project-hangup' : 'project-ing'
+})
+const hangupProject = async () => {
+  const { data } = await postHangUpProject({ id: projectContent.value.id, isHangUp: !projectContent.value.isHangUp })
+  if (data[0] === 1) {
+    // 刷新
+    emit('refresh')
+    message.success('操作成功')
+  } else message.error('操作失败')
 }
 const router = useRouter()
-const toTaskPage = () => {
+const toTaskPage = (event: Event) => {
+  if (event.target && event.target?.nodeName === 'INPUT') return
   router.push(`/task/${projectContent.value.id}`)
   store.setProject(projectContent.value)
 }
@@ -59,19 +69,19 @@ const toTaskPage = () => {
       </template>
       <template #actions>
         <a-tooltip :title="collectIcon === 'collected' ? '取消收藏' : '收藏'">
-          <SvgIcon :name="collectIcon" width="24px" height="24px" @click="collect"></SvgIcon>
+          <SvgIcon :name="collectIcon" width="24px" height="24px" @click.stop="collect"></SvgIcon>
         </a-tooltip>
         <a-tooltip title="重命名">
-          <SvgIcon name="reName" width="30px" height="28px" @click="reName"></SvgIcon>
+          <SvgIcon name="reName" width="30px" height="28px" @click.stop="reName"></SvgIcon>
         </a-tooltip>
-        <a-tooltip title="挂起">
-          <SvgIcon name="hangup" width="26px" height="26px" @click="deleteProject"></SvgIcon>
+        <a-tooltip :title="hangupIcon === 'project-ing' ? '进行中' : '挂起中'">
+          <SvgIcon :name="hangupIcon" width="26px" height="26px" @click.stop="hangupProject"></SvgIcon>
         </a-tooltip>
       </template>
       <a-card-meta>
         <template #title>
           <template v-if="reNameId !== projectContent.id">{{ projectContent.projectName }}</template>
-          <a-input v-else type="text" autofocus v-model:value="reNameValue" @pressEnter="sureUpdateName"></a-input>
+          <a-input v-else type="text" v-model:value="reNameValue" @pressEnter.stop="sureUpdateName"></a-input>
         </template>
         <template #description>创建时间：{{ showCorrectTime(projectContent.createdAt) }}</template>
       </a-card-meta>
@@ -141,7 +151,6 @@ const toTaskPage = () => {
   height: 310px;
   position: relative;
   .card {
-    height: 100%;
     width: 100%;
     position: absolute;
     transition: 1s ease-in-out;

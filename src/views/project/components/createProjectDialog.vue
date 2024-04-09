@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, defineEmits, defineExpose, ref } from 'vue'
 import type { Rule } from 'ant-design-vue/es/form'
-import { TEMPLATE_MAP } from '@/utils/map.ts'
+import { selectOptions, TEMPLATE_MAP } from '@/utils/map.ts'
 import { postCreateProject } from '@/api/project'
 import { CreateProjectBody } from '@/api/project/type.ts'
 import { message } from 'ant-design-vue'
@@ -9,6 +9,7 @@ const emit = defineEmits(['refresh'])
 // 弹窗数据
 const open = ref<boolean>(false)
 const confirmLoading = ref<boolean>(false)
+
 const showModal = (flag: boolean) => {
   open.value = flag
 }
@@ -63,6 +64,7 @@ defineExpose({
     <a-modal
       v-model:open="open"
       centered
+      keyboard
       title="创建项目"
       destroy-on-close
       :confirm-loading="confirmLoading"
@@ -75,8 +77,9 @@ defineExpose({
         </a-form-item>
         <a-form-item label="项目模板" name="processTemplate">
           <a-select ref="select" v-model:value="formState.processTemplate">
-            <a-select-option :value="1">软件开发</a-select-option>
-            <a-select-option :value="2">产品开发</a-select-option>
+            <a-select-option v-for="item in selectOptions" :key="item.value" :value="item.value">
+              {{ item.label }}
+            </a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item label="项目流程">
