@@ -170,8 +170,9 @@ const targetFn = () => {
     opacity: 80%;
     &.tag-active {
       background-color: #ace1f5 !important;
-      color: #06a8ee;
-      font-weight: bold;
+      border: 1px solid #06a8ee;
+      //color: #06a8ee;
+      //font-weight: bold;
       font-size: 13px;
       transform: scale(1.2);
     }

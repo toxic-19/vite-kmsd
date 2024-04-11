@@ -45,7 +45,7 @@ const create = () => {
 <template>
   <div class="search">
     <a-input v-model:value="inputProjectName" type="text" size="small" autofocus></a-input>
-    <a-menu v-model:selectedKeys="current" mode="horizontal" :items="items" />
+    <a-menu v-model:selectedKeys="current" mode="horizontal" :items="items" @select="search" />
     <a-button type="text" :icon="h(SearchOutlined)" @click="search">Search</a-button>
     <a-button type="text" :icon="h(CloseOutlined)" @click="reset">Reset</a-button>
   </div>

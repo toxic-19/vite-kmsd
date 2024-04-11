@@ -21,19 +21,20 @@ const initVditor = () => {
       if (window.innerWidth <= 768) {
         return
       }
-      getOutline()
+      getOutline() // 渲染目录
       const firstSpan = document.getElementById('outline').querySelector('span')
-      router.push(`${path.value}/#${firstSpan?.innerText}`)
+      if (firstSpan) router.push(`${path.value}/#${firstSpan?.innerText}`)
     },
   })
 }
 const initOutline = () => {
-  const headingElements = []
-  const scrollDOM = document.getElementById('content')
+  const headingElements = [] as HTMLElement[]
+  const scrollDOM = document.getElementById('content') as HTMLElement
   Array.from(document.getElementById('preview').children).forEach((item) => {
-    if (item.tagName.length === 2 && item.tagName !== 'HR' && item.tagName.indexOf('H') === 0) {
-      headingElements.push(item)
+    if (!(item.tagName.length === 2 && item.tagName !== 'HR' && item.tagName.indexOf('H') === 0)) {
+      return;
     }
+    headingElements.push(<HTMLElement>item)
   })
   let toc = []
   scrollDOM.addEventListener('scroll', () => {
@@ -60,15 +61,15 @@ const initOutline = () => {
   })
 }
 const getOutline = () => {
-  const outlineElement = document.getElementById('outline')
-  Vditor.outlineRender(document.getElementById('preview'), outlineElement)
-  if (outlineElement.innerText.trim() !== '') {
-    initOutline()
-    clickOutLine()
-  }
+  const outlineElement = document.getElementById('outline') as HTMLElement
+  Vditor.outlineRender(<HTMLElement>document.getElementById('preview'), outlineElement)
+  if (outlineElement.innerText.trim() === '') return
+  initOutline()
+  clickOutLine()
 }
 const clickOutLine = () => {
-  const ulDOM = document.getElementById('outline').querySelector('ul')
+  console.log('clickOutLine')
+  const ulDOM = document.getElementById('outline').querySelector('ul') as HTMLElement
   ulDOM.addEventListener('click', (event: any) => {
     const title = event.target.innerText.replace(/\s/g, '-')
     const { knowId, articleId } = route.params
@@ -77,7 +78,7 @@ const clickOutLine = () => {
 }
 const outlineWidth = ref<string>('50px')
 const showOutLine = () => {
-  const outlineElement = document.getElementById('outlineWrap')
+  const outlineElement = document.getElementById('outlineWrap') as HTMLElement
   const flag = outlineElement.style.width == '0px'
   outlineElement.style.width = flag ? '240px' : '0px'
   outlineWidth.value = flag ? '260px' : '50px'
@@ -98,6 +99,7 @@ watch(
 watch(
   () => route.fullPath,
   (newVal) => {
+    console.log(newVal)
     path.value = newVal.replace(/\/#[^/]+/g, '')
   },
   {

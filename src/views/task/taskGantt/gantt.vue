@@ -313,10 +313,12 @@ const clickItem = (item) => {
         </ul>
         <ul ref="ganttTimeline" class="gantt-timeline" @scroll="timelineScrollListener" @mouseenter="mouseType = 'timeline'">
           <li v-for="(item, key) in props.lists" :key="key">
-            <div class="timeline-item" :style="itemStyle(item)" @mousedown="itemMouseDown($event, item)">
-              <div class="timeline-title">{{ item.label }}</div>
-              <div class="timeline-resizer"></div>
-            </div>
+            <a-tooltip :title="item.label" placement="top">
+              <div class="timeline-item" :style="itemStyle(item)" @mousedown="itemMouseDown($event, item)">
+                <div class="timeline-title">{{ item.label }}</div>
+                <div class="timeline-resizer"></div>
+              </div>
+            </a-tooltip>
           </li>
         </ul>
       </div>
@@ -388,6 +390,7 @@ const clickItem = (item) => {
         &:hover {
           .item-icon {
             display: flex;
+            cursor: pointer;
           }
         }
         .item-title {
@@ -520,6 +523,7 @@ const clickItem = (item) => {
         z-index: 3;
         overflow-x: hidden;
         overflow-y: auto;
+        @include scrollBar();
         > li {
           cursor: default;
           height: 40px;

@@ -12,6 +12,11 @@ const routes = <RouteRecordRaw[]>[
         component: () => import('@/views/home/index.vue'),
       },
       {
+        path: '/spark',
+        name: 'Spark',
+        component: () => import('@/views/spark/index.vue'),
+      },
+      {
         path: '/knowledge',
         name: 'knowledge',
         component: () => import('@/views/knowBase/index.vue'),

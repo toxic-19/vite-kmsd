@@ -65,7 +65,8 @@ const toTaskPage = (event: Event) => {
   <div class="card-box">
     <a-card hoverable class="card" @click="toTaskPage">
       <template #cover>
-        <img alt="example" src="@/assets/projectCover.png" />
+        <img v-if="projectContent.projectCover" alt="defaultImage" :src="projectContent.projectCover" />
+        <img v-else alt="projectImage" src="@/assets/projectCover.png" />
       </template>
       <template #actions>
         <a-tooltip :title="collectIcon === 'collected' ? '取消收藏' : '收藏'">
@@ -85,7 +86,7 @@ const toTaskPage = (event: Event) => {
         </template>
         <template #description>创建时间：{{ showCorrectTime(projectContent.createdAt) }}</template>
       </a-card-meta>
-      <div class="transfer" @click="transfer">
+      <div class="transfer" @click.stop="transfer">
         <SvgIcon name="transfer" width="24px" height="24px"></SvgIcon>
       </div>
     </a-card>
@@ -136,7 +137,7 @@ const toTaskPage = (event: Event) => {
           <a-avatar style="background-color: #1890ff">X</a-avatar>
         </a-avatar-group>
       </div>
-      <div class="transfer" @click="transfer">
+      <div class="transfer" @click.stop="transfer">
         <SvgIcon name="transfer" width="24px" height="24px"></SvgIcon>
       </div>
     </a-card>
@@ -157,7 +158,7 @@ const toTaskPage = (event: Event) => {
     transform: rotateY(v-bind(rotateFront)); // 翻转 0 -> 180deg
   }
   .card-back {
-    height: 100%;
+    height: 290px;
     width: 100%;
     position: absolute;
     backface-visibility: hidden;
@@ -171,11 +172,11 @@ const toTaskPage = (event: Event) => {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin: 20px 0;
+      margin: 10px 0;
     }
     .left-num {
       .task-item {
-        margin: 4px 0;
+        margin: 2px 0;
       }
       .text {
         display: inline-block;
@@ -202,5 +203,13 @@ const toTaskPage = (event: Event) => {
   top: 10px;
   right: 10px;
   cursor: pointer;
+  width: 50px;
+  height: 30px;
+}
+:deep(.ant-card-cover) {
+  img {
+    width: 100%;
+    height: 142px;
+  }
 }
 </style>

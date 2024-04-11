@@ -6,7 +6,7 @@ import EditTable from './editTable.vue'
 import TaskGantt from './taskGantt/index.vue'
 import { onMounted, ref } from 'vue'
 import { RowVO } from '@/api/project/type.ts'
-import { getTaskListByName, postCreateOneTask, postTaskListByProjectId, postUpdateOneTask } from '@/api/project'
+import { getTaskListByName, postCreateOneTask, postUpdateOneTask } from '@/api/project'
 import { message } from 'ant-design-vue'
 const store = useBreadcrumbsStore()
 const router = useRouter()
@@ -94,7 +94,9 @@ onMounted(() => {
   margin: 0 auto;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   .process-item {
+    flex: 1;
     display: flex;
     align-items: center;
     &:last-child {
@@ -105,19 +107,20 @@ onMounted(() => {
     }
   }
   .level {
-    width: 60px;
+    min-width: 60px;
     height: 56px;
     border: 3px solid #99beff;
     border-radius: 6px;
     margin-right: -20px;
   }
   .text {
-    width: 120px;
+    min-width: 120px;
     height: 34px;
     color: #000000;
     border: 1px solid #b9b9b9;
     border-radius: 4px;
     padding-left: 10px;
+    padding-right: 20px;
     background-color: #ffffff;
     cursor: pointer;
     display: flex;
@@ -132,7 +135,8 @@ onMounted(() => {
     }
   }
   .line {
-    width: 46px;
+    flex: 1;
+    min-width: 46px;
     height: 5px;
     background-color: #cee8fa;
     border-radius: 2px;

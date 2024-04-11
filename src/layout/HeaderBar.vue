@@ -5,9 +5,10 @@ const router = useRouter()
 const store = useBreadcrumbsStore()
 const menuList = [
   { id: 0, name: '主页', icon: 'home', path: '/home' },
+  { id: 4, name: 'Chat', icon: 'spark', path: '/spark' },
   { id: 3, name: '项目', icon: 'project', path: '/project' },
   { id: 1, name: '知识库', icon: 'knowledgeBase', path: '/knowledge' },
-  { id: 2, name: '文档', icon: 'tags', path: '/tags' },
+  { id: 2, name: '文档', icon: 'addMd', path: '/tags' },
 ]
 
 const changeTab = (path) => {
