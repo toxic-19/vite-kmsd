@@ -1,8 +1,8 @@
 <template>
   <a-layout style="width: 80%; height: 100%; margin: auto">
-    <a-layout-sider width="19%">
+    <a-layout-sider width="18%">
       <div class="layout_sider">
-        <div class="addDialogue">
+        <div class="dialogue_top">
           <a-button type="text" class="addDialogue_btn" @click="addDialog">
             <PlusOutlined class="addDialogue_icon" />
             发起新对话
@@ -22,27 +22,23 @@
     </a-layout-sider>
     <a-layout-content class="layout_content">
       <div class="layout_content_main">
-        <div class="main_messageList" id="openai-chat-messgae-scroll-view">
-          <div class="content_main_chatmessage" ref="messageWrapper">
+        <div class="main_messageList" id="openai-chat-message-scroll-view">
+          <div class="chat_message" ref="messageWrapper">
             <div id="firstEl"></div>
-            <div class="chatmessage_contant" v-for="(item, index) in messageList" :key="index">
+            <div class="message_content" v-for="(item, index) in messageList" :key="index">
               <div
-                :class="{ chatmessageRight: item.role == 'user', chatmessageLeft: item.role == 'assistant' }"
-                class="chatmessage"
+                :class="{ chat_message_right: item.role == 'user', chat_message_left: item.role == 'assistant' }"
+                class="single_message"
                 v-html="coverTextToHtml(item.content)"
                 v-if="item.content"
               ></div>
-              <div class="content_main_spin" v-else><a-spin tip="正在生成中..."></a-spin></div>
+              <div class="chat-status" v-else><a-spin tip="正在生成中..."></a-spin></div>
             </div>
           </div>
           <div id="msgEnd" style="height: 1px; overflow: hidden"></div>
         </div>
-        <div
-          :class="{ content_main_chat: true, content_main_chat_focus: isInputFocused }"
-          ref="chatContainer"
-          v-if="type !== 'speechToText'"
-        >
-          <div class="content_main_chat_container">
+        <div :class="{ main_chat: true, main_chat_focus: isInputFocused }" ref="chatContainer">
+          <div class="main_chat_container">
             <a-textarea
               style="border: none"
               v-model:value="messageInput"
@@ -50,13 +46,13 @@
               class="main_chat_input"
               @focus="onInputFocus"
               @blur="onInputBlur"
-              v-on:keydown="inputKeyDownListener"
-              :readonly="loadingsend"
+              @keydown="inputKeyDownListener"
+              :readonly="sendLoading"
               :autoSize="{ minRows: 1, maxRows: 6 }"
-              ref="chattextarea"
+              ref="chatInputRef"
             ></a-textarea>
             <div style="width: 2.4rem">
-              <span v-if="!loadingsend">
+              <span v-if="!sendLoading">
                 <span class="main_chat_icon" v-if="!messageInput" @click="sendChat">
                   <img src="@/assets/send-simple.png" alt="" />
                 </span>
@@ -74,16 +70,16 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onMounted, reactive, ref } from 'vue'
+import { nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { dialogListResponse, DialogType, historyListResponse, MessageType } from './response.ts'
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons-vue'
 import { Marked } from 'marked'
 import hljs from 'highlight.js'
 import { markedHighlight } from 'marked-highlight'
-import 'highlight.js/styles/github-dark-dimmed.css'
-import copyImage from '@/assets/svg/copy.svg'
+import 'highlight.js/styles/atom-one-dark-reasonable.css'
+// import copyImage from '@/assets/svg/copy.svg'
 import { message } from 'ant-design-vue'
-import { sparkChat } from '@/api/spark'
+import { chatWithSpark } from './sparkApi/index.ts'
 const dialogList = ref<DialogType[]>([])
 const nowSessionId = ref()
 const dialogMenu = reactive<Record<number, boolean>>({})
@@ -112,7 +108,7 @@ const autoScrollBottom = async () => {
   await nextTick()
   msgEnd?.scrollIntoView()
   // 判断是否向上滚动，如果向上滚动就停止自动下滑
-  const scrollBox = document.getElementById('openai-chat-messgae-scroll-view') as HTMLElement
+  const scrollBox = document.getElementById('openai-chat-message-scroll-view') as HTMLElement
   const watchTopScroll = () => {
     const scrollTp = scrollBox.scrollTop || 0
     const scrollStep = scrollTp - oldScrollTop.value
@@ -151,7 +147,8 @@ const coverTextToHtml = (text: string) => {
   )
   let result = marked.parse(text)
   if (typeof result === 'string') {
-    result = result.replace(/<pre><code/g, `<pre style="position:relative;"><img src=${copyImage} class="copy-btn" alt=""><code`)
+    // result = result.replace(/<pre><code/g, `<!--<pre style="position:relative;"><img src=${copyImage} class="copy-btn" alt=""><code-->`)
+    result = result.replace(/<pre><code/g, `<pre style="position:relative;"><span class="copy-btn">Copy</span><code`)
   }
   return result
 }
@@ -159,7 +156,7 @@ const coverTextToHtml = (text: string) => {
 // 输入
 const messageInput = ref<string>('')
 const placeholderText = ref<string>('在这里输入你的问题，当前模型：星火1.5')
-const loadingsend = ref<boolean>(false)
+const sendLoading = ref<boolean>(false)
 const isInputFocused = ref(false)
 // 监听输入框的焦点事件
 const onInputFocus = () => {
@@ -170,8 +167,8 @@ const onInputBlur = () => {
 }
 // 换行和发送快捷键
 const inputKeyDownListener = (event: KeyboardEvent) => {
-  if (event.shiftKey && event.keyCode === 13) return
-  if (event.keyCode === 13) sendChat()
+  if (event.shiftKey && event.key === 'Enter') return
+  if (event.key === 'Enter') sendChat()
 }
 // chat聊天事件
 const sendChat = async () => {
@@ -179,7 +176,7 @@ const sendChat = async () => {
     message.warn('请先输入内容再发送呢亲！')
     return
   }
-  loadingsend.value = true
+  sendLoading.value = true
   const index = messageList.value.push(
     {
       role: 'user',
@@ -192,28 +189,42 @@ const sendChat = async () => {
     input: messageInput.value,
     // sessionId: nowSessionId.value, // 会话id
   }
-  console.log(chatParams)
-
-  const fb = async (content) => {
+  const fb = (content: string) => {
     messageList.value[index - 1].content += content
     autoScrollBottomM.keep()
   }
   const doneFb = () => {
     autoScrollBottomM.close()
-    loadingsend.value = false
+    sendLoading.value = false
   }
-  const errFb = (error) => {
+  const errFb = (error: any) => {
     messageList.value[index - 1].content = error.data || error.message || 'AI生成出错'
     autoScrollBottomM.close()
-    loadingsend.value = false
+    sendLoading.value = false
   }
-  sparkChat(chatParams, fb, doneFb, errFb)
+  await chatWithSpark(chatParams, fb, doneFb, errFb)
   messageInput.value = ''
 }
 
 // 发起新对话
-const chattextarea = ref<InstanceType<any>>(null)
+const chatInputRef = ref<InstanceType<any>>(null)
 const addDialog = () => {}
+
+// 给每一个消息框都做一个事件委托
+const messageWrapper = ref<InstanceType<typeof HTMLDivElement>>()
+const copy2ClipBoard = (text: string) => {
+  navigator.clipboard.writeText(text).then(() => {
+    message.success('复制成功', 1)
+  })
+}
+watch(messageWrapper, () => {
+  messageWrapper.value?.addEventListener('click', (e: MouseEvent) => {
+    if (e.target && e.target.classList.contains('copy-btn')) {
+      copy2ClipBoard(e.target?.parentElement.innerText.replace('Copy\n', ''))
+    }
+  })
+})
+
 onMounted(() => {
   getDialogList()
   getMessageList(342)
@@ -227,7 +238,7 @@ onMounted(() => {
   background-color: #fff;
   padding-left: 20px;
   padding-top: 6px;
-  .addDialogue {
+  .dialogue_top {
     .addDialogue_btn {
       display: flex;
       align-items: center;
@@ -302,7 +313,7 @@ onMounted(() => {
     }
   }
 }
-.popover_resetname,
+.popover_resetName,
 .popover_del {
   cursor: pointer;
   text-align: center;
@@ -367,33 +378,50 @@ onMounted(() => {
         display: none;
       }
     }
-    .content_main_chatmessage {
-      .chatmessage_contant {
+    .chat_message {
+      .message_content {
         display: flex;
-        .chatmessageLeft {
-          padding: 20px;
+        .chat_message_left {
+          padding: 10px 20px;
           background-color: #ffffff;
-          border-radius: 13px;
-          margin: 12px 0;
-          margin-right: auto;
+          margin: 12px auto 12px 0;
+          border-radius: 12px;
         }
-        .chatmessageRight {
-          padding: 10px;
-          background-color: #d3e3fd;
-          border-radius: 13px;
-          margin: 12px 0;
-          margin-left: auto;
+        .chat_message_right {
+          padding: 6px 10px;
+          margin: 12px 0 12px auto;
+          background-color: #c2ead2;
+          border-radius: 4px;
         }
-        .chatmessage {
+        .single_message {
+          :deep(*) {
+            letter-spacing: 1px;
+          }
           :deep(pre) {
             white-space: pre-wrap;
-            background-color: #fbfbfb;
-            padding: 20px;
+            //background: #f8f8f8;
+            padding: 20px 8px;
             border-radius: 13px;
             code {
               font-size: 14px;
               line-height: 28px;
               border-radius: 10px;
+            }
+          }
+          :deep(ol) {
+            list-style: decimal-leading-zero;
+            margin-left: 30px;
+            li {
+              font-size: 14px;
+              line-height: 28px;
+              code {
+                font-size: 14px;
+                line-height: 28px;
+                border-radius: 6px;
+                padding: 2px 6px;
+                background: #f8f8f8;
+                margin: 0 6px;
+              }
             }
           }
           :deep(p) {
@@ -405,20 +433,32 @@ onMounted(() => {
             &:last-child {
               margin-bottom: 0;
             }
+            code {
+              font-size: 14px;
+              line-height: 28px;
+              border-radius: 6px;
+              padding: 2px 6px;
+              background: #f8f8f8;
+              margin: 0 6px;
+            }
+          }
+          :deep(a) {
+            font-size: 14px;
+            margin: 0 4px;
           }
         }
-        .content_main_spin {
+        .chat-status {
           position: relative;
           left: 50%;
           transform: translate(-50%);
         }
       }
     }
-    .content_main_chat {
+    .main_chat {
       position: relative;
       margin: 10px 30px 15px;
       min-height: 60px;
-      border-radius: 26px;
+      border-radius: 10px;
       padding: 0.5rem 20px;
       background-color: #ffffff;
       border: 1px solid transparent;
@@ -427,7 +467,7 @@ onMounted(() => {
         border: 1px solid #87a2ff;
       }
 
-      .content_main_chat_container {
+      .main_chat_container {
         display: flex;
       }
       .main_chat_input {
@@ -471,7 +511,7 @@ onMounted(() => {
         line-height: 24px;
       }
     }
-    .content_main_chat_focus {
+    .main_chat_focus {
       border: 1px solid #87a2ff;
       box-shadow: 0 0 5px rgba(135, 162, 255, 0.3);
     }
@@ -511,7 +551,7 @@ onMounted(() => {
   min-height: 40%;
   max-height: 50%;
   transition: all 0.3s linear;
-  box-shadow: 0px 2px 12px 3px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 12px 3px rgba(0, 0, 0, 0.2);
   .main-chat-more__left {
     display: flex;
     flex-direction: column;
@@ -607,16 +647,18 @@ onMounted(() => {
   }
 }
 :deep(.copy-btn) {
-  width: 28px;
-  height: 28px;
   position: absolute;
   top: -4px;
-  right: 10px;
-  padding: 1px 5px;
-  color: rgba(255, 255, 255, 0.8);
+  right: 6px;
+  padding: 3px 6px 2px;
+  color: rgba(0, 0, 0, 0.8);
   border-radius: 5px;
+  font-weight: bold;
+  font-size: 15px;
+  transition: all 0.2s;
   &:hover {
     cursor: pointer;
+    background-color: rgba(241, 234, 222, 0.6);
   }
 }
 </style>
