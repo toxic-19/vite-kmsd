@@ -8,7 +8,7 @@ const API_KEY = 'e577238d7a4c27b7484a487c830003b2'
 type ChatDto = {
   input: string
 }
-type noArgsFunction = () => void
+// type noArgsFunction = () => void
 type oneArgsFunction = (content: any) => void
 const getWebsocketUrl = (): Promise<string> => {
   // 动态获取domain信息
@@ -39,6 +39,7 @@ const getWebsocketUrl = (): Promise<string> => {
     const headers = 'host date request-line'
     const signatureOrigin = `host: ${host}\ndate: ${date}\nGET ${httpUrl.pathname} HTTP/1.1`
     const signatureSha = CryptoJS.HmacSHA256(signatureOrigin, apiSecret)
+    console.log(signatureSha)
     const signature = CryptoJS.enc.Base64.stringify(signatureSha)
     const authorizationOrigin = `api_key="${apiKey}", algorithm="${algorithm}", headers="${headers}", signature="${signature}"`
     const authorization = btoa(authorizationOrigin)
@@ -92,10 +93,11 @@ const generateParams = (chatDto: ChatDto) => {
   }
 }
 
-export const chatWithSpark = async (chatDto: ChatDto, fb: oneArgsFunction, doneFb: noArgsFunction, errFb: oneArgsFunction) => {
+export const chatWithSpark = async (chatDto: ChatDto, fb: oneArgsFunction, doneFb: oneArgsFunction, errFb: oneArgsFunction) => {
   // 连接websocket
   const url = await getWebsocketUrl()
   const ttsWS = new WebSocket(url)
+  let totalResults = ''
   ttsWS.onopen = () => {
     // websocket发送数据
     const params = generateParams(chatDto)
@@ -109,17 +111,20 @@ export const chatWithSpark = async (chatDto: ChatDto, fb: oneArgsFunction, doneF
       },
     } = jsonData
     const { content } = text[0]
-    if (content) fb(content)
+    if (content) {
+      fb(content)
+      totalResults += content
+    }
     // 提问失败
     if (jsonData.header.code !== 0) {
       alert(`提问失败: ${jsonData.header.code}:${jsonData.header.message}`)
-      doneFb()
+      doneFb(' ')
       return `${jsonData.header.code}:${jsonData.header.message}`
     }
     if (jsonData.header.code === 0 && jsonData.header.status === 2) {
       // code为0正常状态码且status为2是最后一个文本结果
       ttsWS.close()
-      doneFb()
+      doneFb(totalResults)
       return
     }
   }

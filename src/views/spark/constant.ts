@@ -60,3 +60,12 @@ export const LIKE_STATUS = {
   YES: 1,
   NO: 0,
 }
+
+export type MessageType = {
+  id?: number
+  role: string
+  content: string
+  createTime?: string
+  score?: null | number
+  imageUrls?: string[]
+}

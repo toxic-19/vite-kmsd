@@ -21,7 +21,6 @@ enum API {
   task_list_url = '/task', // 获取项目下流程的任务列表
   task_update_url = '/task/update', // 修改项目
   task_listById_url = '/task/getByProjectId', // 根据项目id获取所有流程的任务
-  spark_chat_url = '/spark/chat', // 发送AI对话
 }
 export const postCreateProject = (data: CreateProjectBody) =>
   axiosInstance.post<any, CreateProjectResponseData>(API.project_create_url, data)
@@ -33,4 +32,3 @@ export const getTaskListByName = (params: GetTaskListQuery) => axiosInstance.get
 export const postCreateOneTask = (data: CreateTaskBody) => axiosInstance.post(API.task_create_one_url, data)
 export const postUpdateOneTask = (data: UpdateTaskBody) => axiosInstance.post(API.task_update_url, data)
 export const postTaskListByProjectId = (params: GetProjectQuery) => axiosInstance.post(API.task_listById_url, {}, { params })
-export const postSparkChat = (data: { input: string }) => axiosInstance.post(API.spark_chat_url, data)

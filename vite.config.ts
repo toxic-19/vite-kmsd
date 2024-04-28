@@ -53,13 +53,13 @@ export default (): UserConfigExport => {
       },
     },
     server: {
-      // host: true,
+      host: true,
       hmr: true,
       port: 9951,
       proxy: {
         '/dev': {
           // 将带有/dev路径的地址都换成http://127.0.0.1:3001/kmsd-api
-          target: 'http://localhost:9952/kmsd-api', // 后端接口地址
+          target: 'http://localhost:3001/kmsd-api', // 后端接口地址
           changeOrigin: true, // 是否允许跨越
           rewrite: (path) => path.replace(/^\/dev/, ''),
         },

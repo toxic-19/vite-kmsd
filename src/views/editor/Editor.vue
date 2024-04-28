@@ -50,7 +50,7 @@ function reInitVditor() {
       extend: [
         {
           key: '@',
-          hint: (key) => {
+          hint: (key: string) => {
             console.log(key)
             if ('vanessa'.indexOf(key.toLocaleLowerCase()) > -1) {
               return [
@@ -65,7 +65,7 @@ function reInitVditor() {
         },
         {
           key: '#',
-          hint: (key) => {
+          hint: (key: string) => {
             console.log(key)
             if ('vditor'.indexOf(key.toLocaleLowerCase()) > -1) {
               return [
@@ -87,16 +87,9 @@ function reInitVditor() {
       multiple: false,
       fieldName: 'file',
       max: 5242880, // 上传图片的大小5M
-      // extraData: { token: localStorage.getItem('token') }, // 为 FormData 添加额外的参数
       linkToImgUrl: '/dev/upload', // 粘贴图片请求接口
       // format 和 success error 不能一起定义 否则format不会执行
-      // success(_, msg: string) {
-      //   const { data } = JSON.parse(msg)
-      //   if (vditor.value) {
-      //     vditor.value.insertValue(`&lt;img src="${data}" alt=""&gt;`)
-      //   }
-      // },
-      format: (_, responseText) => {
+      format: (_: any, responseText: string) => {
         const { code, data } = JSON.parse(responseText)
         if (code === 200) {
           let success: Success = {}
@@ -180,7 +173,7 @@ onMounted(() => {
 const content = ref<string>('')
 watch(
   props,
-  (newVal) => {
+  (newVal: { editContent: any }) => {
     content.value = newVal.editContent
   },
   { immediate: true },

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
+import DrawerQa from '@/views/spark/drawerQa/index.vue'
 import { defineProps, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 const props = defineProps(['preview'])
@@ -22,8 +23,9 @@ const initVditor = () => {
         return
       }
       getOutline() // 渲染目录
-      const firstSpan = document.getElementById('outline').querySelector('span')
-      if (firstSpan) router.push(`${path.value}/#${firstSpan?.innerText}`)
+      const firstSpan = document.getElementById('outline').querySelector('span') as HTMLElement
+      const name = firstSpan.getAttribute('data-target-id')
+      if (firstSpan) router.push(`${path.value}/#${name}`)
     },
   })
 }
@@ -32,10 +34,12 @@ const initOutline = () => {
   const scrollDOM = document.getElementById('content') as HTMLElement
   Array.from(document.getElementById('preview').children).forEach((item) => {
     if (!(item.tagName.length === 2 && item.tagName !== 'HR' && item.tagName.indexOf('H') === 0)) {
-      return;
+      return
     }
+    console.log(item)
     headingElements.push(<HTMLElement>item)
   })
+  console.log(headingElements)
   let toc = []
   scrollDOM.addEventListener('scroll', () => {
     const scrollTop = scrollDOM.scrollTop
@@ -71,9 +75,10 @@ const clickOutLine = () => {
   console.log('clickOutLine')
   const ulDOM = document.getElementById('outline').querySelector('ul') as HTMLElement
   ulDOM.addEventListener('click', (event: any) => {
-    const title = event.target.innerText.replace(/\s/g, '-')
+    const title = event.target.parentElement.getAttribute('data-target-id') || event.target.getAttribute('data-target-id')
+    // const title = event.target.innerText.replace(/\s/g, '-')
     const { knowId, articleId } = route.params
-    window.location = `/docs/${knowId}/${articleId}/#${title}`
+    window.location.href = `/docs/${knowId}/${articleId}/#${title}`
   })
 }
 const outlineWidth = ref<string>('50px')
@@ -82,6 +87,13 @@ const showOutLine = () => {
   const flag = outlineElement.style.width == '0px'
   outlineElement.style.width = flag ? '240px' : '0px'
   outlineWidth.value = flag ? '260px' : '50px'
+}
+const DrawerQaRef = ref<InstanceType<typeof DrawerQa>>()
+const openChatDrawer = () => {
+  DrawerQaRef.value?.showDrawer()
+}
+const changeWidth = (open: boolean) => {
+  outlineWidth.value = open ? '500px' : '50px'
 }
 onMounted(() => {
   initVditor()
@@ -121,6 +133,11 @@ watch(
       <SvgIcon name="float-menu" width="30px" height="38px"></SvgIcon>
     </a-tooltip>
   </div>
+  <div class="chat-switch" @click="openChatDrawer">
+    <SvgIcon name="qa" width="30px" height="30px"></SvgIcon>
+    <div class="tips">AI问答</div>
+  </div>
+  <drawer-qa ref="DrawerQaRef" @changeOpen="changeWidth"></drawer-qa>
 </template>
 
 <style scoped lang="scss">
@@ -128,6 +145,7 @@ watch(
 #previewWrap {
   padding: 0 0 20px 20px;
   margin-right: v-bind(outlineWidth);
+  transition: all 0.3s;
   #preview {
     margin: 0 auto;
   }
@@ -194,9 +212,43 @@ watch(
   border: 1px solid transparent;
   box-shadow: 1px 2px 6px 2px rgba(183, 183, 183, 0.8);
   transition: all 0.3s;
-  z-index: 999;
+  z-index: 99;
   &:hover {
     border: 1px solid #d9d6d6;
+  }
+}
+.chat-switch {
+  width: 54px;
+  height: 40px;
+  padding: 0 12px;
+  padding-right: 8px;
+  border-radius: 40px 0 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  right: 0;
+  bottom: 60px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  box-shadow: 1px 2px 6px 2px rgba(183, 183, 183, 0.8);
+  transition: all 0.3s;
+  z-index: 99;
+  overflow: hidden;
+  &:hover {
+    width: 106px;
+    .tips {
+      opacity: 1;
+    }
+  }
+  .tips {
+    width: 50px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: all 0.3s;
+    letter-spacing: 2px;
+    font-weight: 700;
+    font-size: 14px;
   }
 }
 

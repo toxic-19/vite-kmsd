@@ -11,7 +11,7 @@ if (window.innerWidth <= 1200) {
 </script>
 
 <template>
-  <div class="docs">
+  <div class="docs" id="docs">
     <div class="docs-left">
       <doc-menu></doc-menu>
     </div>
