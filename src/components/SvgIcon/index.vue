@@ -38,6 +38,7 @@ defineProps({
   justify-content: center;
   align-items: center;
   grid-gap: 4px;
+  cursor: pointer;
   .text {
     color: #313c52;
     font-family: cursive;

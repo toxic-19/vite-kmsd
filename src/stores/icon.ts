@@ -7,7 +7,6 @@ export const useCollapsedStore = defineStore('collapsed', () => {
   function collapseMenu() {
     opened.value = !opened.value
     leftWidth.value = opened.value ? '320px' : '0px'
-    console.log(leftWidth.value)
   }
 
   return { leftWidth, collapseMenu } // 组合式写法必须返回state中的所有属性

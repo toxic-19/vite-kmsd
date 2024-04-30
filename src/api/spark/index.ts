@@ -39,7 +39,6 @@ const getWebsocketUrl = (): Promise<string> => {
     const headers = 'host date request-line'
     const signatureOrigin = `host: ${host}\ndate: ${date}\nGET ${httpUrl.pathname} HTTP/1.1`
     const signatureSha = CryptoJS.HmacSHA256(signatureOrigin, apiSecret)
-    console.log(signatureSha)
     const signature = CryptoJS.enc.Base64.stringify(signatureSha)
     const authorizationOrigin = `api_key="${apiKey}", algorithm="${algorithm}", headers="${headers}", signature="${signature}"`
     const authorization = btoa(authorizationOrigin)

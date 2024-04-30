@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import {nextTick, onMounted, onUnmounted, ref, watch} from 'vue'
-import { LoadingOutlined, FullscreenOutlined } from '@ant-design/icons-vue'
+import { h, nextTick, onMounted, ref, watch } from 'vue'
+import { LoadingOutlined, ReadOutlined, CopyOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
 import { Marked } from 'marked'
 import { markedHighlight } from 'marked-highlight'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/atom-one-dark-reasonable.css'
-import { getHistoryList, postSaveHistory } from '@/api/session/index.ts'
+import { getFileContentByDocId, getHistoryList, postSaveHistory } from '@/api/session/index.ts'
 import { chatWithSpark } from '@/api/spark/index.ts'
-import { chatWithDoc } from '@/api/spark/docsQa.ts'
+// import { chatWithDoc } from '@/api/spark/docsQa.ts'
 import { MessageType } from '../constant.ts'
+import { useRoute } from 'vue-router'
 
 // onMounted(() => {
 //   chatWithDoc()
@@ -19,9 +20,9 @@ const emit = defineEmits(['changeOpen'])
 const nowSessionId = ref()
 const messageList = ref<MessageType[]>([])
 // 获取对话的聊天数据
-const getMessageList = async (sessionId: number) => {
-  nowSessionId.value = sessionId
-  const { data } = await getHistoryList({ sessionId })
+const getMessageList = async (articleId: number) => {
+  // nowSessionId.value = sessionId
+  const { data } = await getHistoryList({ articleId })
   messageList.value = data
   messageList.value.forEach((item) => {
     if (item.content.includes('ai-image')) item.imageUrls = item.content.split('-img-')
@@ -45,13 +46,13 @@ const autoScrollBottom = async () => {
       msgEnd = null
     }
   }
-  scrollBox.addEventListener('scroll', watchTopScroll)
-
+  if (scrollBox) {
+    scrollBox.addEventListener('scroll', watchTopScroll)
+  }
   // 向下滚
   const keep = () => {
     msgEnd && msgEnd.scrollIntoView()
   }
-
   // 关闭监听
   const close = () => {
     scrollBox.removeEventListener('scroll', watchTopScroll)
@@ -157,16 +158,22 @@ watch(messageWrapper, () => {
   })
 })
 const open = ref<boolean>(false)
-const drawerWidth = ref<number | string>(480)
+const drawerWidth = ref<number | string>(520)
 const showDrawer = () => {
   open.value = true
 }
 const closeDrawer = () => {
   open.value = false
-  drawerWidth.value = 480
+  drawerWidth.value = 520
 }
+const fullscreenIcon = ref('fullscreen')
 const fullScreen = () => {
-  drawerWidth.value = drawerWidth.value === '100%' ? 480 : '100%'
+  drawerWidth.value = drawerWidth.value === '100%' ? 520 : '100%'
+  fullscreenIcon.value = fullscreenIcon.value === 'fullscreen' ? 'close-fullscreen' : 'fullscreen'
+}
+const isShowSummary = ref<boolean>(false)
+const showSummary = () => {
+  isShowSummary.value = !isShowSummary.value
 }
 watch(open, (newVal) => {
   emit('changeOpen', newVal)
@@ -175,8 +182,16 @@ defineExpose({
   showDrawer,
   open,
 })
-onMounted(() => {
-  getMessageList(2)
+const route = useRoute()
+const summary = ref()
+onMounted(async () => {
+  const { articleId } = route.params
+  const { code, data } = await getFileContentByDocId({ articleId: +articleId })
+  if (code === 200) {
+    summary.value = data.summary
+    // 根据对应的fileId来获取聊天记录
+    getMessageList(+articleId)
+  }
 })
 </script>
 
@@ -187,16 +202,40 @@ onMounted(() => {
     :open="open"
     @close="closeDrawer"
     :mask="false"
-    :headerStyle="{ padding: '10px 24px' }"
-    :bodyStyle="{ padding: '10px 24px 16px' }"
+    :headerStyle="{ padding: '10px 24px 6px' }"
+    :bodyStyle="{ padding: '10px 12px 16px', background: '#f3f6fc' }"
     :width="drawerWidth"
   >
     <template #extra>
-      <a-tooltip title="全屏对话">
-        <fullscreen-outlined style="font-size: 13px" @click="fullScreen" />
-      </a-tooltip>
+      <div class="extra-operate">
+        <a-tooltip title="文档总结">
+          <SvgIcon name="summary" width="20px" height="20px" @click="showSummary"></SvgIcon>
+        </a-tooltip>
+        <a-tooltip title="全屏">
+          <SvgIcon :name="fullscreenIcon" width="18px" height="18px" @click="fullScreen"></SvgIcon>
+        </a-tooltip>
+      </div>
     </template>
     <div class="layout_content_main">
+      <!-- 总结 -->
+      <transition>
+        <div class="doc-summary" v-show="isShowSummary">
+          <div class="summary-title">
+            <SvgIcon name="summary" width="16" height="16"></SvgIcon>
+            <span class="title">以下为该文档的总结概要：</span>
+            <a-button size="large" type="link" class="summary-btn" :icon="h(CopyOutlined)" @click="copy2ClipBoard(summary)">
+              Copy
+            </a-button>
+          </div>
+          <div class="summary-content">
+            <div class="content" v-html="coverTextToHtml(summary)"></div>
+            <div class="summary-restart">
+              <div class="restart-tips">注意：如对以上生成内容不满意，可点击右侧按钮重新生成</div>
+              <a-button size="large" type="link" class="summary-btn" :icon="h(ReadOutlined)" :autoInsertSpaceInButton="false">ReCap</a-button>
+            </div>
+          </div>
+        </div>
+      </transition>
       <div class="main_messageList" id="openai-chat-message-scroll-view">
         <div class="chat_message" ref="messageWrapper">
           <div id="firstEl"></div>
@@ -244,19 +283,72 @@ onMounted(() => {
 </template>
 
 <style scoped lang="scss">
+.extra-operate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  grid-gap: 20px;
+}
+.doc-summary {
+  padding: 10px 0 10px 10px;
+  background-color: #fbfcff;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(76, 99, 140, 0.4);
+  width: 100%;
+  .summary-title {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    .title {
+      font-size: 15px;
+      line-height: 16px;
+      font-weight: bold;
+    }
+  }
+  .summary-btn {
+    margin-left: auto;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    :deep(span) {
+      font-size: 15px;
+    }
+  }
+  .summary-content {
+    width: 100%;
+    max-height: 220px;
+    padding: 0 10px;
+    overflow-y: scroll;
+    @include scrollBar;
+    .content {
+      padding-bottom: 10px;
+      :deep(p) {
+        padding: 2px 0;
+        font-size: 14px;
+        line-height: 26px;
+      }
+    }
+    .summary-restart {
+      display: flex;
+      align-items: center;
+      .restart-tips {
+        flex: 1;
+        color: rgba(76, 99, 140, 0.9);
+        font-size: 13px;
+      }
+    }
+  }
+}
 .layout_content_main {
-  background-color: #f3f6fc;
   height: 100%;
   width: 100%;
-  border-radius: 16px;
   position: relative;
-  padding-top: 12px;
   display: flex;
   flex-direction: column;
   .main_messageList {
     overflow-y: auto;
     flex: 1;
-    padding: 1.71rem 2.29rem;
     margin-bottom: 20px;
     @include scrollBar;
     -ms-overflow-style: none;
@@ -343,11 +435,11 @@ onMounted(() => {
   }
   .main_chat {
     position: relative;
-    margin: 10px 20px 15px;
-    border-radius: 10px;
-    padding: 0.5rem 20px;
+    margin: 10px 20px;
+    border-radius: 12px;
+    padding: 0.5rem 10px;
     background-color: #ffffff;
-    border: 1px solid transparent;
+    border: 1px solid #cccccc;
 
     &:hover {
       border: 1px solid #87a2ff;
@@ -425,5 +517,13 @@ onMounted(() => {
 }
 :deep(.ant-drawer .ant-drawer-header) {
   padding: 8px 24px;
+}
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 1s ease;
+}
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 </style>

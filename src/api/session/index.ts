@@ -3,6 +3,7 @@ import {
   CreateSessionDto,
   CreateSessionResponseData,
   DeleteSessionDto,
+  FileContentResData,
   HistoryResData,
   ReNameDto,
   SaveHistoryDto,
@@ -16,6 +17,7 @@ enum API {
   session_reName_url = '/spark/session/reName', // 重命名对话
   history_save_url = '/spark/history/save', // 保存对话记录
   history_list_url = '/spark/history/list', // 获取聊天记录
+  file_content_url = '/spark/file/fileId', // 获取文章下的fileId和summary
 }
 export const postCreateSession = (data: CreateSessionDto) =>
   axiosInstance.post<any, CreateSessionResponseData>(API.session_create_url, data)
@@ -23,4 +25,7 @@ export const getListSession = () => axiosInstance.get<any, SessionListResponseDa
 export const postDeleteSession = (params: DeleteSessionDto) => axiosInstance.post(API.session_delete_url, {}, { params })
 export const postReNameSession = (data: ReNameDto) => axiosInstance.post(API.session_reName_url, data)
 export const postSaveHistory = (data: SaveHistoryDto) => axiosInstance.post<any, HistoryResData>(API.history_save_url, data)
-export const getHistoryList = (params: { sessionId: number }) => axiosInstance.get<any>(API.history_list_url, { params })
+export const getHistoryList = (params: { sessionId?: number; articleId?: number }) =>
+  axiosInstance.get<any>(API.history_list_url, { params })
+export const getFileContentByDocId = (params: { articleId: number }) =>
+  axiosInstance.get<any, FileContentResData>(API.file_content_url, { params })

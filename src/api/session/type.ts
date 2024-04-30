@@ -41,3 +41,14 @@ export type SaveHistoryDto = {
 export interface HistoryResData extends ResponseData {
   data: OneHistoryRecord[]
 }
+type FileContentRecord = {
+  id: number
+  sid: string
+  fileId: string
+  summary: string | null
+  createdAt: string
+  updatedAt: string
+}
+export interface FileContentResData extends ResponseData {
+  data: FileContentRecord
+}

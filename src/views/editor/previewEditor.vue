@@ -4,6 +4,7 @@ import 'vditor/dist/index.css'
 import DrawerQa from '@/views/spark/drawerQa/index.vue'
 import { defineProps, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useCollapsedStore } from '@/stores/icon.ts'
 const props = defineProps(['preview'])
 const router = useRouter()
 const route = useRoute()
@@ -19,28 +20,29 @@ const initVditor = () => {
       listStyle: false,
     },
     after() {
-      if (window.innerWidth <= 768) {
-        return
-      }
+      if (window.innerWidth <= 768) return
       getOutline() // 渲染目录
-      const firstSpan = document.getElementById('outline').querySelector('span') as HTMLElement
-      const name = firstSpan.getAttribute('data-target-id')
-      if (firstSpan) router.push(`${path.value}/#${name}`)
+      const outlineEle = document.getElementById('outline') as HTMLDivElement
+      const firstSpanName = outlineEle.querySelector('span')?.getAttribute('data-target-id')
+      if (firstSpanName) router.push(`${path.value}/#${firstSpanName}`)
     },
   })
 }
 const initOutline = () => {
+  // 获取文章的导航headingElements
   const headingElements = [] as HTMLElement[]
   const scrollDOM = document.getElementById('content') as HTMLElement
-  Array.from(document.getElementById('preview').children).forEach((item) => {
-    if (!(item.tagName.length === 2 && item.tagName !== 'HR' && item.tagName.indexOf('H') === 0)) {
-      return
-    }
-    console.log(item)
-    headingElements.push(<HTMLElement>item)
+  const previewDOM = document.getElementById('preview') as HTMLElement
+  Array.from(previewDOM.children).forEach((element) => {
+    if (!(element.tagName.length === 2 && element.tagName !== 'HR' && element.tagName.indexOf('H') === 0)) return
+    headingElements.push(element as HTMLElement)
   })
-  console.log(headingElements)
-  let toc = []
+  // 页面滚动获取各个标题距顶部的top
+  type TocSingle = {
+    id: string
+    offsetTop: number
+  }
+  let toc = [] as TocSingle[]
   scrollDOM.addEventListener('scroll', () => {
     const scrollTop = scrollDOM.scrollTop
     toc = []
@@ -50,7 +52,6 @@ const initOutline = () => {
         offsetTop: item.offsetTop,
       })
     })
-
     const currentElement = document.querySelector('.vditor-outline__item--current')
     for (let i = 0, iMax = toc.length; i < iMax; i++) {
       if (scrollTop < toc[i].offsetTop - 10) {
@@ -58,22 +59,24 @@ const initOutline = () => {
           currentElement.classList.remove('vditor-outline__item--current')
         }
         let index = i > 0 ? i : 0
-        document.querySelector('span[data-target-id="' + toc[index].id + '"]').classList.add('vditor-outline__item--current')
+        const otherTocSingle = document.querySelector(`span[data-target-id=${toc[index].id}]`) as HTMLElement
+        otherTocSingle.classList.add('vditor-outline__item--current')
         break
       }
     }
   })
 }
 const getOutline = () => {
-  const outlineElement = document.getElementById('outline') as HTMLElement
-  Vditor.outlineRender(<HTMLElement>document.getElementById('preview'), outlineElement)
+  const outlineElement = document.getElementById('outline') as HTMLDivElement
+  const previewElement = document.getElementById('preview') as HTMLDivElement
+  Vditor.outlineRender(previewElement, outlineElement)
   if (outlineElement.innerText.trim() === '') return
   initOutline()
   clickOutLine()
 }
 const clickOutLine = () => {
-  console.log('clickOutLine')
-  const ulDOM = document.getElementById('outline').querySelector('ul') as HTMLElement
+  const outlineEle = document.getElementById('outline') as HTMLDivElement
+  const ulDOM = outlineEle.querySelector('ul') as HTMLUListElement
   ulDOM.addEventListener('click', (event: any) => {
     const title = event.target.parentElement.getAttribute('data-target-id') || event.target.getAttribute('data-target-id')
     // const title = event.target.innerText.replace(/\s/g, '-')
@@ -92,8 +95,10 @@ const DrawerQaRef = ref<InstanceType<typeof DrawerQa>>()
 const openChatDrawer = () => {
   DrawerQaRef.value?.showDrawer()
 }
+const store = useCollapsedStore()
 const changeWidth = (open: boolean) => {
-  outlineWidth.value = open ? '500px' : '50px'
+  outlineWidth.value = open ? '540px' : '50px'
+  store.collapseMenu()
 }
 onMounted(() => {
   initVditor()
