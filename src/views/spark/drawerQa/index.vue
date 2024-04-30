@@ -11,6 +11,7 @@ import { chatWithSpark } from '@/api/spark/index.ts'
 // import { chatWithDoc } from '@/api/spark/docsQa.ts'
 import { MessageType } from '../constant.ts'
 import { useRoute } from 'vue-router'
+import {chatWithDoc} from "@/api/spark/docsQa.ts";
 
 // onMounted(() => {
 //   chatWithDoc()
@@ -28,7 +29,7 @@ const getMessageList = async (articleId: number) => {
     if (item.content.includes('ai-image')) item.imageUrls = item.content.split('-img-')
   })
   await autoScrollBottom()
-  return data.list
+  return data
 }
 // 监听滚动事件
 const oldScrollTop = ref(0)
@@ -82,7 +83,7 @@ const coverTextToHtml = (text: string) => {
 }
 // 输入
 const messageInput = ref<string>('')
-const placeholderText = ref<string>('请输入询问内容')
+const placeholderText = ref<string>('请输入对该文档的询问内容')
 const sendLoading = ref<boolean>(false)
 const isInputFocused = ref(false)
 // 监听输入框的焦点事件
@@ -113,7 +114,8 @@ const sendChat = async () => {
   )
   const autoScrollBottomM = await autoScrollBottom()
   const chatParams = {
-    input: messageInput.value,
+    userInput: messageInput.value,
+    fileId: fileId.value,
     // sessionId: nowSessionId.value, // 会话id
   }
   const fb = (content: string) => {
@@ -123,7 +125,7 @@ const sendChat = async () => {
   const doneFb = async (totalResults: string) => {
     // 保存此次对话的记录
     await postSaveHistory({
-      sessionId: nowSessionId.value,
+      articleId: route.params.articleId,
       userInput: messageInput.value,
       assistantResponse: totalResults,
     })
@@ -137,7 +139,7 @@ const sendChat = async () => {
     sendLoading.value = false
     messageInput.value = ''
   }
-  await chatWithSpark(chatParams, fb, doneFb, errFb)
+  await chatWithDoc(chatParams, fb, doneFb, errFb)
 }
 
 // 发起新对话
@@ -171,7 +173,7 @@ const fullScreen = () => {
   drawerWidth.value = drawerWidth.value === '100%' ? 520 : '100%'
   fullscreenIcon.value = fullscreenIcon.value === 'fullscreen' ? 'close-fullscreen' : 'fullscreen'
 }
-const isShowSummary = ref<boolean>(false)
+const isShowSummary = ref<boolean>(true)
 const showSummary = () => {
   isShowSummary.value = !isShowSummary.value
 }
@@ -184,14 +186,25 @@ defineExpose({
 })
 const route = useRoute()
 const summary = ref()
-onMounted(async () => {
-  const { articleId } = route.params
-  const { code, data } = await getFileContentByDocId({ articleId: +articleId })
+const fileId = ref()
+const getSummary = async (articleId: number) => {
+  const { code, data } = await getFileContentByDocId({ articleId })
   if (code === 200) {
     summary.value = data.summary
+    fileId.value = data.fileId
     // 根据对应的fileId来获取聊天记录
-    getMessageList(+articleId)
+    await getMessageList(articleId)
   }
+}
+watch(
+  () => route.params.articleId,
+  (newVal) => {
+    getSummary(+newVal)
+  },
+)
+onMounted(() => {
+  const { articleId } = route.params
+  getSummary(+articleId)
 })
 </script>
 
@@ -203,7 +216,7 @@ onMounted(async () => {
     @close="closeDrawer"
     :mask="false"
     :headerStyle="{ padding: '10px 24px 6px' }"
-    :bodyStyle="{ padding: '10px 12px 16px', background: '#f3f6fc' }"
+    :bodyStyle="{ padding: '10px 20px 16px', background: '#f3f6fc' }"
     :width="drawerWidth"
   >
     <template #extra>
@@ -219,7 +232,7 @@ onMounted(async () => {
     <div class="layout_content_main">
       <!-- 总结 -->
       <transition>
-        <div class="doc-summary" v-show="isShowSummary">
+        <div class="doc-summary" v-if="isShowSummary">
           <div class="summary-title">
             <SvgIcon name="summary" width="16" height="16"></SvgIcon>
             <span class="title">以下为该文档的总结概要：</span>
@@ -231,7 +244,9 @@ onMounted(async () => {
             <div class="content" v-html="coverTextToHtml(summary)"></div>
             <div class="summary-restart">
               <div class="restart-tips">注意：如对以上生成内容不满意，可点击右侧按钮重新生成</div>
-              <a-button size="large" type="link" class="summary-btn" :icon="h(ReadOutlined)" :autoInsertSpaceInButton="false">ReCap</a-button>
+              <a-button size="large" type="link" class="summary-btn" :icon="h(ReadOutlined)" :autoInsertSpaceInButton="false">
+                ReCap
+              </a-button>
             </div>
           </div>
         </div>
@@ -249,7 +264,7 @@ onMounted(async () => {
             <div class="chat-status" v-else><a-spin tip="正在生成中..."></a-spin></div>
           </div>
         </div>
-        <div id="msgEnd" style="height: 1px; overflow: hidden"></div>
+        <div id="msgEnd" style="height: 10px; overflow: hidden"></div>
       </div>
       <div :class="{ main_chat: true, main_chat_focus: isInputFocused }" ref="chatContainer">
         <div class="main_chat_container">
@@ -349,7 +364,6 @@ onMounted(async () => {
   .main_messageList {
     overflow-y: auto;
     flex: 1;
-    margin-bottom: 20px;
     @include scrollBar;
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -450,10 +464,8 @@ onMounted(async () => {
     }
     .main_chat_input {
       flex: 1;
-      line-height: 26px;
+      line-height: 22px;
       resize: none;
-      margin-right: 10px;
-      font-size: 16px;
       &::-webkit-scrollbar {
         width: 0;
       }
