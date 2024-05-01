@@ -104,20 +104,27 @@ export const chatWithSpark = async (chatDto: ChatDto, fb: oneArgsFunction, doneF
   }
   ttsWS.onmessage = (e) => {
     const jsonData = JSON.parse(e.data)
-    const {
-      payload: {
-        choices: { text },
-      },
-    } = jsonData
-    const { content } = text[0]
-    if (content) {
-      fb(content)
-      totalResults += content
+    if (jsonData.payload?.choices) {
+      const {
+        payload: {
+          choices: { text },
+        },
+      } = jsonData
+      const { content } = text[0]
+      if (content) {
+        fb(content)
+        totalResults += content
+      }
+    } else {
+      const text = jsonData.header.message
+      fb(text)
+      totalResults += text
     }
+
     // 提问失败
     if (jsonData.header.code !== 0) {
-      alert(`提问失败: ${jsonData.header.code}:${jsonData.header.message}`)
-      doneFb(' ')
+      // alert(`提问失败: ${jsonData.header.code}:${jsonData.header.message}`)
+      doneFb(jsonData.header.message)
       return `${jsonData.header.code}:${jsonData.header.message}`
     }
     if (jsonData.header.code === 0 && jsonData.header.status === 2) {

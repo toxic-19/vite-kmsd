@@ -129,6 +129,10 @@ const sendChat = async () => {
   const fb = (content: string) => {
     messageList.value[index - 1].content += content
     autoScrollBottomM.keep()
+    const currentSession = dialogList.value.find((item) => item.id === nowSessionId.value)
+    if (currentSession.sessionName === '新建测试') {
+      updateChatName(nowSessionId.value, messageInput.value.slice(0, 12))
+    }
   }
   const doneFb = async (totalResults: string) => {
     // 保存此次对话的记录
@@ -178,9 +182,13 @@ const cancelEdit = (id: number) => {
   delete editData[id]
 }
 // 更新对话名称
-const updateChatName = async (id: number) => {
-  const name = editData[id]
-  if (!name.trim().length) return message.error('对话名称不能为空')
+const updateChatName = async (id: number, inputLetters: string) => {
+  console.log('点击勾选')
+  let name = ''
+  if (!inputLetters) {
+    name = editData[id]
+    if (!name.trim().length) return message.error('对话名称不能为空')
+  } else name = inputLetters
   await postReNameSession({ sessionId: id, sessionName: name })
   delete editData[id]
   getDialogList()
@@ -215,13 +223,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <a-layout style="width: 80%; height: 100%; margin: auto">
+  <a-layout style="width: 76%; height: 100%; margin: auto">
     <a-layout-sider width="18%">
       <div class="layout_sider">
         <div class="dialogue_top">
-          <a-button type="text" :icon="h(PlusSquareOutlined)" class="addDialogue_btn" @click="addDialog">
-            新对话
-          </a-button>
+          <a-button type="text" :icon="h(PlusSquareOutlined)" class="addDialogue_btn" @click="addDialog">新对话</a-button>
         </div>
         <div class="dialogue_main">
           <div class="title">近期对话</div>
@@ -236,15 +242,16 @@ onMounted(() => {
                   maxlength="15"
                   ref="updateChatNameInput"
                 />
-                <div class="edit">
-                  <check-outlined style="font-size: 16px" @click="updateChatName(item.id)" />
-                  <close-outlined style="font-size: 16px" @click="cancelEdit(item.id)" />
-                </div>
+                <!--                <div class="edit">-->
+                <!--                  <check-outlined style="font-size: 16px" @click.prevent="updateChatName(item.id)" />-->
+                <!--                  <close-outlined style="font-size: 16px" @click.stop="cancelEdit(item.id)" />-->
+                <!--                </div>-->
               </div>
               <div
                 :class="{ dialogue_item: true, dialogue_item_select: item.id == nowSessionId }"
                 v-show="!(item.id in editData)"
               >
+                <div class="sessionName-icon">{{ item.sessionName.slice(0, 1) }}</div>
                 {{ item.sessionName }}
                 <a-popover
                   v-model:open="dialogMenu[item.id]"
@@ -258,10 +265,18 @@ onMounted(() => {
                       <SvgIcon name="edit" width="13px" height="13px"></SvgIcon>
                       <span class="operator">重命名</span>
                     </div>
-                    <div class="popover_del" @click.stop="delDialog(item, index)">
-                      <SvgIcon name="delete" width="13px" height="13px"></SvgIcon>
-                      <span class="operator">删除</span>
-                    </div>
+                    <a-popconfirm
+                      :title="'Are you sure delete【' + item.sessionName + '】dialog ?'"
+                      ok-text="Yes"
+                      cancel-text="No"
+                      @confirm="delDialog(item, index)"
+                      placement="bottom"
+                    >
+                      <div class="popover_del">
+                        <SvgIcon name="delete" width="14px" height="14px"></SvgIcon>
+                        <span class="operator">删除</span>
+                      </div>
+                    </a-popconfirm>
                   </template>
                   <div v-show="!sendLoading" class="dialogue_item_operation">
                     <ellipsis-outlined style="font-size: 20px" />
@@ -328,7 +343,7 @@ onMounted(() => {
   position: relative;
   background-color: #fff;
   padding-left: 20px;
-  padding-top: 6px;
+  padding-top: 12px;
   .dialogue_top {
     .addDialogue_btn {
       display: flex;
@@ -362,12 +377,13 @@ onMounted(() => {
         cursor: pointer;
         margin: 8px 0;
         height: 40px;
-        border-radius: 20px;
+        border-radius: 12px;
         padding: 14px 0 14px 14px;
         display: flex;
         align-items: center;
+        transition: all 0.3s;
         &:hover {
-          background-color: #f4f3f2;
+          background-color: rgba(128, 171, 213, 0.2);
         }
         &:hover .dialogue_item_operation {
           display: block;
@@ -398,9 +414,24 @@ onMounted(() => {
             outline: none;
           }
         }
+        .sessionName-icon {
+          width: 24px;
+          height: 24px;
+          color: #ffffff;
+          background-color: #80abd5;
+          border-radius: 4px;
+          text-align: center;
+          line-height: 24px;
+          margin-right: 4px;
+          transition: all 0.3s;
+        }
       }
       .dialogue_item_select {
-        background-color: #f4f3f2;
+        background-color: rgba(128, 171, 213, 0.3) !important;
+        .sessionName-icon {
+          background-color: #ffffff;
+          color: #000000;
+        }
       }
     }
   }

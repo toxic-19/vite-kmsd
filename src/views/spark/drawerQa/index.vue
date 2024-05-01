@@ -7,18 +7,11 @@ import { markedHighlight } from 'marked-highlight'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/atom-one-dark-reasonable.css'
 import { getFileContentByDocId, getHistoryList, postSaveHistory } from '@/api/session/index.ts'
-import { chatWithSpark } from '@/api/spark/index.ts'
-// import { chatWithDoc } from '@/api/spark/docsQa.ts'
 import { MessageType } from '../constant.ts'
 import { useRoute } from 'vue-router'
-import {chatWithDoc} from "@/api/spark/docsQa.ts";
-
-// onMounted(() => {
-//   chatWithDoc()
-// })
+import { chatWithDoc } from '@/api/spark/docsQa.ts'
 
 const emit = defineEmits(['changeOpen'])
-const nowSessionId = ref()
 const messageList = ref<MessageType[]>([])
 // 获取对话的聊天数据
 const getMessageList = async (articleId: number) => {
@@ -308,7 +301,7 @@ onMounted(() => {
   padding: 10px 0 10px 10px;
   background-color: #fbfcff;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(76, 99, 140, 0.4);
+  box-shadow: 4px 7px 12px 3px rgba(76, 99, 140, 0.4);
   width: 100%;
   .summary-title {
     display: flex;
