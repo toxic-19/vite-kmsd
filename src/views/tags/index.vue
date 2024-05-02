@@ -87,18 +87,18 @@ const targetFn = () => {
   <div class="tags">
     <div
       class="tag-item"
-      v-for="(tag, index) in showTagList"
+      v-for="tag in showTagList"
       :key="tag.id"
       :class="{ 'tag-active': tag.id === selectedTagId }"
-      :style="{ 'background-color': colorsList[index] }"
       @click="selectTag(tag)"
     >
+      <!--:style="{ 'background-color': colorsList[index] }"-->
       {{ tag.tagName }}
     </div>
     <div class="dropdown">
-      <a-dropdown v-model:open="visible" placement="bottom" :arrow="{ pointAtCenter: true }">
+      <a-dropdown v-model:open="visible" placement="bottomLeft" :arrow="{ pointAtCenter: true }">
         <a class="ant-dropdown-link" @click.prevent>
-          <SvgIcon name="choose-tag" width="30px" height="30px"></SvgIcon>
+          <SvgIcon name="choose-tag" width="24px" height="30px"></SvgIcon>
         </a>
         <template #overlay>
           <div class="select-box" @click="dropdownClick">
@@ -115,19 +115,16 @@ const targetFn = () => {
     <div class="doc-item" v-for="doc in articleList" :key="doc.id">
       <div class="item-header">
         <div class="title">
-          <SvgIcon name="title"></SvgIcon>
+          <SvgIcon name="title" width="26px" height="26px"></SvgIcon>
           <span>{{ doc.title }}</span>
         </div>
         <div class="description">
           <SvgIcon name="desc1" width="10px"></SvgIcon>
-          {{ doc.description }}
+          <span class="desc">{{ doc.description }}</span>
           <SvgIcon name="desc2" width="10px"></SvgIcon>
         </div>
       </div>
-      <div class="short-content">
-        <!--        {{ toHtml(doc.content) }}-->
-        {{ doc.content }}
-      </div>
+      <div class="short-content single_message" v-html="toHtml(doc.content)"></div>
       <div class="other">
         <div class="create-time time">
           <SvgIcon name="createdAt" width="18px" height="18px"></SvgIcon>
@@ -151,39 +148,48 @@ const targetFn = () => {
 .article-content {
   margin: 0 auto;
   width: 76%;
-  padding-top: 40px;
 }
 .tags {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  background-color: #fff;
+  margin-top: 40px;
+  border-radius: 10px;
+  padding: 6px 0;
   .tag-item {
-    min-width: 70px;
     text-align: center;
     font-size: 12px;
-    padding: 4px 12px;
-    margin: 6px 10px;
+    padding: 4px 8px;
+    margin: 6px 8px;
     border: 1px solid transparent;
-    border-radius: 6px;
+    border-radius: 4px;
+    background-color: #ffffff;
     cursor: pointer;
-    transition: all 0.4s;
+    transition: all 0.2s;
     opacity: 80%;
+    &:hover {
+      background-color: #f1f5f9;
+    }
     &.tag-active {
-      background-color: #ace1f5 !important;
-      border: 1px solid #06a8ee;
+      background-color: #f1f5f9 !important;
+      //border: 1px solid #06a8ee;
       //color: #06a8ee;
       //font-weight: bold;
       font-size: 13px;
-      transform: scale(1.2);
+      //transform: scale(1.2);
     }
   }
 }
 .article-content {
   padding-top: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 24px;
   .doc-item {
-    margin: 0 auto 20px;
+    margin-bottom: 20px;
     padding: 16px 20px;
-    width: 100%;
+    width: calc(50% - 12px);
     overflow: hidden;
     border-radius: 10px;
     box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.1);
@@ -191,6 +197,8 @@ const targetFn = () => {
     transition: all 0.3s;
     background-color: #fff;
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
     &:hover {
       box-shadow: 0 2px 16px 0 rgba(0, 0, 0, 0.2);
     }
@@ -202,10 +210,12 @@ const targetFn = () => {
         align-items: center;
         span {
           font-size: 20px;
-          margin: 0 30px 0 10px;
+          margin: 0 30px 0 6px;
           line-height: 24px;
           color: #333333;
-          font-family: microsoft yahei;
+          font-family:
+            microsoft yahei,
+            serif;
           font-weight: 700;
           letter-spacing: 0.2px;
           text-align: left;
@@ -213,11 +223,11 @@ const targetFn = () => {
           &::after {
             content: '';
             position: absolute;
-            width: 100%;
-            height: 2px;
+            width: 110%;
+            height: 3px;
             bottom: -4px;
-            left: -2px;
-            background-color: #3178c6;
+            left: -5%;
+            background-color: #64acf3;
             visibility: hidden;
             transform: scaleX(0);
             transition: 0.3s ease-in-out;
@@ -233,12 +243,21 @@ const targetFn = () => {
       }
     }
     .short-content {
+      flex: 1;
       color: #666666;
       font-size: 14px;
       line-height: 20px;
       margin: 18px 10px 18px 4px;
       overflow: hidden;
-      @include multilineEllipsis(2);
+      @include multilineEllipsis(8);
+      :deep(img) {
+        width: 100px;
+      }
+      :deep(pre) {
+        background-color: rgba(222, 229, 235, 0.6);
+        border-radius: 4px;
+        line-height: 22px;
+      }
       //&::before {
       //  position: absolute;
       //  left: 0;
@@ -254,6 +273,9 @@ const targetFn = () => {
       .svg-icon {
         margin: 0 4px;
       }
+      .desc {
+        @include textOverflow;
+      }
     }
     .other {
       display: flex;
@@ -267,6 +289,23 @@ const targetFn = () => {
       }
     }
   }
+  .doc-simple-item {
+    width: 180px;
+    height: 232px;
+    background-image: url('@/assets/doc-bg.png');
+    background-size: contain;
+    position: relative;
+    .title {
+      /* 最多七个字 */
+      width: 100px;
+      position: absolute;
+      left: 30px;
+      top: 30px;
+      text-align: center;
+      color: #ffffff;
+      font-weight: bold;
+    }
+  }
 }
 .empty-status {
   height: 600px;
@@ -276,7 +315,6 @@ const targetFn = () => {
 }
 .dropdown {
   margin-left: auto;
-  align-self: end;
 }
 .select-box {
   display: flex;

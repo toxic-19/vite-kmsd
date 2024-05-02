@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { nextTick, onMounted, reactive, ref, watch, h } from 'vue'
-import { PlusSquareOutlined, LoadingOutlined, EllipsisOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons-vue'
+import { PlusSquareOutlined, LoadingOutlined, EllipsisOutlined } from '@ant-design/icons-vue'
 import { Marked } from 'marked'
 import hljs from 'highlight.js'
 import { markedHighlight } from 'marked-highlight'
