@@ -51,7 +51,9 @@ const create = () => {
   </div>
   <a-button class="create-btn" type="primary" :icon="h(ApartmentOutlined)" @click="create">新建项目</a-button>
   <div class="project">
-    <project-item v-for="project in projectList" :key="project.id" :project="project" @refresh="getAllProjectList"></project-item>
+    <template v-for="project in projectList" :key="project.id">
+      <project-item :project="project" @refresh="getAllProjectList"></project-item>
+    </template>
   </div>
   <div class="empty-status" v-if="!projectList?.length">
     <empty-status></empty-status>

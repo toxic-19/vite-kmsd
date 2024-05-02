@@ -4,7 +4,7 @@ import { useBreadcrumbsStore } from '@/stores/breadcrumbs.ts'
 import { storeToRefs } from 'pinia'
 import EditTable from './editTable.vue'
 import TaskGantt from './taskGantt/index.vue'
-import { onMounted, ref } from 'vue'
+import { onActivated, onMounted, ref} from 'vue'
 import { RowVO } from '@/api/project/type.ts'
 import { getTaskListByName, postCreateOneTask, postUpdateOneTask } from '@/api/project'
 import { message } from 'ant-design-vue'
@@ -32,10 +32,17 @@ const createOneTask = async (row) => {
   if (code === 200) {
     message.success(`${id ? '修改' : '创建'}成功`)
   }
-  getTaskList(activeProcess.value, currentProject.value.id)
+  await getTaskList(activeProcess.value, currentProject.value.id)
+}
+const deleteOneTask = async (row) => {
+
 }
 const showGantt = ref<boolean>(false)
 onMounted(() => {
+  getTaskList(activeProcess.value, currentProject.value.id)
+})
+onActivated(() => {
+  activeProcess.value = currentProject.value?.process[0]
   getTaskList(activeProcess.value, currentProject.value.id)
 })
 </script>
@@ -80,7 +87,7 @@ onMounted(() => {
       </div>
     </div>
     <div class="task-panel">
-      <edit-table :table-data="tableData" @add-one="createOneTask"></edit-table>
+      <edit-table :table-data="tableData" @add-one="createOneTask" @delete-one="deleteOneTask"></edit-table>
     </div>
   </template>
 </template>
@@ -148,7 +155,7 @@ onMounted(() => {
     display: inline-block;
     width: 12px;
     height: 12px;
-    background-color: #33c33f;
+    background-color: #3bd5b3;
     border-radius: 50%;
     margin-right: 6px;
   }
@@ -158,9 +165,9 @@ onMounted(() => {
     font-weight: 300;
   }
   .active-process {
-    background-color: #65c48f;
+    background-color: rgba(100, 172, 243, 0.8);
     color: #fff;
-    border-color: rgba(0, 0, 0, 0.1);
+    border-color: #64acf3;
     box-shadow: 2px 2px 10px 4px rgba(0, 0, 0, 0.2);
     .circle {
       background-color: #495d81;

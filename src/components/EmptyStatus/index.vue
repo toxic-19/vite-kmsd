@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import emptyPng from '@/assets/original.png'
+const props = defineProps(['description'])
 </script>
 
 <template>
   <a-empty :image="emptyPng" :image-style="{ height: '200px' }">
-    <template #description>暂无内容</template>
+    <template #description>{{ props.description || '暂无内容' }}</template>
   </a-empty>
 </template>
 <style scoped lang="scss">

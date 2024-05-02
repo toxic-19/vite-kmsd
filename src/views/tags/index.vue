@@ -92,7 +92,6 @@ const targetFn = () => {
       :class="{ 'tag-active': tag.id === selectedTagId }"
       @click="selectTag(tag)"
     >
-      <!--:style="{ 'background-color': colorsList[index] }"-->
       {{ tag.tagName }}
     </div>
     <div class="dropdown">
@@ -110,6 +109,9 @@ const targetFn = () => {
         </template>
       </a-dropdown>
     </div>
+    <a-tooltip title="标签管理" placement="bottom">
+      <SvgIcon name="tag-manager" width="24px" height="30px"></SvgIcon>
+    </a-tooltip>
   </div>
   <div class="article-content">
     <div class="doc-item" v-for="doc in articleList" :key="doc.id">
@@ -315,6 +317,7 @@ const targetFn = () => {
 }
 .dropdown {
   margin-left: auto;
+  margin-right: 16px;
 }
 .select-box {
   display: flex;

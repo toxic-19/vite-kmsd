@@ -7,6 +7,18 @@ export const showCorrectTime = (timeStr: string) => {
   return data.replace(/\//g, '-')
 }
 /**
+ * 通过结束时间和开始时间获取人日
+ * @param timeEnd '2024-04-09T18:00:00.000Z'
+ * @param timeStart '2024-04-09T16:00:00.000Z'
+ */
+export const diffInHours = (timeEnd: string, timeStart: string) => {
+  if (timeStart === '') return 0
+  const date1 = new Date(timeEnd)
+  const date2 = new Date(timeStart)
+  const differenceInMilliseconds = Math.abs(date1 - date2)
+  return (differenceInMilliseconds / (1000 * 60 * 60) / 24).toFixed(1)
+}
+/**
  * 补零
  * @param str
  * @param length

@@ -22,12 +22,16 @@ const formState = ref<CreateProjectBody>({
 })
 const processList = computed(() => {
   const result = TEMPLATE_MAP.get(formState.value.processTemplate)
-  console.log(result)
   return result ? result.map((item) => item) : []
+})
+const processImage = computed(() => {
+  const currentItem = selectOptions.value.find((option) => option.value === formState.value.processTemplate)
+  return currentItem.back
 })
 const handleOk = () => {
   createDocRef.value.validate().then(async () => {
     confirmLoading.value = true
+    formState.value.projectCover = processImage.value
     const { code } = await postCreateProject(formState.value)
     if (code === 200) message.success('创建项目成功')
     emit('refresh')
@@ -39,10 +43,11 @@ const clearForm = () => {
   // 清空表单
   formState.value = {
     projectName: '',
-    processTemplate: '',
+    processTemplate: 1,
     projectCover: '',
   }
   createDocRef.value.resetFields()
+  open.value = false
 }
 
 // 检验规则
@@ -90,14 +95,16 @@ defineExpose({
             </div>
           </div>
         </a-form-item>
-        <a-form-item label="项目背景" name="projectCover"></a-form-item>
+        <a-form-item label="项目背景" name="projectCover">
+          <img class="project-cover" :src="processImage" alt="背景" />
+        </a-form-item>
       </a-form>
     </a-modal>
   </div>
 </template>
 <style lang="scss" scoped>
 .process {
-  width: 340px;
+  width: 341px;
   display: flex;
   flex-wrap: wrap;
   font-size: 16px;
@@ -118,5 +125,8 @@ defineExpose({
       }
     }
   }
+}
+.project-cover {
+  width: 120px;
 }
 </style>

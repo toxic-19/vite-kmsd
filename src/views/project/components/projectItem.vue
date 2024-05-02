@@ -18,7 +18,7 @@ const rotateFront = ref('0deg')
 const rotateBack = ref('180deg')
 const transfer = () => {
   rotateFront.value = rotateFront.value === '0deg' ? '180deg' : '0deg'
-  rotateBack.value = rotateBack.value === '180deg' ? '360deg' : '180deg'
+  rotateBack.value = rotateBack.value === '180deg' ? '0deg' : '180deg'
 }
 // 收藏项目
 const collectIcon = ref<string>('unCollect')
@@ -57,8 +57,8 @@ const hangupProject = async () => {
 const router = useRouter()
 const toTaskPage = (event: Event) => {
   if (event.target && event.target?.nodeName === 'INPUT') return
-  router.push(`/task/${projectContent.value.id}`)
   store.setProject(projectContent.value)
+  router.push(`/task/${projectContent.value.id}`)
 }
 </script>
 <template>
@@ -158,7 +158,7 @@ const toTaskPage = (event: Event) => {
     transform: rotateY(v-bind(rotateFront)); // 翻转 0 -> 180deg
   }
   .card-back {
-    height: 290px;
+    height: 310px;
     width: 100%;
     position: absolute;
     backface-visibility: hidden;
@@ -201,7 +201,7 @@ const toTaskPage = (event: Event) => {
 .transfer {
   position: absolute;
   top: 10px;
-  right: 10px;
+  right: 0;
   cursor: pointer;
   width: 50px;
   height: 30px;
@@ -209,7 +209,7 @@ const toTaskPage = (event: Event) => {
 :deep(.ant-card-cover) {
   img {
     width: 100%;
-    height: 142px;
+    //height: 142px;
   }
 }
 </style>

@@ -21,6 +21,8 @@ const progressTemplates = {
   '4': ['后端任务分解', '设计实现方案', '自测Bug', '联调', '验收'],
   '5': ['创建产品、执行', '关联需求', '团队管理', '分解任务', '跟踪进度'],
   '6': ['撰写用例', '执行用例', '提交Bug', '验证Bug', '关闭Bug'],
+  '7': ['学习', '预研', '感兴趣', '缺陷', '复习'],
+  '8': ['当前计划'],
 }
 export const TEMPLATE_MAP = new Map([
   [1, progressTemplates['1']],
@@ -29,12 +31,26 @@ export const TEMPLATE_MAP = new Map([
   [4, progressTemplates['4']],
   [5, progressTemplates['5']],
   [6, progressTemplates['6']],
+  [7, progressTemplates['7']],
+  [8, progressTemplates['8']],
 ])
 export const selectOptions = ref([
-  { value: 1, label: '软件开发' },
-  { value: 2, label: '需求设计' },
-  { value: 3, label: '前端开发' },
-  { value: 4, label: '后端开发' },
-  { value: 5, label: '产品开发' },
-  { value: 6, label: '测试开发' },
+  { value: 1, label: '软件开发', back: 'https://moscdn.lanhuapp.com/prod/7/image/636a2065b5b853eeffbdfa0c_cover.png' },
+  { value: 2, label: '需求设计', back: 'https://lhcdn.lanhuapp.com/workbench/template2.jpg' },
+  { value: 3, label: '前端开发', back: 'https://lhcdn.lanhuapp.com/workbench/template10.jpg' },
+  { value: 4, label: '后端开发', back: 'https://lhcdn.lanhuapp.com/workbench/template9.jpg' },
+  { value: 5, label: '产品开发', back: 'https://lhcdn.lanhuapp.com/workbench/template1.jpg' },
+  { value: 6, label: '测试开发', back: 'https://lhcdn.lanhuapp.com/workbench/template3.jpg' },
+  { value: 7, label: '个人计划', back: 'https://lhcdn.lanhuapp.com/workbench/template5-1.png' },
+  { value: 8, label: '团队计划', back: 'https://lhcdn.lanhuapp.com/workbench/template7.jpg' },
+])
+
+export const taskStatusList = ref([
+  { label: '未开始', value: 0 },
+  { label: '进行中', value: 1 },
+  { label: '暂停', value: 2 },
+  { label: '已完成', value: 3 },
+  { label: '已取消', value: 4 },
+  { label: '延期', value: 5 },
+  { label: '出现问题', value: 6 },
 ])

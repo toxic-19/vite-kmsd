@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { VxeTableInstance } from 'vxe-table'
-import { showCorrectTime } from '@/utils/constant.ts'
+import { VxeColumnPropTypes, VxeTableInstance } from 'vxe-table'
+import { diffInHours, showCorrectTime } from '@/utils/constant.ts'
+import { taskStatusList } from '@/utils/map.ts'
+import { RowVO } from '@/api/project/type.ts'
 const props = defineProps(['tableData'])
 const emit = defineEmits(['addOne'])
 const tableData = ref(props.tableData)
@@ -13,13 +15,6 @@ watch(
     }
   },
 )
-const taskStatusList = ref([
-  { label: '刚发布', value: 0 },
-  { label: '未开始', value: 1 },
-  { label: '进行中', value: 2 },
-  { label: '已完成', value: 3 },
-  { label: '已关闭', value: 4 },
-])
 const formatSex = (value: string) => {
   return taskStatusList.value.find((item) => value === item.value)?.label
 }
@@ -44,8 +39,15 @@ const insertEvent = async () => {
 //   }
 // }
 const saveOneTask = async (row) => {
+  row.days = diffInHours(row.dateEnd, row.dateStart)
   console.log(row)
   emit('addOne', row)
+}
+const deleteTask = async (row) => {
+  console.log(row)
+}
+const formatTaskStatus: VxeColumnPropTypes.Formatter<RowVO> = ({ cellValue }) => {
+  return `<a href="#" class="link" target="_black" style="color: orange">链接 ${cellValue}</a>`
 }
 </script>
 <template>
@@ -74,45 +76,45 @@ const saveOneTask = async (row) => {
           <vxe-input v-model="row.taskName" type="text"></vxe-input>
         </template>
       </vxe-column>
-      <vxe-column field="taskStatus" title="任务状态" :edit-render="{}" width="120">
+      <vxe-column field="taskStatus" title="任务状态" :edit-render="{}" width="160" :formatter="formatTaskStatus">
         <template #default="{ row }">
           <span>{{ formatSex(row.taskStatus) }}</span>
         </template>
         <template #edit="{ row }">
-          <vxe-select v-model="row.taskStatus" transfer>
+          <vxe-select v-model="row.taskStatus" transfer popup-class-name="vxeTableSelect">
             <vxe-option v-for="item in taskStatusList" :key="item.value" :value="item.value" :label="item.label"></vxe-option>
           </vxe-select>
         </template>
       </vxe-column>
-      <vxe-column field="days" title="人天" :edit-render="{}" width="100">
+      <vxe-column field="dateStart" title="预计开始时间" :edit-render="{}" width="160">
         <template #edit="{ row }">
-          <vxe-input v-model="row.days" type="number" placeholder="请输入数值"></vxe-input>
+          <vxe-input v-model="row.dateStart" type="datetime" placeholder="请选择日期" transfer clearable></vxe-input>
         </template>
       </vxe-column>
-      <vxe-column field="dateStart" title="预计开始时间" :edit-render="{}">
+      <vxe-column field="dateEnd" title="预计结束时间" :edit-render="{}" width="160">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.dateEnd" type="datetime" placeholder="请选择日期" transfer clearable></vxe-input>
+        </template>
+      </vxe-column>
+      <vxe-column field="days" title="人天" :edit-render="{}" width="80">
         <template #default="{ row }">
-          <span>{{ showCorrectTime(row.dateStart) }}</span>
-        </template>
-        <template #edit="{ row }">
-          <vxe-input v-model="row.dateStart" type="datetime" placeholder="请选择日期" transfer></vxe-input>
+          <span>{{ diffInHours(row.dateEnd, row.dateStart) }}</span>
         </template>
       </vxe-column>
-      <vxe-column field="dateEnd" title="预计结束时间" :edit-render="{}">
-        <template #default="{ row }">
-          <span>{{ showCorrectTime(row.dateEnd) }}</span>
-        </template>
-        <template #edit="{ row }">
-          <vxe-input v-model="row.dateEnd" type="datetime" placeholder="请选择日期" transfer></vxe-input>
-        </template>
+      <vxe-column field="member" title="任务所属人" :edit-render="{}" width="120">
+        <!--        <template #edit="{ row }">-->
+        <!--          <span>你好</span>-->
+        <!--        </template>-->
       </vxe-column>
-      <vxe-column title="操作" width="100" show-overflow align="center">
+      <vxe-column title="操作" width="180" show-overflow align="center">
         <template #default="{ row }">
           <a-button type="dashed" @click="saveOneTask(row)">{{ row?.id ? '保存修改' : '新建' }}</a-button>
+          <a-button type="link" danger @click="deleteTask(row)">删除</a-button>
         </template>
       </vxe-column>
       <template v-slot:empty>
-        <div style="padding: 20px 0">
-          <empty-status></empty-status>
+        <div style="padding: 100px 0">
+          <empty-status description="暂无任务, 点击左下角进行新建任务"></empty-status>
         </div>
       </template>
     </vxe-table>

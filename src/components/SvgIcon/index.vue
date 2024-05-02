@@ -41,8 +41,9 @@ defineProps({
   cursor: pointer;
   .text {
     color: #313c52;
-    font-family: cursive;
+    font-family: '楷体_GB2312', serif;
     font-size: 16px;
+    line-height: 16px;
   }
 }
 </style>
