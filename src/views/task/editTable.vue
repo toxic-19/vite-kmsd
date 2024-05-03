@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { VxeColumnPropTypes, VxeTableInstance } from 'vxe-table'
-import { diffInHours, showCorrectTime } from '@/utils/constant.ts'
-import { taskStatusList } from '@/utils/map.ts'
+import { diffInHours } from '@/utils/constant.ts'
+import { taskStatusList, taskStatusColors } from '@/utils/map.ts'
 import { RowVO } from '@/api/project/type.ts'
 const props = defineProps(['tableData'])
 const emit = defineEmits(['addOne'])
@@ -78,7 +78,9 @@ const formatTaskStatus: VxeColumnPropTypes.Formatter<RowVO> = ({ cellValue }) =>
       </vxe-column>
       <vxe-column field="taskStatus" title="任务状态" :edit-render="{}" width="160" :formatter="formatTaskStatus">
         <template #default="{ row }">
-          <span>{{ formatSex(row.taskStatus) }}</span>
+          <span class="status" :style="{ backgroundColor: taskStatusColors[row.taskStatus] }">
+            {{ formatSex(row.taskStatus) }}
+          </span>
         </template>
         <template #edit="{ row }">
           <vxe-select v-model="row.taskStatus" transfer popup-class-name="vxeTableSelect">
@@ -86,26 +88,22 @@ const formatTaskStatus: VxeColumnPropTypes.Formatter<RowVO> = ({ cellValue }) =>
           </vxe-select>
         </template>
       </vxe-column>
-      <vxe-column field="dateStart" title="预计开始时间" :edit-render="{}" width="160">
+      <vxe-column field="dateStart" title="预计开始时间" :edit-render="{}" width="180">
         <template #edit="{ row }">
           <vxe-input v-model="row.dateStart" type="datetime" placeholder="请选择日期" transfer clearable></vxe-input>
         </template>
       </vxe-column>
-      <vxe-column field="dateEnd" title="预计结束时间" :edit-render="{}" width="160">
+      <vxe-column field="dateEnd" title="预计结束时间" :edit-render="{}" width="180">
         <template #edit="{ row }">
           <vxe-input v-model="row.dateEnd" type="datetime" placeholder="请选择日期" transfer clearable></vxe-input>
         </template>
       </vxe-column>
-      <vxe-column field="days" title="人天" :edit-render="{}" width="80">
+      <vxe-column field="days" title="天数" :edit-render="{}" width="100">
         <template #default="{ row }">
           <span>{{ diffInHours(row.dateEnd, row.dateStart) }}</span>
         </template>
       </vxe-column>
-      <vxe-column field="member" title="任务所属人" :edit-render="{}" width="120">
-        <!--        <template #edit="{ row }">-->
-        <!--          <span>你好</span>-->
-        <!--        </template>-->
-      </vxe-column>
+      <vxe-column field="member" title="任务所属人" :edit-render="{}" width="120"></vxe-column>
       <vxe-column title="操作" width="180" show-overflow align="center">
         <template #default="{ row }">
           <a-button type="dashed" @click="saveOneTask(row)">{{ row?.id ? '保存修改' : '新建' }}</a-button>
@@ -144,6 +142,11 @@ const formatTaskStatus: VxeColumnPropTypes.Formatter<RowVO> = ({ cellValue }) =>
   z-index: 2;
   box-shadow: 2px 2px 10px 0 rgba(0, 0, 0, 0.1);
   cursor: pointer;
+}
+.status {
+  padding: 4px 10px;
+  border-radius: 12px;
+  color: #fff;
 }
 :deep(.vxe-table) {
   box-shadow: 2px 2px 10px 4px rgba(0, 0, 0, 0.1);

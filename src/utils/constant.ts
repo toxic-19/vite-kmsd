@@ -16,7 +16,8 @@ export const diffInHours = (timeEnd: string, timeStart: string) => {
   const date1 = new Date(timeEnd)
   const date2 = new Date(timeStart)
   const differenceInMilliseconds = Math.abs(date1 - date2)
-  return (differenceInMilliseconds / (1000 * 60 * 60) / 24).toFixed(1)
+  const hours = differenceInMilliseconds / (1000 * 60 * 60)
+  return (hours / 24).toFixed(1)
 }
 /**
  * 补零

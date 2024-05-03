@@ -442,9 +442,9 @@ onMounted(() => {
   }
   .main_chat {
     position: relative;
-    margin: 10px 20px;
+    margin: 10px 0;
     border-radius: 12px;
-    padding: 0.5rem 10px;
+    padding: 8px 10px;
     background-color: #ffffff;
     border: 1px solid #cccccc;
 

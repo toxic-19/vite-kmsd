@@ -119,6 +119,7 @@ onMounted(() => {
   height: calc(100vh - 120px);
   overflow-y: scroll;
   border: 1px solid rgba(75, 99, 138, 0.1);
+  background-image: url('https://www.toptal.com/designers/subtlepatterns/uploads/leaves.png');
   @include scrollBar();
 }
 .base-info {

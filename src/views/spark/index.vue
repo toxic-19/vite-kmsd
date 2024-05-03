@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { nextTick, onMounted, reactive, ref, watch, h } from 'vue'
-import { PlusSquareOutlined, LoadingOutlined, EllipsisOutlined } from '@ant-design/icons-vue'
+import { MessageOutlined, LoadingOutlined, EllipsisOutlined } from '@ant-design/icons-vue'
 import { Marked } from 'marked'
 import hljs from 'highlight.js'
 import { markedHighlight } from 'marked-highlight'
@@ -84,9 +84,10 @@ const coverTextToHtml = (text: string) => {
   )
   let result = marked.parse(text)
   if (typeof result === 'string') {
-    // result = result.replace(/<pre><code/g, `<!--<pre style="position:relative;"><img src=${copyImage} class="copy-btn" alt=""><code-->`)
+    result = result.replace(/<script>/g, '<code>script</code>')
     result = result.replace(/<pre><code/g, `<pre style="position:relative;"><span class="copy-btn">Copy</span><code`)
   }
+  console.log(result)
   return result
 }
 
@@ -124,14 +125,15 @@ const sendChat = async () => {
   const autoScrollBottomM = await autoScrollBottom()
   const chatParams = {
     input: messageInput.value,
+    history: messageList.value.slice(-5),
     // sessionId: nowSessionId.value, // 会话id
   }
   const fb = (content: string) => {
     messageList.value[index - 1].content += content
     autoScrollBottomM.keep()
     const currentSession = dialogList.value.find((item) => item.id === nowSessionId.value)
-    if (currentSession.sessionName === '新建测试') {
-      updateChatName(nowSessionId.value, messageInput.value.slice(0, 12))
+    if (currentSession.sessionName === '新建对话') {
+      updateChatName(nowSessionId.value, messageInput.value.slice(0, 8))
     }
   }
   const doneFb = async (totalResults: string) => {
@@ -227,7 +229,12 @@ onMounted(() => {
     <a-layout-sider width="18%">
       <div class="layout_sider">
         <div class="dialogue_top">
-          <a-button type="text" :icon="h(PlusSquareOutlined)" class="addDialogue_btn" @click="addDialog">新对话</a-button>
+          <a-button type="text" class="addDialogue_btn" @click="addDialog">
+            <template #icon>
+              <MessageOutlined style="color: #80abd5; font-size: 18px" />
+            </template>
+            <span class="text">新建对话</span>
+          </a-button>
         </div>
         <div class="dialogue_main">
           <div class="title">近期对话</div>
@@ -349,10 +356,11 @@ onMounted(() => {
       display: flex;
       align-items: center;
       background-color: #f3f6fc;
-      border-radius: 4px;
-      height: 34px;
-      span {
-        font-size: 15px;
+      border-radius: 12px;
+      height: 40px;
+      width: 100%;
+      .text {
+        font-size: 14px;
       }
     }
   }
@@ -489,7 +497,8 @@ onMounted(() => {
               border-radius: 10px;
             }
           }
-          :deep(ol) {
+          :deep(ol),
+          :deep(ul) {
             list-style: decimal-leading-zero;
             margin-left: 30px;
             li {
@@ -508,7 +517,7 @@ onMounted(() => {
           :deep(p) {
             word-break: break-all;
             white-space: pre-wrap;
-            margin-bottom: 16px;
+            margin-bottom: 8px;
             font-size: 14px;
             line-height: 28px;
             &:last-child {
@@ -540,7 +549,7 @@ onMounted(() => {
       margin: 10px 30px 15px;
       min-height: 40px;
       border-radius: 10px;
-      padding: 0.5rem 20px;
+      padding: 4px 20px;
       background-color: #ffffff;
       border: 1px solid transparent;
 

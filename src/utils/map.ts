@@ -21,7 +21,7 @@ const progressTemplates = {
   '4': ['后端任务分解', '设计实现方案', '自测Bug', '联调', '验收'],
   '5': ['创建产品、执行', '关联需求', '团队管理', '分解任务', '跟踪进度'],
   '6': ['撰写用例', '执行用例', '提交Bug', '验证Bug', '关闭Bug'],
-  '7': ['学习', '预研', '感兴趣', '缺陷', '复习'],
+  '7': ['学习', '预研', '感兴趣', '实战', '缺陷', '复习'],
   '8': ['当前计划'],
 }
 export const TEMPLATE_MAP = new Map([
@@ -54,3 +54,56 @@ export const taskStatusList = ref([
   { label: '延期', value: 5 },
   { label: '出现问题', value: 6 },
 ])
+export const taskStatusColors = {
+  0: 'orange', // 未开始
+  1: '#66adf1', // 进行中
+  2: '#fcbc6a', // 暂停
+  3: 'green', // 已完成
+  4: '#949393', // 已取消
+  5: '#aecfe2', // 延期
+  6: '#f80404', // 出现问题
+}
+export const ANIMATION_DATA = [
+  [
+    {
+      title: '辩论观点',
+      image: 'https://qyai-prod.oss-cn-shanghai.aliyuncs.com/common/home/home_creator_icon_14.png',
+    },
+    {
+      title: '短视频',
+      image: 'https://qyai-prod.oss-cn-shanghai.aliyuncs.com/common/home/home_creator_icon_16.png',
+    },
+    {
+      title: '诗歌情诗',
+      image: 'https://qyai-prod.oss-cn-shanghai.aliyuncs.com/common/home/home_creator_icon_1.png',
+    },
+  ],
+  [
+    {
+      title: '概括总结',
+      image: 'https://qyai-prod.oss-cn-shanghai.aliyuncs.com/common/home/home_creator_icon_6.png',
+    },
+    {
+      title: '周报',
+      image: 'https://qyai-prod.oss-cn-shanghai.aliyuncs.com/common/home/home_creator_icon_3.png',
+    },
+    {
+      title: '日程计划',
+      image: 'https://qyai-prod.oss-cn-shanghai.aliyuncs.com/common/home/home_creator_icon_18.png',
+    },
+  ],
+  [
+    {
+      title: '合同模板',
+      image: 'https://qyai-prod.oss-cn-shanghai.aliyuncs.com/common/home/home_creator_icon_10.png',
+    },
+    {
+      title: '考研科目',
+      image: 'https://qyai-prod.oss-cn-shanghai.aliyuncs.com/common/home/home_creator_icon_10.png',
+    },
+    {
+      title: '梦境分析',
+      image: 'https://qyai-prod.oss-cn-shanghai.aliyuncs.com/common/home/home_creator_icon_20.png',
+    },
+  ],
+]

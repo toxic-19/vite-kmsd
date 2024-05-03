@@ -2,8 +2,8 @@
 import GanttView from './gantt.vue'
 import { cloneData, formatDate, runNum } from '@/utils/constant.ts'
 import { Modal } from 'ant-design-vue'
-import { TEMPLATE_MAP } from '@/utils/map.ts'
-import { onMounted, ref, watch } from 'vue'
+import { TEMPLATE_MAP, taskStatusColors } from '@/utils/map.ts'
+import { onMounted, ref } from 'vue'
 import { postTaskListByProjectId } from '@/api/project'
 import { useBreadcrumbsStore } from '@/stores/breadcrumbs.ts'
 import { storeToRefs } from 'pinia'
@@ -34,16 +34,7 @@ const initData = () => {
       let times = getTimeObj(taskData)
       let start = times.start
       let end = times.end
-      let color = '#058ce4'
-      if (taskData.taskStatus === 1) {
-        color = '#ff0000'
-      } else if (taskData.taskStatus === 2) {
-        color = '#BB9F35'
-      } else if (taskData.taskStatus === 3) {
-        color = '#449EDD'
-      } else if (taskData.taskStatus === 4) {
-        color = '#84A83B'
-      }
+      let color = taskStatusColors[taskData.taskStatus] || '#058ce4'
       //
       let tempTime = { start, end }
       let findData = editData.value.find((t) => {

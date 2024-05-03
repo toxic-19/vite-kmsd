@@ -1,0 +1,95 @@
+.card {
+  position: relative;
+  width: 330px;
+  height: 56px;
+  border-radius: 14px;
+  z-index: 1111;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 2px 2px 6px 2px #bebebe, -20px -20px 60px #ffffff;
+}
+
+.bg {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 320px;
+  height: 46px;
+  z-index: 2;
+  background-image: url("@/assets/logo.png");
+  backdrop-filter: blur(24px);
+  border-radius: 10px;
+  overflow: hidden;
+  outline: 2px solid white;
+}
+
+.blob {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  width: 290px;
+  height: 50px;
+  border-radius: 50%;
+  opacity: 1;
+  filter: blur(18px);
+  animation: blob-bounce 5s infinite ease;
+}
+
+@keyframes blob-bounce {
+  0% {
+    transform: translate(-100%, -100%) translate3d(0, 0, 0);
+  }
+
+  25% {
+    transform: translate(-100%, -100%) translate3d(100%, 0, 0);
+  }
+
+  50% {
+    transform: translate(-100%, -100%) translate3d(100%, 100%, 0);
+  }
+
+  75% {
+    transform: translate(-100%, -100%) translate3d(0, 100%, 0);
+  }
+
+  100% {
+    transform: translate(-100%, -100%) translate3d(0, 0, 0);
+  }
+}
+
+
+.typing {
+  width: 18em;
+  height: 50px;
+  /*border-right: 1px solid transparent;*/
+  animation: typing 2s steps(42, end), blink-caret .75s step-end infinite;
+  word-break: break-all;
+  overflow: hidden;
+  box-sizing: content-box;
+}
+/* 打印效果 */
+@keyframes typing {
+  from {
+    width: 0;
+  }
+
+  to {
+    width: 18em;
+  }
+}
+
+/* 光标 */
+@keyframes blink-caret {
+  from,
+  to {
+    border-color: transparent;
+  }
+
+  50% {
+    border-color: currentColor;
+  }
+}

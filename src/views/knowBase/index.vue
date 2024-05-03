@@ -35,7 +35,7 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .knowBase-item {
-  width: 80%;
+  width: 76%;
   margin: 0 auto;
 }
 .knowBase-title {

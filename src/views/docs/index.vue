@@ -23,6 +23,7 @@ if (window.innerWidth <= 1200) {
 .docs {
   display: flex;
   justify-content: space-between;
+  background-image: url('@/assets/so-white.png');
   .docs-left {
     width: v-bind(leftWidth);
     transition: all 0.5s;

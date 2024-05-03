@@ -7,6 +7,7 @@ const API_SECRET = 'ZmViMTc1MDk0ZGI1ZDgzMGM1YTVlYTdi'
 const API_KEY = 'e577238d7a4c27b7484a487c830003b2'
 type ChatDto = {
   input: string
+  history: Array<{ role: string; content: string }>
 }
 // type noArgsFunction = () => void
 type oneArgsFunction = (content: any) => void
@@ -66,22 +67,7 @@ const generateParams = (chatDto: ChatDto) => {
       message: {
         // 历史聊天记录
         text: [
-          {
-            role: 'user',
-            content: '中国第一个皇帝是谁？',
-          },
-          {
-            role: 'assistant',
-            content: '秦始皇',
-          },
-          {
-            role: 'user',
-            content: '秦始皇修的长城吗',
-          },
-          {
-            role: 'assistant',
-            content: '是的',
-          },
+          ...chatDto.history,
           {
             role: 'user',
             content: input,
