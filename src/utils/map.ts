@@ -66,44 +66,62 @@ export const taskStatusColors = {
 export const ANIMATION_DATA = [
   [
     {
-      title: '辩论观点',
-      image: 'https://qyai-prod.oss-cn-shanghai.aliyuncs.com/common/home/home_creator_icon_14.png',
+      title: '集成知识库',
     },
     {
-      title: '短视频',
-      image: 'https://qyai-prod.oss-cn-shanghai.aliyuncs.com/common/home/home_creator_icon_16.png',
+      title: '文档架构管理',
     },
     {
-      title: '诗歌情诗',
-      image: 'https://qyai-prod.oss-cn-shanghai.aliyuncs.com/common/home/home_creator_icon_1.png',
-    },
-  ],
-  [
-    {
-      title: '概括总结',
-      image: 'https://qyai-prod.oss-cn-shanghai.aliyuncs.com/common/home/home_creator_icon_6.png',
+      title: '文档查询对话',
     },
     {
-      title: '周报',
-      image: 'https://qyai-prod.oss-cn-shanghai.aliyuncs.com/common/home/home_creator_icon_3.png',
+      title: 'AI驱动对话',
     },
     {
-      title: '日程计划',
-      image: 'https://qyai-prod.oss-cn-shanghai.aliyuncs.com/common/home/home_creator_icon_18.png',
+      title: '互动式文档预览',
+    },
+    {
+      title: '图片上传',
     },
   ],
   [
     {
-      title: '合同模板',
-      image: 'https://qyai-prod.oss-cn-shanghai.aliyuncs.com/common/home/home_creator_icon_10.png',
+      title: '项目管理工具',
     },
     {
-      title: '考研科目',
-      image: 'https://qyai-prod.oss-cn-shanghai.aliyuncs.com/common/home/home_creator_icon_10.png',
+      title: '甘特图视图',
     },
     {
-      title: '梦境分析',
-      image: 'https://qyai-prod.oss-cn-shanghai.aliyuncs.com/common/home/home_creator_icon_20.png',
+      title: '时间线可视化',
+    },
+    {
+      title: '拖拽式任务编辑',
+    },
+    {
+      title: '进度追踪',
+    },
+    {
+      title: '界面简洁',
+    },
+  ],
+  [
+    {
+      title: '信息可视化',
+    },
+    {
+      title: '交互设计',
+    },
+    {
+      title: '分类标签系统',
+    },
+    {
+      title: '知识卡片布局',
+    },
+    {
+      title: '浅蓝色基调',
+    },
+    {
+      title: '响应式设计',
     },
   ],
 ]

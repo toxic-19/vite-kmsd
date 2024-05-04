@@ -6,7 +6,7 @@
         <div class="card">
           <div class="bg"></div>
           <div class="blob">
-            <img src="@/assets/logo.png" class="title-image" alt="" />
+            <!--            <img src="@/assets/logo.png" class="title-image" alt="" />-->
           </div>
         </div>
         <div class="title typing">——全功能AI智能知识库服务解决方案</div>
@@ -17,11 +17,27 @@
       </div>
       <div class="right"></div>
     </div>
+    <div class="animate-container">
+      <div class="animate-group" v-for="(line, index) in ANIMATION_DATA" :key="line.title">
+        <div
+          v-for="(item, childIndex) in line"
+          :key="item.title"
+          :class="`
+              animate-item
+              animate-item-${index}`"
+        >
+          <img width="44" :src="'src/assets/images/' + (index + 1) + '-' + (childIndex + 1) + '.webp'" alt="" />
+          <span class="text">{{ item.title }}</span>
+        </div>
+      </div>
+      <div class="left-shade shade"></div>
+      <div class="right-shade shade"></div>
+    </div>
     <div class="image-word">
       <img src="@/assets/home-bg1.png" alt="5555" />
       <div class="message-forImage">
         <SvgIcon name="ai-chat" width="120px" height="120px"></SvgIcon>
-        <div class="item-title">AI对话</div>
+        <div class="item-title">AI驱动对话</div>
         <div class="item-line"></div>
         <div class="item-description">无所不知，身边的智囊团，最全面的建议与支持。</div>
       </div>
@@ -42,20 +58,6 @@
         <div class="item-title">任务-甘特图</div>
         <div class="item-line"></div>
         <div class="item-description">监控项目进度，轻而易举调整时间。</div>
-      </div>
-    </div>
-    <div class="animate-container">
-      <div class="animate-group" v-for="(line, index) in ANIMATION_DATA" :key="line.title">
-        <div
-          v-for="item in line"
-          :key="item.title"
-          :class="`
-              animate-item
-              animate-item-${index}`"
-        >
-          <img width="24" :src="item.image" alt="" />
-          <span class="text">{{ item.title }}</span>
-        </div>
       </div>
     </div>
     <div class="list">
@@ -106,6 +108,8 @@ const list = ref([
 @import './animation.scss';
 .home {
   background-color: rgba(100, 172, 243, 0.1);
+  //background-image: url('@/assets/so-white.png');
+  //background-size: contain;
 }
 .main {
   display: flex;
@@ -122,8 +126,8 @@ const list = ref([
     background-repeat: no-repeat;
     background-position: left bottom;
     .app-name {
-      height: 60px;
-      font-size: 20px;
+      height: 80px;
+      font-size: 24px;
       font-weight: bold;
       font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
       letter-spacing: 1px;
@@ -185,35 +189,38 @@ const list = ref([
   }
 }
 .animate-container {
+  position: relative;
+  margin-bottom: 80px;
   .animate-group {
     display: flex;
     justify-content: center;
-    margin-top: 16px;
+    margin-top: 32px;
   }
   .animate-item {
     display: flex;
     align-items: center;
-    padding: 10px 14px;
-    column-gap: 10px;
+    padding: 6px 12px;
     background: #ffffff;
     margin-right: 20px;
-    border-radius: 4px;
+    border-radius: 6px;
+    column-gap: 4px;
     .text {
       font-size: 16px;
     }
   }
+
   .animate-item-0,
   .animate-item-2 {
-    animation: leftToRight infinite 5s alternate-reverse linear;
+    animation: leftToRight infinite 4s alternate-reverse linear;
   }
   .animate-item-1 {
-    animation: rightToLeft infinite 5s alternate-reverse linear;
+    animation: rightToLeft infinite 4s alternate-reverse linear;
   }
 }
 .list {
   display: flex;
   justify-content: center;
-  padding: 80px 100px;
+  padding: 20px 100px 80px;
 }
 .item {
   flex: 1;
@@ -276,24 +283,39 @@ const list = ref([
   background: #06a8ee;
   margin: 8px auto;
 }
+.shade {
+  position: absolute;
+  top: 0;
+  width: 342px;
+  height: 100%;
+}
+.left-shade {
+  left: 0;
+  background: linear-gradient(270deg, rgba(255, 255, 255, 0) 0%, rgba(219, 236, 250, 0.8) 40%, rgba(219, 236, 250, 0.1) 100%);
+}
+.right-shade {
+  right: 0;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(219, 236, 250, 0.8) 40%, rgba(219, 236, 250, 0.1) 100%);
+}
 @keyframes leftToRight {
   0% {
-    transform: translate(-100px);
+    transform: translate(-120px);
   }
 
   100% {
-    transform: translate(100px);
+    transform: translate(120px);
   }
 }
 @keyframes rightToLeft {
   0% {
-    transform: translate(100px);
+    transform: translate(120px);
   }
 
   100% {
-    transform: translate(-100px);
+    transform: translate(-120px);
   }
 }
+
 :deep(.ant-typography) {
   margin-left: 36px;
 }

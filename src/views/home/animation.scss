@@ -1,7 +1,7 @@
 .card {
   position: relative;
-  width: 330px;
-  height: 56px;
+  width: 334px;
+  height: 60px;
   border-radius: 14px;
   z-index: 1111;
   overflow: hidden;
@@ -9,13 +9,13 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: 2px 2px 6px 2px #bebebe, -20px -20px 60px #ffffff;
+  box-shadow: 2px 2px 6px 2px #bebebe, -7px 2px 20px #ffffff;
 }
 
 .bg {
   position: absolute;
-  top: 5px;
-  left: 5px;
+  top: 7px;
+  left: 7px;
   width: 320px;
   height: 46px;
   z-index: 2;
@@ -36,6 +36,7 @@
   border-radius: 50%;
   opacity: 1;
   filter: blur(18px);
+  background-color: #3193f5;
   animation: blob-bounce 5s infinite ease;
 }
 

@@ -66,7 +66,7 @@ import HeaderBar from './HeaderBar.vue'
 .content {
   height: calc(100vh - 50px);
   width: 100%;
-  background-color: rgba(206, 216, 228, 0.3);
+  //background-color: rgba(206, 216, 228, 0.3);
   background-image: url('https://www.toptal.com/designers/subtlepatterns/uploads/blue-snow.png');
   overflow-y: scroll;
   @include scrollBar;
