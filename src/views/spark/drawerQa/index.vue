@@ -187,6 +187,10 @@ const getSummary = async (articleId: number) => {
     fileId.value = data.fileId
     // 根据对应的fileId来获取聊天记录
     await getMessageList(articleId)
+  } else {
+    summary.value = ''
+    fileId.value = ''
+    messageList.value = []
   }
 }
 watch(
@@ -214,6 +218,9 @@ onMounted(() => {
   >
     <template #extra>
       <div class="extra-operate">
+        <a-tooltip title="文档上传">
+          <SvgIcon name="upload" width="30px" height="25px" @click="showSummary"></SvgIcon>
+        </a-tooltip>
         <a-tooltip title="文档总结">
           <SvgIcon name="summary" width="20px" height="20px" @click="showSummary"></SvgIcon>
         </a-tooltip>
@@ -235,11 +242,14 @@ onMounted(() => {
           </div>
           <div class="summary-content">
             <div class="content" v-html="coverTextToHtml(summary)"></div>
-            <div class="summary-restart">
+            <div class="summary-restart" v-if="summary">
               <div class="restart-tips">注意：如对以上生成内容不满意，可点击右侧按钮重新生成</div>
-              <a-button size="large" type="link" class="summary-btn" :icon="h(ReadOutlined)" :autoInsertSpaceInButton="false">
+              <a-button size="large" type="link" class="restart-btn" :icon="h(ReadOutlined)" :autoInsertSpaceInButton="false">
                 ReCap
               </a-button>
+            </div>
+            <div class="summary-empty">
+              <div class="tips">点击左上角图标进行文档上传</div>
             </div>
           </div>
         </div>
@@ -258,6 +268,11 @@ onMounted(() => {
           </div>
         </div>
         <div id="msgEnd" style="height: 10px; overflow: hidden"></div>
+        <empty-status
+          v-if="!messageList.length"
+          description="空的文档问答记录喔！"
+          image-name="empty-message-list.png"
+        ></empty-status>
       </div>
       <div :class="{ main_chat: true, main_chat_focus: isInputFocused }" ref="chatContainer">
         <div class="main_chat_container">
@@ -344,6 +359,20 @@ onMounted(() => {
         flex: 1;
         color: rgba(76, 99, 140, 0.9);
         font-size: 13px;
+      }
+      .restart-btn {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+      }
+    }
+    .summary-empty {
+      height: 140px;
+      text-align: center;
+      background: url('@/assets/empty/empty-summary.svg') center no-repeat;
+      background-size: contain;
+      .tips {
+        padding-top: 120px;
       }
     }
   }

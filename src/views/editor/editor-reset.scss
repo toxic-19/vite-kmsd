@@ -9,7 +9,10 @@
   }
 }
 :deep(.vditor-reset img) {
-  width: 50%;
+  max-width: 50%;
+}
+:deep(.vditor-reset img.emoji) {
+  max-width: 20px !important;
 }
 :deep(.vditor-reset pre > code) {
   overflow-y: scroll;
@@ -111,4 +114,14 @@
 :deep(.vditor-outline__action) {
   width: 20px;
   height: 8px;
+}
+:deep(.vditor-reset) {
+  h1, h2, h3, h4, h5, h6 {
+    span[data-type='code'] {
+      font-size: inherit;
+    }
+  }
+  ol li {
+    list-style: decimal;
+  }
 }

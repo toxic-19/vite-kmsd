@@ -32,3 +32,14 @@ export interface UpdateArticle {
   title?: string
   content?: string
 }
+export interface CreateTag {
+  tagName: string
+}
+export interface DeleteTag {
+  tagId: number
+  articleId: number
+}
+export interface AddTagForDocs {
+  tagName: string
+  articleId: number
+}

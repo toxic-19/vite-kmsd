@@ -1,26 +1,38 @@
 <script setup lang="ts">
-import emptyPng from '@/assets/original.png'
-const props = defineProps(['description'])
+// import emptyPng from '../../assets/original.png'
+import { ref } from 'vue'
+
+const props = defineProps(['description', 'imageName'])
+const emptyPng = ref('original.png')
+console.log(props.imageName)
+if (props.imageName) {
+  emptyPng.value = props.imageName
+}
 </script>
 
 <template>
-  <a-empty :image="emptyPng" :image-style="{ height: '200px' }">
-    <template #description>{{ props.description || '暂无内容' }}</template>
-  </a-empty>
+  <div class="empty-status">
+    <img :src="'../../../src/assets/empty/' + emptyPng" alt="" />
+    <div class="description">{{ props.description || '暂无内容' }}</div>
+  </div>
 </template>
 <style scoped lang="scss">
-:deep(.ant-empty) {
+.empty-status {
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  img {
+    height: 240px;
+    object-fit: contain;
+  }
 }
-:deep(.ant-empty-description) {
-  font-size: 18px;
-  color: #4a6288;
-  font-weight: bolder;
-  font-family: -apple-system, serif;
+.description {
+  font-size: 16px;
+  font-weight: bold;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   margin-top: 10px;
 }
 </style>

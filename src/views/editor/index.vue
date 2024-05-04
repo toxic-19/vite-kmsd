@@ -4,10 +4,11 @@ import { useCollapsedStore } from '@/stores/icon'
 import PreviewEditor from './previewEditor.vue'
 import Editor from './Editor.vue'
 import { useRoute } from 'vue-router'
-import { getContentById, getTagsById, updateArticle } from '@/api/article'
+import {addTagForDoc, deleteTag, getContentById, getTagsById, updateArticle} from '@/api/article'
 import { Tag } from '@/api/article/type'
 import emptyPng from '@/assets/empty.png'
 import { message } from 'ant-design-vue'
+import { PlusOutlined } from '@ant-design/icons-vue'
 const store = useCollapsedStore()
 const closeDocMenu = () => {
   store.collapseMenu()
@@ -44,6 +45,25 @@ const getTagsName = async (articleId: number) => {
   const { data } = await getTagsById({ articleId })
   tagsList.value = data
 }
+const closeTag = async (tagId: number) => {
+  const { data } = await deleteTag({
+    tagId,
+    articleId: docId.value,
+  })
+  if (data === 1) message.success('Tag removed successfully')
+}
+const newTag = ref('')
+const addItem = async () => {
+  const data = await addTagForDoc({
+    articleId: docId.value,
+    tagName: newTag.value,
+  })
+  if (data.code === 200) {
+    message.success('Tag added successfully')
+    getTagsName(docId.value)
+  } else message.warning(data.message)
+  newTag.value = ''
+}
 watch(
   () => route.params.articleId,
   (newVal) => {
@@ -66,9 +86,18 @@ watch(
       <div class="doc-info">
         <div class="info-title">{{ docName }}</div>
         <div class="info-tags">
-          <a-tag :color="colors[Math.floor(Math.random() * colors.length)]" v-for="tag in tagsList" :key="tag.tagId">
+          <a-tag
+            :color="colors[Math.floor(Math.random() * colors.length)]"
+            v-for="tag in tagsList"
+            :key="tag.tagId"
+            closable
+            @close="closeTag(tag.tagId)"
+          >
             {{ tag.tagName }}
           </a-tag>
+        </div>
+        <div style="padding: 4px 8px; width: 120px; margin-top: 2px">
+          <a-input ref="inputRef" size="small" v-model:value="newTag" placeholder="enter tag" @pressEnter="addItem" />
         </div>
       </div>
       <div class="doc-btn">

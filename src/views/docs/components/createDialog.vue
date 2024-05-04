@@ -6,7 +6,7 @@ import { postCreateGroup } from '@/api/knowBase'
 import { storeToRefs } from 'pinia'
 import { PlusOutlined } from '@ant-design/icons-vue'
 import type { Rule } from 'ant-design-vue/es/form'
-import { getTagList } from '@/api/tag'
+import {getTagList, postAddNewTag} from '@/api/tag'
 const store = useKnowledgeStore()
 const emit = defineEmits(['refreshMenu'])
 // 弹窗数据
@@ -66,10 +66,15 @@ const getTagsList = async () => {
 }
 const inputRef = ref()
 const name = ref()
-const addItem = (e: Event) => {
+const addItem = async (e: Event) => {
   e.preventDefault()
-  items.value.push(name.value || `New item ${(index += 1)}`)
-  name.value = ''
+  let lastName = name.value || `New item ${(index += 1)}`
+  const { code } = await postAddNewTag({ tagName: lastName })
+  if (code === 200) {
+    items.value.push({ value: lastName })
+    name.value = ''
+    formState.value.tags.push(lastName)
+  }
   setTimeout(() => {
     inputRef.value?.focus()
   }, 0)
@@ -79,9 +84,9 @@ const addItem = (e: Event) => {
 const rules: Record<string, Rule[]> = {
   title: [
     { required: true, message: '请输入文章标题', trigger: 'change' },
-    { min: 2, max: 10, trigger: 'blur' },
+    { min: 2, max: 16, trigger: 'blur' },
   ],
-  description: [{ min: 0, max: 20, message: '文章描述请不要超过20字', trigger: 'blur' }],
+  description: [{ min: 0, max: 50, message: '文章描述请不要超过40字', trigger: 'blur' }],
   tags: [{ type: 'array', max: 3, message: '文章标签请不要超过3个', trigger: 'blur' }],
   groupName: [
     { required: true, message: '请输入分组标题', trigger: 'change' },

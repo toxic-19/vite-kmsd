@@ -156,16 +156,20 @@ watch(
   }
 }
 #outlineWrap {
-  //display: none;
+  background-image: url('@/assets/so-white.png');
+  //background-image: url('https://www.toptal.com/designers/subtlepatterns/uploads/leaves.png');
+  box-shadow: -9px 5px 10px 6px rgba(206, 216, 228, 0.2);
   position: fixed;
-  //width: 186px;
-  top: 164px;
+  z-index: 99;
+  top: 144px;
   right: 20px;
   bottom: 120px;
+  padding-top: 30px;
   overflow: auto;
   font-size: 12px;
   border-left: 1px solid var(--border-color);
   border-right: 0;
+  border-radius: 10px;
   overflow-x: hidden;
   --border-color: #eee;
   --toolbar-icon-hover-color: #4285f4;
