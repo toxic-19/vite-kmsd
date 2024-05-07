@@ -4,7 +4,7 @@ import { useBreadcrumbsStore } from '@/stores/breadcrumbs.ts'
 import { storeToRefs } from 'pinia'
 import EditTable from './editTable.vue'
 import TaskGantt from './taskGantt/index.vue'
-import { onActivated, onMounted, ref} from 'vue'
+import { onActivated, onMounted, ref } from 'vue'
 import { RowVO } from '@/api/project/type.ts'
 import { getTaskListByName, postCreateOneTask, postUpdateOneTask } from '@/api/project'
 import { message } from 'ant-design-vue'
@@ -34,10 +34,12 @@ const createOneTask = async (row) => {
   }
   await getTaskList(activeProcess.value, currentProject.value.id)
 }
-const deleteOneTask = async (row) => {
-
-}
+const deleteOneTask = async (row) => {}
 const showGantt = ref<boolean>(false)
+const closeGantt = () => {
+  showGantt.value = false
+  getTaskList(activeProcess.value, currentProject.value.id)
+}
 onMounted(() => {
   getTaskList(activeProcess.value, currentProject.value.id)
 })
@@ -48,7 +50,7 @@ onActivated(() => {
 </script>
 
 <template>
-  <task-gantt v-if="showGantt" @close-gantt="showGantt = false"></task-gantt>
+  <task-gantt v-if="showGantt" @close-gantt="closeGantt"></task-gantt>
   <template v-if="!showGantt">
     <div class="header">
       <a-page-header

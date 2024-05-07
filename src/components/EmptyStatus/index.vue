@@ -11,7 +11,7 @@ if (props.imageName) {
 </script>
 
 <template>
-  <div class="empty-status">
+  <div class="empty-status" :data-type="emptyPng">
     <img :src="'../../../src/assets/empty/' + emptyPng" alt="" />
     <div class="description">{{ props.description || '暂无内容' }}</div>
     <slot name="operation"></slot>

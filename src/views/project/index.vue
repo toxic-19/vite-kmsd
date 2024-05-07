@@ -45,7 +45,9 @@ const create = () => {
 <template>
   <div class="search">
     <a-input v-model:value="inputProjectName" type="text" size="small" autofocus></a-input>
-    <a-menu v-model:selectedKeys="current" mode="horizontal" :items="items" @select="search" />
+    <div style="width: 200px">
+      <a-menu v-model:selectedKeys="current" mode="horizontal" :items="items" @select="search" />
+    </div>
     <a-button type="text" :icon="h(SearchOutlined)" @click="search">Search</a-button>
     <a-button type="text" :icon="h(CloseOutlined)" @click="reset">Reset</a-button>
   </div>
@@ -97,4 +99,5 @@ const create = () => {
   right: 12%;
   top: 10px;
 }
+
 </style>

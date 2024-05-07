@@ -237,6 +237,7 @@ const itemMouseMove = (e) => {
 }
 
 const itemMouseUp = (e) => {
+  console.log(e)
   if (mouseItem.value != null) {
     const { start, end } = mouseItem.value.time
     let isM = false
@@ -260,7 +261,7 @@ const itemMouseUp = (e) => {
     if (isM) {
       emit('onChange', mouseItem.value)
     } else if (e.target.className === 'timeline-title') {
-      this.clickItem(mouseItem.value)
+      clickItem(mouseItem.value)
     }
     mouseItem.value = null
   } else if (dateMove.value != null) {

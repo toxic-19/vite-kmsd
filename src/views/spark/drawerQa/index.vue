@@ -6,7 +6,7 @@ import { Marked } from 'marked'
 import { markedHighlight } from 'marked-highlight'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/atom-one-dark-reasonable.css'
-import { getFileContentByDocId, getHistoryList, postSaveHistory } from '@/api/session/index.ts'
+import { getFileContentByDocId, getHistoryList, postFileSummary, postSaveHistory, postUploadFile } from '@/api/session/index.ts'
 import { MessageType } from '../constant.ts'
 import { useRoute } from 'vue-router'
 import { chatWithDoc } from '@/api/spark/docsQa.ts'
@@ -172,6 +172,7 @@ const fullScreen = () => {
 }
 const isShowSummary = ref<boolean>(false)
 const showSummary = () => {
+  getSummary(+route.params.articleId)
   isShowSummary.value = !isShowSummary.value
 }
 watch(open, (newVal) => {
@@ -187,11 +188,17 @@ const fileId = ref()
 const getSummary = async (articleId: number) => {
   const { code, data } = await getFileContentByDocId({ articleId })
   if (code === 200) {
-    summary.value = data.summary
     fileId.value = data.fileId
+    summary.value = data.summary
     placeholderText.value = '文档已上传！请输入对该文档的询问内容'
     // 根据对应的fileId来获取聊天记录
     await getMessageList(articleId)
+    if (!data.summary) {
+      const summaryRes = await postFileSummary({
+        fileId: data.fileId,
+      })
+      summary.value = summaryRes.data
+    }
   } else {
     summary.value = ''
     fileId.value = ''
@@ -200,9 +207,23 @@ const getSummary = async (articleId: number) => {
   }
 }
 // 文档上传
+const key = 'uploadKey'
 const uploadFile = () => {
-  const hide = message.loading('Action in progress..', 0)
-  setTimeout(hide, 2500)
+  message.loading({
+    content: '正在上传中...',
+    key,
+  })
+  postUploadFile({
+    articleId: +route.params.articleId,
+    needSummary: true,
+  }).then(async (res) => {
+    fileId.value = res.data
+    message.success({ content: '上传成功!', key, duration: 2 })
+    placeholderText.value = '文档已上传！请输入对该文档的询问内容'
+    await postFileSummary({
+      fileId: res.data,
+    })
+  })
 }
 watch(
   () => route.params.articleId,
@@ -260,7 +281,8 @@ onMounted(() => {
               </a-button>
             </div>
             <div class="summary-empty" v-else>
-              <div class="tips">点击左上角图标进行文档上传</div>
+              <empty-status v-if="!fileId" imageName="empty-summary.svg" description="点击左上角图标进行文档上传"></empty-status>
+              <a-spin v-else tip="正在总结中！请耐心等待..."></a-spin>
             </div>
           </div>
         </div>
@@ -379,9 +401,10 @@ onMounted(() => {
     }
     .summary-empty {
       height: 140px;
+      line-height: 140px;
       text-align: center;
-      background: url('@/assets/empty/empty-summary.svg') center no-repeat;
-      background-size: contain;
+      //background: url('@/assets/empty/empty-summary.svg') center no-repeat;
+      //background-size: contain;
       .tips {
         padding-top: 120px;
       }

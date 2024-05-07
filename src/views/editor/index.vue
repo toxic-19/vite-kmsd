@@ -3,6 +3,7 @@ import { ref, watch } from 'vue'
 import { useCollapsedStore } from '@/stores/icon'
 import PreviewEditor from './previewEditor.vue'
 import Editor from './Editor.vue'
+import KnowInfo from '@/views/knowBase/knowInfo.vue'
 import { useRoute } from 'vue-router'
 import { addTagForDoc, deleteTag, getContentById, getTagsById, updateArticle } from '@/api/article'
 import { Tag } from '@/api/article/type'
@@ -11,7 +12,7 @@ const store = useCollapsedStore()
 const closeDocMenu = () => {
   store.collapseMenu()
 }
-const type = ref('preview')
+const type = ref('setting')
 const edit = () => {
   type.value = 'edit'
 }
@@ -19,7 +20,6 @@ const docId = ref<number>()
 const save = () => {
   // type.value = 'preview'
   const content = localStorage.getItem('cacheMd')
-  console.log(content)
   updateArticle(docId.value, {
     content,
   }).then(() => {
@@ -65,11 +65,11 @@ const addItem = async () => {
 watch(
   () => route.params.articleId,
   (newVal) => {
-    type.value = 'preview'
     if (newVal) {
+      type.value = 'preview'
       getArticleContent(+newVal)
       docId.value = +newVal
-    }
+    } else type.value = 'setting'
   },
   { immediate: true },
 )
@@ -82,8 +82,8 @@ watch(
         <SvgIcon name="menu-collapsed" width="20px" height="20px"></SvgIcon>
       </div>
       <div class="doc-info">
-        <div class="info-title">{{ docName }}</div>
-        <div class="info-tags">
+        <div class="info-title">{{ type !== 'setting' ? docName : '知识库设置' }}</div>
+        <div class="info-tags" v-if="type !== 'setting'">
           <a-tag
             :color="colors[Math.floor(Math.random() * colors.length)]"
             v-for="tag in tagsList"
@@ -94,11 +94,11 @@ watch(
             {{ tag.tagName }}
           </a-tag>
         </div>
-        <div style="padding: 4px 8px; width: 120px; margin-top: 2px">
+        <div style="padding: 4px 8px; width: 120px; margin-top: 2px" v-if="route.params.articleId">
           <a-input ref="inputRef" size="small" v-model:value="newTag" placeholder="enter tag" @pressEnter="addItem" />
         </div>
       </div>
-      <div class="doc-btn">
+      <div class="doc-btn" v-if="route.params.articleId">
         <div class="self-edit-btn" v-if="type === 'preview'" @click="edit">
           <SvgIcon name="edit"></SvgIcon>
           <span>编辑</span>
@@ -121,15 +121,19 @@ watch(
       </empty-status>
       <preview-editor v-else :preview="docContent"></preview-editor>
     </div>
-    <div class="editor-content" id="editor" v-else>
+    <div class="editor-content" id="editor" v-if="type === 'edit'">
       <editor :edit-content="docContent"></editor>
+    </div>
+    <div class="preview-content" v-if="type === 'setting'">
+      <KnowInfo></KnowInfo>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
 .article {
-  width: 100%;
+  flex: 1;
+  overflow: hidden;
 }
 .doc-header {
   padding: 8px 0 12px;

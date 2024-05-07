@@ -67,7 +67,6 @@ export const chatWithDoc = (chatParams: ChatParams, fb: oneArgsFunction, doneFb:
   }
   ws.onmessage = (e) => {
     const message = JSON.parse(e.data)
-    console.log(message, message.content)
     if (message.content !== undefined) {
       fb(message.content)
       totalResults += message.content
@@ -75,6 +74,7 @@ export const chatWithDoc = (chatParams: ChatParams, fb: oneArgsFunction, doneFb:
     const status = message.status
     if (status === 2) {
       ws.close()
+      doneFb(totalResults)
     }
   }
   ws.onerror = (error) => {

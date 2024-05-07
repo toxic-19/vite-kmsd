@@ -52,3 +52,7 @@ type FileContentRecord = {
 export interface FileContentResData extends ResponseData {
   data: FileContentRecord
 }
+export type FileUploadDto = {
+  articleId: number
+  needSummary: boolean
+}

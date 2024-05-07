@@ -8,7 +8,7 @@ import { treeData } from './type.ts'
 import Tree from './components/tree.vue'
 import CreateDialog from './components/createDialog.vue'
 const store = useKnowledgeStore()
-const { currentKnowName } = storeToRefs(store)
+const { currentKnowName, currentKnowId } = storeToRefs(store)
 const tree = ref<treeData>({})
 const activeKey = ref(['1'])
 const articleName = ref<string>('')
@@ -40,7 +40,9 @@ const addArticleInKnow = () => {
 const addGroupInKnow = () => {
   createArticleRef.value?.showModal(true, 0, 2)
 }
-
+const toSettingPage = () => {
+  router.replace(`/docs/${currentKnowId.value}`)
+}
 provide('refreshMenu', getTreeData)
 onMounted(() => {
   getTreeData()
@@ -54,7 +56,7 @@ onMounted(() => {
       <SvgIcon name="collapsed" width="12px" height="12px"></SvgIcon>
       <div class="knowledge-name">{{ currentKnowName }}</div>
     </div>
-    <div class="settings">
+    <div class="settings" @click="toSettingPage">
       <a-tooltip title="知识库设置">
         <SvgIcon name="operate" width="18px" height="18px"></SvgIcon>
       </a-tooltip>

@@ -5,5 +5,12 @@ type ListItem = {
   list: Array<KnowBase>
   isTop: boolean
 }
-
-export { ListItem }
+interface Knowledge {
+  id: number
+  kbName: string
+  kbDesc: string
+  isTop: boolean
+  cover: string
+  isDel: boolean
+}
+export { ListItem, Knowledge }

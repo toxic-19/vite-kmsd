@@ -18,7 +18,7 @@ const getTagsList = async () => {
   const { data } = await getTagList()
   allTagList.value = data
   showTagList.value = data?.filter((item) => savedList.includes(item.tagName))
-  selectTag(data[0])
+  selectTag(showTagList.value[0])
   treeData.value = data.map((item) => item.tagName)
 }
 const articleList = ref<Array<Article>>([])
@@ -120,11 +120,13 @@ const targetFn = () => {
           <SvgIcon name="title" width="26px" height="26px"></SvgIcon>
           <span>{{ doc.title }}</span>
         </div>
-        <div class="description">
-          <SvgIcon name="desc1" width="10px"></SvgIcon>
-          <span class="desc">{{ doc.description }}</span>
-          <SvgIcon name="desc2" width="10px"></SvgIcon>
-        </div>
+        <a-tooltip :title="doc.description">
+          <div class="description">
+            <SvgIcon name="desc1" width="10px"></SvgIcon>
+            <span class="desc">{{ doc.description }}</span>
+            <SvgIcon name="desc2" width="10px"></SvgIcon>
+          </div>
+        </a-tooltip>
       </div>
       <div class="short-content single_message" v-html="toHtml(doc.content)"></div>
       <div class="other">
@@ -141,7 +143,7 @@ const targetFn = () => {
     <a-back-top :target="targetFn" :visibilityHeight="50" />
   </div>
   <div class="empty-status" v-if="!articleList.length">
-    <empty-status></empty-status>
+    <empty-status imageName="empty-content.webp" description="该标签暂无所属文档列表"></empty-status>
   </div>
 </template>
 
@@ -242,6 +244,7 @@ const targetFn = () => {
       }
       .description {
         align-self: end;
+        @include textOverflow;
       }
     }
     .short-content {
@@ -310,10 +313,13 @@ const targetFn = () => {
   }
 }
 .empty-status {
-  height: 600px;
+  //height: 600px;
   display: flex;
   align-items: center;
   justify-content: center;
+  :deep(img) {
+    width: 260px;
+  }
 }
 .dropdown {
   margin-left: auto;

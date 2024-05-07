@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import GanttView from './gantt.vue'
 import { cloneData, formatDate, runNum } from '@/utils/constant.ts'
-import { Modal } from 'ant-design-vue'
+import {message, Modal} from 'ant-design-vue'
 import { TEMPLATE_MAP, taskStatusColors } from '@/utils/map.ts'
+import { postUpdateOneTask } from '@/api/project'
 import { onMounted, ref } from 'vue'
 import { postTaskListByProjectId } from '@/api/project'
 import { useBreadcrumbsStore } from '@/stores/breadcrumbs.ts'
@@ -29,6 +30,7 @@ const initData = () => {
         return
       }
     }
+    console.log(item.title)
     item.taskLists.forEach((taskData: any) => {
       let notime = taskData.dateStart === 0 || taskData.dateEnd === 0
       let times = getTimeObj(taskData)
@@ -50,6 +52,7 @@ const initData = () => {
         time: tempTime,
         notime: notime,
         style: { background: color },
+        process: item.title,
       })
     })
   })
@@ -91,17 +94,24 @@ const clickItem = (item: any) => {
 }
 
 const editSubmit = (save: any) => {
-  editData.value.forEach((item) => {
+  editData.value.forEach(async (item) => {
     if (save) {
       editLoad.value++
       let timeStart = formatDate('Y-m-d H:i', Math.round(item.newTime.start / 1000))
       let timeEnd = formatDate('Y-m-d H:i', Math.round(item.newTime.end / 1000))
       let ajaxData = {
-        act: 'plannedtime',
-        taskid: item.id,
-        content: timeStart + ',' + timeEnd,
+        // act: 'plannedtime',
+        id: item.id,
+        dateStart: timeStart,
+        dateEnd: timeEnd,
       }
       console.log(ajaxData)
+      // API
+      const res = await postUpdateOneTask(ajaxData)
+      if (res.code === 200 && res.data[0] === 1) {
+        message.success('修改成功')
+      }
+      editLoad.value--
     } else {
       lists.value.some((task) => {
         if (task.id === item.id) {
@@ -141,11 +151,11 @@ const getTimeObj = (taskData) => {
   end *= 1000
   return { start, end }
 }
-
-const tapProject = (e) => {
-  filtrProjectId.value = runNum(e)
-  initData()
-}
+// 筛选
+// const tapProject = (e) => {
+//   filtrProjectId.value = runNum(e)
+//   initData()
+// }
 const store = useBreadcrumbsStore()
 const { currentProject } = storeToRefs(store)
 const taskLabelList = ref()
@@ -163,17 +173,24 @@ onMounted(() => {
 <template>
   <div class="project-gstc-gantt">
     <GanttView :lists="lists" :menu-width="260" :itemWidth="80" @on-change="updateTime" @on-click="clickItem" />
-    <a-dropdown class="project-gstc-dropdown-filtr" placement="bottom">
-      <SvgIcon class="project-gstc-dropdown-icon" name="funnel"></SvgIcon>
-      <template #overlay>
-        <div class="select-box">
-          <a-checkbox>全部</a-checkbox>
-          <a-checkbox-group :options="TEMPLATE_MAP.get(1)" />
-        </div>
-      </template>
-    </a-dropdown>
+    <!--    <a-dropdown class="project-gstc-dropdown-filtr" placement="bottom">-->
+    <!--      <SvgIcon class="project-gstc-dropdown-icon" name="funnel"></SvgIcon>-->
+    <!--      <template #overlay>-->
+    <!--        <div class="select-box">-->
+    <!--          <a-checkbox>全部</a-checkbox>-->
+    <!--          <a-checkbox-group :options="TEMPLATE_MAP.get(1)" />-->
+    <!--        </div>-->
+    <!--      </template>-->
+    <!--    </a-dropdown>-->
     <div class="project-gstc-close" @click="emit('closeGantt')">
       <SvgIcon name="back" text="返回"></SvgIcon>
+    </div>
+    <div class="project-gstc-edit" :class="{ info: editShowInfo, visible: editData.length > 0 }">
+      <div class="project-gstc-edit-small">
+        <div class="project-gstc-edit-text" @click="editShowInfo = true">未保存计划时间: {{ editData.length }}</div>
+        <a-button :loading="editLoad > 0" size="small" type="text" @click="editSubmit(false)">取消</a-button>
+        <a-button :loading="editLoad > 0" size="small" type="primary" @click="editSubmit(true)">保存</a-button>
+      </div>
     </div>
   </div>
 </template>

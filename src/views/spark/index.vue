@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, onMounted, reactive, ref, watch, h } from 'vue'
+import { nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { MessageOutlined, LoadingOutlined, EllipsisOutlined } from '@ant-design/icons-vue'
 import { Marked } from 'marked'
 import hljs from 'highlight.js'
@@ -26,6 +26,7 @@ const getDialogList = async () => {
   const { data } = await getListSession()
   dialogList.value = data
   dialogList.value.forEach((item) => (dialogMenu[item.id] = false))
+  getMessageList(data[0].id)
 }
 // 获取对话的聊天数据
 const getMessageList = async (sessionId: number) => {
@@ -87,7 +88,6 @@ const coverTextToHtml = (text: string) => {
     result = result.replace(/<script>/g, '<code>script</code>')
     result = result.replace(/<pre><code/g, `<pre style="position:relative;"><span class="copy-btn">Copy</span><code`)
   }
-  console.log(result)
   return result
 }
 
@@ -133,7 +133,7 @@ const sendChat = async () => {
     autoScrollBottomM.keep()
     const currentSession = dialogList.value.find((item) => item.id === nowSessionId.value)
     if (currentSession.sessionName === '新建对话') {
-      updateChatName(nowSessionId.value, messageInput.value.slice(0, 8))
+      updateChatName(nowSessionId.value, messageInput.value.slice(0, 7))
     }
   }
   const doneFb = async (totalResults: string) => {

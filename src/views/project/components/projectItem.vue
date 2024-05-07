@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import { OneProject } from '@/api/project/type.ts'
 import { showCorrectTime } from '@/utils/constant.ts'
-import { postHangUpProject, postUpdateProject} from '@/api/project'
+import {getTaskStatisticsByProjectId, postHangUpProject, postUpdateProject} from '@/api/project'
 import { message } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
 import { useBreadcrumbsStore } from '@/stores/breadcrumbs.ts'
@@ -12,13 +12,21 @@ const emit = defineEmits(['refresh'])
 const projectContent = computed<OneProject>(() => {
   return props.project
 })
-const taskList = [{ text: '项目总任务数' }, { text: '项目未完成任务' }, { text: '项目超期任务' }, { text: '项目已完成任务' }]
+const taskList = ref<Array<{ text: string; key: string; num?: number }>>([
+  { text: '项目总任务数', key: 'total', num: 0 },
+  { text: '项目未完成任务', key: 'unfinished', num: 0 },
+  { text: '项目超期任务', key: 'delayCancel', num: 0 },
+  { text: '项目已完成任务', key: 'completed', num: 0 },
+])
 // CSS翻转效果
 const rotateFront = ref('0deg')
 const rotateBack = ref('180deg')
 const transfer = () => {
   rotateFront.value = rotateFront.value === '0deg' ? '180deg' : '0deg'
   rotateBack.value = rotateBack.value === '180deg' ? '0deg' : '180deg'
+  if (rotateBack.value === '0deg') {
+    getTaskStatistics()
+  }
 }
 // 收藏项目
 const collectIcon = ref<string>('unCollect')
@@ -53,6 +61,17 @@ const hangupProject = async () => {
     emit('refresh')
     message.success('操作成功')
   } else message.error('操作失败')
+}
+
+const percentage = ref(0)
+const getTaskStatistics = async () => {
+  const { data } = await getTaskStatisticsByProjectId({
+    projectId: projectContent.value.id,
+  })
+  percentage.value = (data.completed / data.total).toFixed(2) * 100
+  taskList.value.forEach((task) => {
+    task.num = data[task.key]
+  })
 }
 const router = useRouter()
 const toTaskPage = (event: Event) => {
@@ -97,7 +116,7 @@ const toTaskPage = (event: Event) => {
           <div class="task-item" v-for="item in taskList" :key="item.text">
             <a-space :size="10">
               <span class="text">{{ item.text }}</span>
-              <span class="num">3</span>
+              <span class="num">{{ item.num }}</span>
             </a-space>
           </div>
         </div>
@@ -109,9 +128,9 @@ const toTaskPage = (event: Event) => {
               '0%': '#80abd5',
               '100%': '#aecfe2',
             }"
-            :percent="90"
+            :percent="percentage"
             :size="100"
-            :format="(percent: number) => `${percent} Days`"
+            :format="(percent: number) => `${percent}%`"
           />
           <div class="progress-title">项目进度</div>
         </div>
@@ -158,8 +177,8 @@ const toTaskPage = (event: Event) => {
     transform: rotateY(v-bind(rotateFront)); // 翻转 0 -> 180deg
   }
   .card-back {
+    width: 276px;
     height: 310px;
-    width: 100%;
     position: absolute;
     backface-visibility: hidden;
     transform: rotateY(v-bind(rotateBack)); // 翻转前 180deg -> 360deg
@@ -172,7 +191,7 @@ const toTaskPage = (event: Event) => {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin: 10px 0;
+      margin: 22px 0;
     }
     .left-num {
       .task-item {

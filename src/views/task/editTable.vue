@@ -71,12 +71,12 @@ const formatTaskStatus: VxeColumnPropTypes.Formatter<RowVO> = ({ cellValue }) =>
       :edit-config="{ trigger: 'dblclick', mode: 'cell', showStatus: true, showIcon: false }"
     >
       <vxe-column type="seq" width="60"></vxe-column>
-      <vxe-column field="taskName" title="任务名称" :edit-render="{ autofocus: '.vxe-input--inner' }">
+      <vxe-column field="taskName" title="任务名称" width="200" :edit-render="{ autofocus: '.vxe-input--inner' }">
         <template #edit="{ row }">
           <vxe-input v-model="row.taskName" type="text"></vxe-input>
         </template>
       </vxe-column>
-      <vxe-column field="taskStatus" title="任务状态" :edit-render="{}" width="160" :formatter="formatTaskStatus">
+      <vxe-column field="taskStatus" title="任务状态" :edit-render="{}" width="140" :formatter="formatTaskStatus">
         <template #default="{ row }">
           <span class="status" :style="{ backgroundColor: taskStatusColors[row.taskStatus] }">
             {{ formatSex(row.taskStatus) }}
@@ -103,7 +103,7 @@ const formatTaskStatus: VxeColumnPropTypes.Formatter<RowVO> = ({ cellValue }) =>
           <span>{{ diffInHours(row.dateEnd, row.dateStart) }}</span>
         </template>
       </vxe-column>
-      <vxe-column field="member" title="任务所属人" :edit-render="{}" width="120"></vxe-column>
+      <!--      <vxe-column field="member" title="任务所属人" :edit-render="{}" width="120"></vxe-column>-->
       <vxe-column title="操作" width="180" show-overflow align="center">
         <template #default="{ row }">
           <a-button type="dashed" @click="saveOneTask(row)">{{ row?.id ? '保存修改' : '新建' }}</a-button>
