@@ -6,7 +6,8 @@ import { postCreateGroup } from '@/api/knowBase'
 import { storeToRefs } from 'pinia'
 import { PlusOutlined } from '@ant-design/icons-vue'
 import type { Rule } from 'ant-design-vue/es/form'
-import {getTagList, postAddNewTag} from '@/api/tag'
+import { getTagList, postAddNewTag } from '@/api/tag'
+import { useRouter } from 'vue-router'
 const store = useKnowledgeStore()
 const emit = defineEmits(['refreshMenu'])
 // 弹窗数据
@@ -103,14 +104,19 @@ const createDoc = () => {
   postArticle({
     ...formState.value,
     ...data,
-  }).then(() => {
+  }).then(({ data: { articleId } }) => {
+    console.log('新建文档', articleId)
     emit('refreshMenu')
+    getPreview(articleId)
     open.value = false
     confirmLoading.value = false
     clearForm()
   })
 }
-
+const router = useRouter()
+const getPreview = (articleId: number) => {
+  router.replace(`/docs/${currentKnowId.value}/${articleId}`)
+}
 // 新建分组
 const createGroup = () => {
   const data = { knowId: currentKnowId.value, groupName: formState.value.groupName }

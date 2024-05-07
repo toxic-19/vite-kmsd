@@ -76,7 +76,7 @@ const coverTextToHtml = (text: string) => {
 }
 // 输入
 const messageInput = ref<string>('')
-const placeholderText = ref<string>('请输入对该文档的询问内容')
+const placeholderText = ref<string>('文档已上传！请输入对该文档的询问内容')
 const sendLoading = ref<boolean>(false)
 const isInputFocused = ref(false)
 // 监听输入框的焦点事件
@@ -93,6 +93,10 @@ const inputKeyDownListener = (event: KeyboardEvent) => {
 }
 // chat聊天事件
 const sendChat = async () => {
+  if (!fileId.value) {
+    message.warn('文档还未上传！无法进行对话')
+    return
+  }
   if (!messageInput.value.trim().length) {
     message.warn('请输入询问内容！')
     return
@@ -166,7 +170,7 @@ const fullScreen = () => {
   drawerWidth.value = drawerWidth.value === '100%' ? 520 : '100%'
   fullscreenIcon.value = fullscreenIcon.value === 'fullscreen' ? 'close-fullscreen' : 'fullscreen'
 }
-const isShowSummary = ref<boolean>(true)
+const isShowSummary = ref<boolean>(false)
 const showSummary = () => {
   isShowSummary.value = !isShowSummary.value
 }
@@ -185,13 +189,20 @@ const getSummary = async (articleId: number) => {
   if (code === 200) {
     summary.value = data.summary
     fileId.value = data.fileId
+    placeholderText.value = '文档已上传！请输入对该文档的询问内容'
     // 根据对应的fileId来获取聊天记录
     await getMessageList(articleId)
   } else {
     summary.value = ''
     fileId.value = ''
+    placeholderText.value = '文档还未上传！暂时无法进行对话'
     messageList.value = []
   }
+}
+// 文档上传
+const uploadFile = () => {
+  const hide = message.loading('Action in progress..', 0)
+  setTimeout(hide, 2500)
 }
 watch(
   () => route.params.articleId,
@@ -219,7 +230,7 @@ onMounted(() => {
     <template #extra>
       <div class="extra-operate">
         <a-tooltip title="文档上传">
-          <SvgIcon name="upload" width="30px" height="25px" @click="showSummary"></SvgIcon>
+          <SvgIcon name="upload" width="30px" height="25px" @click="uploadFile"></SvgIcon>
         </a-tooltip>
         <a-tooltip title="文档总结">
           <SvgIcon name="summary" width="20px" height="20px" @click="showSummary"></SvgIcon>
@@ -248,7 +259,7 @@ onMounted(() => {
                 ReCap
               </a-button>
             </div>
-            <div class="summary-empty">
+            <div class="summary-empty" v-else>
               <div class="tips">点击左上角图标进行文档上传</div>
             </div>
           </div>
@@ -526,6 +537,9 @@ onMounted(() => {
   .main_chat_focus {
     border: 1px solid #87a2ff;
     box-shadow: 0 0 5px rgba(135, 162, 255, 0.3);
+  }
+  .upload-tips {
+    border: 1px solid #c0c0c0;
   }
 }
 :deep(.ant-spin-text) {

@@ -4,11 +4,9 @@ import { useCollapsedStore } from '@/stores/icon'
 import PreviewEditor from './previewEditor.vue'
 import Editor from './Editor.vue'
 import { useRoute } from 'vue-router'
-import {addTagForDoc, deleteTag, getContentById, getTagsById, updateArticle} from '@/api/article'
+import { addTagForDoc, deleteTag, getContentById, getTagsById, updateArticle } from '@/api/article'
 import { Tag } from '@/api/article/type'
-import emptyPng from '@/assets/empty.png'
 import { message } from 'ant-design-vue'
-import { PlusOutlined } from '@ant-design/icons-vue'
 const store = useCollapsedStore()
 const closeDocMenu = () => {
   store.collapseMenu()
@@ -116,10 +114,11 @@ watch(
       </div>
     </header>
     <div class="preview-content" id="content" v-if="type === 'preview'">
-      <a-empty v-if="!docContent" :image="emptyPng" :image-style="{ height: '200px' }">
-        <template #description>暂无内容</template>
-        <a-button type="primary" @click="edit">Create Now</a-button>
-      </a-empty>
+      <empty-status imageName="empty-content.webp" description="点击按钮进行编辑内容" v-if="!docContent">
+        <template #operation>
+          <a-button type="primary" @click="edit">Create Now</a-button>
+        </template>
+      </empty-status>
       <preview-editor v-else :preview="docContent"></preview-editor>
     </div>
     <div class="editor-content" id="editor" v-else>
@@ -137,7 +136,7 @@ watch(
   display: flex;
   align-items: center;
   width: 100%;
-  background-color: #ffffff;
+  //background-color: #ffffff;
   top: 0;
   z-index: 10;
   .doc-info {
@@ -205,19 +204,5 @@ watch(
 }
 #editor {
   padding-left: 0;
-}
-:deep(.ant-empty) {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  .ant-empty-description {
-    font-size: 18px;
-    color: #4a6288;
-    font-weight: bold;
-    font-family: -apple-system, serif;
-    margin-top: 10px;
-  }
 }
 </style>

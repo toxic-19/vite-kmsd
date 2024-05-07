@@ -118,6 +118,10 @@ watch(props, (newVal) => {
   }
   // else if (groupList.length) getPreview(groupList[0].childrenData?.[0]?.articleId)
 })
+watch(() => route.params.articleId, (newVal) => {
+  console.log('newVal', newVal)
+  selectedId.value = +newVal
+})
 </script>
 
 <template>

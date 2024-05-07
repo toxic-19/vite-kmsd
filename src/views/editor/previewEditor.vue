@@ -127,7 +127,9 @@ watch(
 
 <template>
   <div id="previewWrap">
-    <div id="preview" class="preview"></div>
+    <a-watermark content="KMSD-Vue3-Nest" :gap="[200, 200]">
+      <div id="preview" class="preview"></div>
+    </a-watermark>
   </div>
   <div id="outlineWrap" style="width: 0">
     <div id="outline-title">目录</div>
@@ -167,7 +169,7 @@ watch(
   padding-top: 30px;
   overflow: auto;
   font-size: 12px;
-  border-left: 1px solid var(--border-color);
+  border: 1px solid var(--border-color);
   border-right: 0;
   border-radius: 10px;
   overflow-x: hidden;

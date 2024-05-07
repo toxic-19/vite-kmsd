@@ -14,6 +14,7 @@ if (props.imageName) {
   <div class="empty-status">
     <img :src="'../../../src/assets/empty/' + emptyPng" alt="" />
     <div class="description">{{ props.description || '暂无内容' }}</div>
+    <slot name="operation"></slot>
   </div>
 </template>
 <style scoped lang="scss">
@@ -34,5 +35,6 @@ if (props.imageName) {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
     'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   margin-top: 10px;
+  margin-bottom: 10px;
 }
 </style>
