@@ -93,7 +93,7 @@ const coverTextToHtml = (text: string) => {
 
 // 输入
 const messageInput = ref<string>('')
-const placeholderText = ref<string>('在这里输入你的问题，当前模型：星火1.5')
+const placeholderText = ref<string>('在这里输入你的问题，当前模型：星火3.5')
 const sendLoading = ref<boolean>(false)
 const isInputFocused = ref(false)
 // 监听输入框的焦点事件

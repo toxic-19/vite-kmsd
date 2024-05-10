@@ -99,6 +99,11 @@ onMounted(() => {
         </template>
       </a-collapse-panel>
     </a-collapse>
+    <empty-status
+      imageName="empty-menu.svg"
+      description="暂无文档目录"
+      v-if="!tree.article?.length && !tree.group?.length"
+    ></empty-status>
   </div>
   <create-dialog ref="createArticleRef" @refreshMenu="getTreeData"></create-dialog>
 </template>
@@ -184,6 +189,9 @@ onMounted(() => {
   display: flex;
   width: 40px;
   justify-content: space-between;
+}
+:deep(.empty-status[data-type='empty-menu.svg']) {
+  height: 70%;
 }
 //:deep(.ant-collapse > .ant-collapse-item.ant-collapse-no-arrow > .ant-collapse-header) {
 //  position: fixed;

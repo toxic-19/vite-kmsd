@@ -12,7 +12,6 @@ const getKnowInfo = async () => {
   knowInfo.value = data
 }
 const submitUpdate = async () => {
-  console.log(knowInfo.value)
   const res = await postUpdateKnowInfo({ ...knowInfo.value })
   if (res.code === 200 && res.data[0] === 1) {
     message.success('修改成功')
@@ -31,7 +30,7 @@ onMounted(() => {
         <a-input v-model:value="knowInfo.kbName" placeholder="请输入知识库名称" />
       </a-form-item>
       <a-form-item label="知识库描述">
-        <a-input v-model:value="knowInfo.kbDesc" placeholder="请输入知识库描述" />
+        <a-textarea v-model:value="knowInfo.kbDesc" placeholder="请输入知识库描述" :autoSize="{ minRows: 1, maxRows: 10 }" />
       </a-form-item>
       <a-form-item label="是否置顶">
         <a-switch v-model:checked="knowInfo.isTop" />
@@ -41,7 +40,7 @@ onMounted(() => {
         <img class="cover-image" :src="knowInfo.cover" width="140px" height="250px" alt="" />
       </a-form-item>
       <a-form-item label="是否删除">
-        <a-switch disabled v-model:checked="knowInfo.isDel" />
+        <a-switch v-model:checked="knowInfo.isDel" />
       </a-form-item>
       <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
         <a-button type="primary" @click="submitUpdate">Submit</a-button>

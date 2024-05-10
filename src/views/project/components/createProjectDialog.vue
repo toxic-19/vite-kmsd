@@ -106,7 +106,7 @@ defineExpose({
 .process {
   width: 341px;
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   font-size: 16px;
   .process-item {
     display: flex;

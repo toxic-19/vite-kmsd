@@ -1,6 +1,6 @@
 import * as CryptoJS from 'crypto-js/crypto-js.js'
 // websocket协议通用鉴权
-const httpUrl = new URL('https://spark-api.xf-yun.com/v1.1/chat')
+const httpUrl = new URL('https://spark-api.xf-yun.com/v3.5/chat')
 let modelDomain = ''
 const APPID = 'eb7b67d3'
 const API_SECRET = 'ZmViMTc1MDk0ZGI1ZDgzMGM1YTVlYTdi'

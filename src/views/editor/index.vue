@@ -24,7 +24,7 @@ const save = () => {
     content,
   }).then(() => {
     getArticleContent(docId.value)
-    message.success('上传成功')
+    message.success('保存文档成功')
     type.value = 'preview'
   })
 }

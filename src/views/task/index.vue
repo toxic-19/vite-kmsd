@@ -103,7 +103,7 @@ onActivated(() => {
   margin: 0 auto;
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   .process-item {
     flex: 1;
     display: flex;

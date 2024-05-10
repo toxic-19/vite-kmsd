@@ -55,7 +55,7 @@ export default (): UserConfigExport => {
     server: {
       host: true,
       hmr: true,
-      // port: 9951,
+      port: 9951,
       proxy: {
         '/dev': {
           // 将带有/dev路径的地址都换成http://127.0.0.1:3001/kmsd-api

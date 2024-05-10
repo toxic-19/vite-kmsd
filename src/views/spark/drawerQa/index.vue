@@ -219,10 +219,11 @@ const uploadFile = () => {
   }).then(async (res) => {
     fileId.value = res.data
     message.success({ content: '上传成功!', key, duration: 2 })
-    placeholderText.value = '文档已上传！请输入对该文档的询问内容'
     await postFileSummary({
       fileId: res.data,
     })
+    location.reload() // 需要刷新页面，否则对话会报错时间
+    placeholderText.value = '文档已上传！请输入对该文档的询问内容'
   })
 }
 watch(
@@ -275,10 +276,10 @@ onMounted(() => {
           <div class="summary-content">
             <div class="content" v-html="coverTextToHtml(summary)"></div>
             <div class="summary-restart" v-if="summary">
-              <div class="restart-tips">注意：如对以上生成内容不满意，可点击右侧按钮重新生成</div>
-              <a-button size="large" type="link" class="restart-btn" :icon="h(ReadOutlined)" :autoInsertSpaceInButton="false">
-                ReCap
-              </a-button>
+              <div class="restart-tips">注意：以上内容由讯飞星火知识库生成</div>
+              <!--              <a-button size="large" type="link" class="restart-btn" :icon="h(ReadOutlined)" :autoInsertSpaceInButton="false">-->
+              <!--                ReCap-->
+              <!--              </a-button>-->
             </div>
             <div class="summary-empty" v-else>
               <empty-status v-if="!fileId" imageName="empty-summary.svg" description="点击左上角图标进行文档上传"></empty-status>

@@ -60,7 +60,8 @@ const beTop = async (id: number, isTop: boolean) => {
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(31, 35, 41, 0.1);
   background-repeat: no-repeat;
-  background-position: 50% 50%;
+  background-position: 50% 100%;
+  background-size: cover;
   position: relative;
   &:hover {
     box-shadow: 4px 6px 6px rgba(31, 35, 41, 0.3);
@@ -85,6 +86,7 @@ const beTop = async (id: number, isTop: boolean) => {
   .desc {
     font-size: 13px;
     word-break: break-word;
+    @include multilineEllipsis(3);
   }
 }
 .item-in {
