@@ -56,6 +56,7 @@ declare module 'vue' {
     ATree: (typeof import('ant-design-vue/es'))['Tree']
     ATreeSelect: (typeof import('ant-design-vue/es'))['TreeSelect']
     ATypographyParagraph: typeof import('ant-design-vue/es')['TypographyParagraph']
+    AUpload: typeof import('ant-design-vue/es')['Upload']
     AWatermark: typeof import('ant-design-vue/es')['Watermark']
     EmptyStatus: typeof import('./src/components/EmptyStatus/index.vue')['default']
     PreviewEditor: (typeof import('./src/components/PreviewEditor/index.vue'))['default']

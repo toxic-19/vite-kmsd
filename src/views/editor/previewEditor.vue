@@ -22,9 +22,9 @@ const initVditor = () => {
     after() {
       if (window.innerWidth <= 768) return
       getOutline() // 渲染目录
-      const outlineEle = document.getElementById('outline') as HTMLDivElement
-      const firstSpanName = outlineEle.querySelector('span')?.getAttribute('data-target-id')
-      if (firstSpanName) router.push(`${path.value}/#${firstSpanName}`)
+      // const outlineEle = document.getElementById('outline') as HTMLDivElement
+      // const firstSpanName = outlineEle.querySelector('span')?.getAttribute('data-target-id')
+      // if (firstSpanName) router.push(`${path.value}/#${firstSpanName}`)
     },
   })
 }

@@ -5,6 +5,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { groupMenu, articleMenu } from '../type'
 import { deleteArticle, updateArticle } from '@/api/article'
 import { postReNameGroup } from '@/api/knowBase'
+import { getChangedIcon } from "@/utils/constant.ts"
 import ArticleDropdown from '@/views/docs/components/articleDropdown.vue'
 import GroupDropdown from '@/views/docs/components/groupDropdown.vue'
 import { message } from 'ant-design-vue'
@@ -21,7 +22,7 @@ const getTreeData = inject('refreshMenu') as Function
 const router = useRouter()
 const route = useRoute()
 const changeIcon = (item: groupMenu) => {
-  item.iconName = item.iconName === 'collapsed' ? 'open' : 'collapsed'
+  item.iconName = getChangedIcon(item.iconName, 'collapsed', 'open')
 }
 const selectedId = ref<number>(0)
 const getPreview = (articleId: number) => {
@@ -109,17 +110,15 @@ watch(props, (newVal) => {
     return { ...item, iconName: 'collapsed' }
   })
   allData.value = [...articleList, ...groupList]
-  if (articleList.length) {
-    getPreview(articleList[0]?.articleId)
-  } else {
-    const noArticle = groupList.every((item) => !item.childrenData.length)
-    console.log('noArticle', noArticle)
-    // TODO: 不一定要一进来就展示第一页；可以用来展示知识库设置。
-  }
+  // if (articleList.length) {
+  //   getPreview(articleList[0]?.articleId)
+  // } else {
+  //   const noArticle = groupList.every((item) => !item.childrenData.length)
+  //   console.log('noArticle', noArticle)
+  // }
   // else if (groupList.length) getPreview(groupList[0].childrenData?.[0]?.articleId)
 })
 watch(() => route.params.articleId, (newVal) => {
-  console.log('newVal', newVal)
   selectedId.value = +newVal
 })
 </script>

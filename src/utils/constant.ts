@@ -26,9 +26,9 @@ export const diffInHours = (timeEnd: string, timeStart: string) => {
  * @param after
  * @returns {*}
  */
-const zeroFill = (str, length, after) => {
+const zeroFill = (str?: string, length: number, after) => {
   str += ''
-  if (str.length >= length) {
+  if (str?.length && str.length >= length) {
     return str
   }
   let _str = '',
@@ -88,7 +88,7 @@ export const formatDate = (format, v) => {
  * @param myObj
  * @returns {*}
  */
-export const cloneData = (myObj) => {
+export const cloneData = (myObj: any) => {
   if (typeof myObj !== 'object') return myObj
   if (myObj === null) return myObj
   //
@@ -107,7 +107,7 @@ export const cloneData = (myObj) => {
  * @param fixed
  * @returns {number}
  */
-export const runNum = (str, fixed) => {
+export const runNum = (str: string, fixed: string) => {
   let _s = Number(str)
   if (_s + '' === 'NaN') {
     _s = 0
@@ -123,4 +123,62 @@ export const runNum = (str, fixed) => {
     }
   }
   return _s
+}
+/**
+ * 切换不同的icon
+ * @param iconName 该icon的所属
+ * @param initIcon 初始状态的iconName
+ * @param changedIcon 切换之后的iconName
+ */
+export const getChangedIcon = (iconName: any, initIcon: string, changedIcon: string) => {
+  return iconName === initIcon ? changedIcon : initIcon
+}
+export const base64Encode = (str: string) => {
+  let out = ''
+  let c1, c2, c3
+  const len = str.length
+  let i = 0
+  const base64EncodeChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_'
+  while (i < len) {
+    c1 = str.charCodeAt(i++) & 0xff
+    if (i == len) {
+      out += base64EncodeChars.charAt(c1 >> 2)
+      out += base64EncodeChars.charAt((c1 & 0x3) << 4)
+      out += '=='
+      break
+    }
+    c2 = str.charCodeAt(i++)
+    if (i == len) {
+      out += base64EncodeChars.charAt(c1 >> 2)
+      out += base64EncodeChars.charAt(((c1 & 0x3) << 4) | ((c2 & 0xf0) >> 4))
+      out += base64EncodeChars.charAt((c2 & 0xf) << 2)
+      out += '='
+      break
+    }
+    c3 = str.charCodeAt(i++)
+    out += base64EncodeChars.charAt(c1 >> 2)
+    out += base64EncodeChars.charAt(((c1 & 0x3) << 4) | ((c2 & 0xf0) >> 4))
+    out += base64EncodeChars.charAt(((c2 & 0xf) << 2) | ((c3 & 0xc0) >> 6))
+    out += base64EncodeChars.charAt(c3 & 0x3f)
+  }
+  return out
+}
+export const utf16to8 = (str: string) => {
+  let out, i, c
+  out = ''
+  const len = str.length
+  for (i = 0; i < len; i++) {
+    c = str.charCodeAt(i)
+    if (c >= 0x0001 && c <= 0x007f) {
+      out += str.charAt(i)
+    } else if (c > 0x07ff) {
+      out += String.fromCharCode(0xe0 | ((c >> 12) & 0x0f))
+      out += String.fromCharCode(0x80 | ((c >> 6) & 0x3f))
+      out += String.fromCharCode(0x80 | ((c >> 0) & 0x3f))
+    } else {
+      out += String.fromCharCode(0xc0 | ((c >> 6) & 0x1f))
+      out += String.fromCharCode(0x80 | ((c >> 0) & 0x3f))
+    }
+  }
+  return out
 }
